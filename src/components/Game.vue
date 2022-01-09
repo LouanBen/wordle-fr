@@ -188,6 +188,9 @@
                                     Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish">@powerlanguish</a> (Josh Wardle).
                                 </p>
                                 <p>
+                                    Merci à <a href="https://twitter.com/Richiesque">Richie</a> pour son aide précieuse !
+                                </p>
+                                <p>
                                     Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
                                 </p>
                             </div>
