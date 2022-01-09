@@ -292,6 +292,7 @@ export default {
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.ceil(random * this.words.length)];
+            this.wordOfTheDay = 'OZONE';
         },
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
@@ -404,9 +405,31 @@ export default {
                         this.correctLetters.push(letter);
                     }
                 } else if (arrayWordOfTheDay.includes(letter)) {
-                    this.results[this.currentAttempt - 1].push('partial');
-                    if (this.partialLetters.indexOf(letter) === -1) {
-                        this.partialLetters.push(letter);
+                    if (this.results[this.currentAttempt - 1].includes(letter)) {
+                        let wotdCount = 0;
+                        let resultCount = 0;
+                        arrayWordOfTheDay.forEach((wotdLetter) => {
+                            if (wotdLetter === letter) {
+                                wotdCount++;
+                            }
+                        });
+                        this.results[this.currentAttempt - 1].forEach((resultLetter) => {
+                            if (resultLetter === letter) {
+                                resultCount++;
+                            }
+                        });
+                        console.log(wotdCount, resultCount);
+
+                        if (wotdCount >= resultCount) {
+                            if (this.partialLetters.indexOf(letter) === -1) {
+                                this.partialLetters.push(letter);
+                            }
+                        } else {
+                            this.results[this.currentAttempt - 1].push('incorrect');
+                            if (this.incorrectLetters.indexOf(letter) === -1) {
+                                this.incorrectLetters.push(letter);
+                            } 
+                        }
                     }
                 } else {
                     this.results[this.currentAttempt - 1].push('incorrect');
