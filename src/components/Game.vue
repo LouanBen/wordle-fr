@@ -291,7 +291,7 @@ export default {
             const formatedDate = this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
             const seed = seedrandom(formatedDate);
             const random = seed();
-            this.wordOfTheDay = this.words[Math.ceil(random * this.words.length)];
+            this.wordOfTheDay = this.words[Math.floor(random * this.words.length)];
         },
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
