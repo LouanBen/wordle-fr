@@ -274,7 +274,7 @@ export default {
     mounted() {
         for (let i = 0; i < NB_ATTEMPTS; i++) {
             this.attempts.push([]);
-            this.results.push([]);
+            this.results.push(new Array(5));
         }
         // this.today.setDate(this.today.getDate() + 1);
         this.getWordOfTheDay();
@@ -343,9 +343,7 @@ export default {
             localStorage.setItem('finished', JSON.stringify(this.finished));
             let yesterday = new Date();
             yesterday.setDate(this.today.getDate() - 1);
-            console.log(localStorage.getItem('lastSave'), yesterday.getFullYear() + '-' + (yesterday.getMonth() + 1) + '-' + yesterday.getDate());
             if (localStorage.getItem('lastSave') === yesterday.getFullYear() + '-' + (yesterday.getMonth() + 1) + '-' + yesterday.getDate()) {
-                console.log('test')
                 this.isStreak = true;
             }
             localStorage.setItem('lastSave', this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate());
@@ -399,22 +397,33 @@ export default {
             }
         },
         verifyLetters(attempt) {
-            let arrayWordOfTheDay = this.wordOfTheDay.split('');
+            let wordToGuess = this.wordOfTheDay.split('');
+            let currentResult = this.results[this.currentAttempt - 1];
+            
             attempt.forEach((letter, index) => {
-                if (arrayWordOfTheDay[index] === letter) {
-                    this.results[this.currentAttempt - 1].push('correct');
-                    if (this.correctLetters.indexOf(letter) === -1) {
+                if (wordToGuess[index] === letter) {
+                    currentResult[index] = 'correct';
+                    wordToGuess[index] = '*';
+                    if (!this.correctLetters.includes(letter)) {
                         this.correctLetters.push(letter);
                     }
-                } else if (arrayWordOfTheDay.includes(letter)) {
-                    this.results[this.currentAttempt - 1].push('partial');
-                    if (this.partialLetters.indexOf(letter) === -1) {
-                        this.partialLetters.push(letter);
-                    }
-                } else {
-                    this.results[this.currentAttempt - 1].push('incorrect');
-                    if (this.incorrectLetters.indexOf(letter) === -1) {
-                        this.incorrectLetters.push(letter);
+                }
+            })
+
+            attempt.forEach((letter, index) => {
+                if (currentResult[index] !== 'correct') {
+                    if (wordToGuess.includes(letter)) {
+                        let otherIndex = wordToGuess.indexOf(letter);
+                        currentResult[index] = 'partial';
+                        wordToGuess[otherIndex] = '*';
+                        if (!this.partialLetters.includes(letter)) {
+                            this.partialLetters.push(letter);
+                        }
+                    } else {
+                        currentResult[index] = 'incorrect';
+                        if (!this.incorrectLetters.includes(letter)) {
+                            this.incorrectLetters.push(letter);
+                        }
                     }
                 }
             });
