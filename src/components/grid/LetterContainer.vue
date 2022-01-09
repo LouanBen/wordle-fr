@@ -34,7 +34,10 @@ export default {
     border: 2px solid #919191
     box-sizing: border-box
     margin: 2px
-    transition: all 0.1s
+    transition: transform 0.1s, background 0.1s, border 0.1s
+    @media (max-width: 300px)
+        width: 48px
+        height: 48px
     &.validated
         border: 2px solid transparent
         animation: flip

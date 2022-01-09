@@ -18,6 +18,10 @@ export default {
 <style lang="sass">
 *
   margin: 0
+html
+  height: 100%
+body
+  height: 100%
 #app
   font-family: Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing: antialiased
@@ -26,7 +30,7 @@ export default {
   color: #919191
   background: #121213
   width: 100vw
-  height: 100vh
+  height: 100%
   display: flex
   justify-content: center
 </style>
