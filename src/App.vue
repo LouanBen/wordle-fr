@@ -12,6 +12,11 @@ export default {
   components: {
     Game
   },
+  mounted() {
+    if(window.location.protocol != 'https:' && window.location.hostname != 'localhost' && window.location.hostname != '127.0.0.1') {
+      location.href = location.href.replace("http://", "https://");
+    }
+  }
 }
 </script>
 
