@@ -484,21 +484,17 @@ export default {
         },
         share() {
             const title = `Le Mot (@WordleFR) ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
-            let schema = '';
-            this.results.forEach((result, index) => {
-                result.forEach((letter) => {
+            let schema = this.results.slice(0, this.currentAttempt).map((result) => {
+                return result.map((letter) => {
                     if (letter === 'correct') {
-                        schema += '🟩';
+                        return '🟩';
                     } else if (letter === 'partial') {
-                        schema += '🟨';
+                        return '🟨';
                     } else {
-                        schema += '⬛';
+                        return '⬛';
                     }
-                })
-                if (index <= this.results.length && result.length > 0) {
-                    schema += '\n';
-                }
-            })
+                }).join('');
+            }).join('\n');
             navigator.clipboard.writeText(title + schema);
             this.resultsCopied = true;
         }
