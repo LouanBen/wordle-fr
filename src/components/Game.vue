@@ -151,7 +151,7 @@
                                         💀
                                     </div>
                                     <div class="attempt-stat">
-                                        <div class="attempt-bar" :class="{ best: getAttemptStatPercent(attempt) === bestAttemptPercent }" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
+                                        <div class="attempt-bar" :class="{ best: getAttemptStatPercent(attempt) === bestAttemptPercent && getAttemptStat(attempt) > 0 }" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +273,7 @@ export default {
             this.attempts.push([]);
             this.results.push([]);
         }
-        this.today.setDate(this.today.getDate() + 1);
+        // this.today.setDate(this.today.getDate() + 1);
         this.getWordOfTheDay();
         this.getSavedData();
 
@@ -426,7 +426,6 @@ export default {
             } else {
                 this.currentAttempt++;
                 if (this.currentAttempt > NB_ATTEMPTS) {
-                    this.currentAttempt++;
                     this.finished = true;
                     this.getStats();
                 }
@@ -464,7 +463,7 @@ export default {
             return iteration;
         },
         getAttemptStatPercent(attemptNumber) {
-            if (attemptNumber === 0) {
+            if (this.getAttemptStat(attemptNumber) === 0) {
                 return 0;
             }
             let attemptPercent = Math.round((this.getAttemptStat(attemptNumber) / this.userResults.nbGames) * 100);
@@ -499,7 +498,7 @@ export default {
 #game
     max-width: 500px
     width: 100%
-    height: 100vh
+    height: 100%
     overflow: hidden
     display: flex
     flex-direction: column
@@ -511,6 +510,17 @@ export default {
         display: flex
         align-items: center
         justify-content: space-between
+        @media (max-width: 500px)
+            padding: 0 12px
+            box-sizing: border-box
+            @media (max-width: 300px)
+                h1
+                    font-size: 1.5rem
+                .header-right, .header-left
+                    width: 50px !important
+                    .icon
+                        width: 20px
+                        height: 20px
         h1
             text-transform: uppercase
         .header-right
@@ -565,7 +575,8 @@ export default {
             font-weight: bold
             z-index: 2
         .grid
-            margin-top: 36px
+            margin-top: auto
+            margin-bottom: auto
             .attempt
                 display: flex
                 animation-duration: 0.3s
@@ -585,8 +596,9 @@ export default {
             left: 0
             .help-modal-content
                 max-width: 450px
-                width: 100%
-                height: 500px
+                width: 90%
+                min-height: 500px
+                max-height: 100%
                 background: #121213
                 border-radius: 8px
                 padding: 12px
@@ -655,7 +667,7 @@ export default {
             left: 0
             .endgame-modal-content
                 max-width: 450px
-                width: 100%
+                width: 90%
                 height: 500px
                 background: #121213
                 border-radius: 8px
@@ -759,7 +771,7 @@ export default {
             left: 0
             .settings-modal-content
                 max-width: 450px
-                width: 100%
+                width: 90%
                 height: 500px
                 background: #121213
                 border-radius: 8px

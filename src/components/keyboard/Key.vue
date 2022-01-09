@@ -62,4 +62,12 @@ export default {
         background: #3A3A3C
     &.color-blind
         color: white
+    @media (max-width: 500px)
+        width: 32px
+        &.big
+            width: 58px
+        @media (max-width: 300px)
+            width: 24px
+            &.big
+                width: 50px
 </style>
