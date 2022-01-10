@@ -215,7 +215,7 @@ const KEYBOARD = [
     ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
     ['Entrer', 'W', 'X', 'C', 'V', 'B', 'N', 'Suppr'],
-]
+];
 
 export default {
     name: 'Game',
@@ -272,6 +272,16 @@ export default {
         }
     },
     mounted() {
+        window.addEventListener('keydown', event => {
+            if (/^[a-zA-Z]$/.test(event.key)) {
+                this.handleKeyClick(event.key.toUpperCase());
+            } else if (event.key === 'Enter') {
+                this.handleKeyClick('Entrer');
+            } else if (event.key === 'Backspace') {
+                this.handleKeyClick('Suppr');
+            }
+        });
+
         for (let i = 0; i < NB_ATTEMPTS; i++) {
             this.attempts.push([]);
             this.results.push(new Array(5));
@@ -370,7 +380,7 @@ export default {
                 this.verifyWord(this.attempts[this.currentAttempt - 1]);
             } else if (key === 'Suppr') {
                 if(!this.userResults.games.find((game) => {
-                    return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate()
+                    return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
                 })) {
                     this.attempts[this.currentAttempt - 1].pop();
                 }
@@ -408,7 +418,7 @@ export default {
                         this.correctLetters.push(letter);
                     }
                 }
-            })
+            });
 
             attempt.forEach((letter, index) => {
                 if (currentResult[index] !== 'correct') {
@@ -448,9 +458,9 @@ export default {
         },
         getStats() {
             if(!this.userResults.games.find((game) => {
-                return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate()
+                return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
             })) {
-                this.userResults.nbGames++
+                this.userResults.nbGames++;
                 this.userResults.nbWins += this.won ? 1 : 0;
                 this.userResults.currentStreak = this.isStreak && this.won ? this.userResults.currentStreak + 1 : 1;
                 if (this.userResults.currentStreak > this.userResults.bestStreak) {
@@ -460,7 +470,7 @@ export default {
                     date: this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate(),
                     won: this.won,
                     nbAttempts: this.currentAttempt,
-                })
+                });
                 localStorage.setItem('userResults', JSON.stringify(this.userResults));
             }
             window.setTimeout(() => { this.statsOpened = true }, 2000);
@@ -471,7 +481,7 @@ export default {
                 if (game.nbAttempts === attemptNumber) {
                     iteration++;
                 }
-            })
+            });
             return iteration;
         },
         getAttemptStatPercent(attemptNumber) {
@@ -483,7 +493,7 @@ export default {
             return attemptPercent;
         },
         getWordID() {
-            return Math.round((new Date().setHours(0, 0, 0, 0) - new Date("2022-01-10").setHours(0, 0, 0, 0)) / (86400*1000)) + 1
+            return Math.round((new Date().setHours(0, 0, 0, 0) - new Date("2022-01-10").setHours(0, 0, 0, 0)) / (86400*1000)) + 1;
         },
         share() {
             const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
