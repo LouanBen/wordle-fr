@@ -57,12 +57,14 @@ export default {
         background: #538D4E
         animation-name: flip
         &.color-blind
+            border: 2px solid #F5793A
             background: #F5793A
     &.partial
         border: 2px solid #B59E3B
         background: #B59E3B
         animation-name: flip
         &.color-blind
+            border: 2px solid #85C0F9
             background: #85C0F9
     &.incorrect
         border: 2px solid #3A3A3C
