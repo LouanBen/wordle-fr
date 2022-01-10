@@ -42,7 +42,7 @@ export default {
             width: 48px
             height: 48px
     &.validated
-        border: 2px solid transparent
+        border: 2px solid #121213
         animation: flip
         animation-duration: 0.5s
         animation-timing-function: ease-in-out
