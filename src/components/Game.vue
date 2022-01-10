@@ -482,8 +482,11 @@ export default {
             this.bestAttemptPercent = attemptPercent > this.bestAttemptPercent ? attemptPercent : this.bestAttemptPercent;
             return attemptPercent;
         },
+        getWordID() {
+            return Math.round((new Date().setHours(0, 0, 0, 0) - new Date("2022-01-10").setHours(0, 0, 0, 0)) / (86400*1000)) + 1
+        },
         share() {
-            const title = `Le Mot (@WordleFR) ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
+            const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
             let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
                     if (letter === 'correct') {
