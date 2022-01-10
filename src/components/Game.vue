@@ -616,6 +616,7 @@ export default {
             background: rgba(0, 0, 0, 0.5)
             top: 0
             left: 0
+            z-index: 10
             .help-modal-content
                 max-width: 450px
                 width: 90%
@@ -687,6 +688,7 @@ export default {
             background: rgba(0, 0, 0, 0.5)
             top: 0
             left: 0
+            z-index: 10
             .endgame-modal-content
                 max-width: 450px
                 width: 90%
@@ -793,6 +795,7 @@ export default {
             background: rgba(0, 0, 0, 0.5)
             top: 0
             left: 0
+            z-index: 10
             .settings-modal-content
                 max-width: 450px
                 width: 90%
