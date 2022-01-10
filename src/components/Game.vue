@@ -535,7 +535,7 @@ export default {
         @media (max-width: 500px)
             padding: 0 12px
             box-sizing: border-box
-            @media (max-width: 300px)
+            @media (max-width: 380px)
                 h1
                     font-size: 1.5rem
                 .header-right, .header-left
