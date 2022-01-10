@@ -42,7 +42,6 @@ export default {
             width: 48px
             height: 48px
     &.validated
-        border: 2px solid transparent
         animation: flip
         animation-duration: 0.5s
         animation-timing-function: ease-in-out
@@ -54,16 +53,19 @@ export default {
             .letter
                 color: white
     &.correct
+        border: 2px solid #538D4E
         background: #538D4E
         animation-name: flip
         &.color-blind
             background: #F5793A
     &.partial
+        border: 2px solid #B59E3B
         background: #B59E3B
         animation-name: flip
         &.color-blind
             background: #85C0F9
     &.incorrect
+        border: 2px solid #3A3A3C
         background: #3A3A3C
     &.no-animation
         transition: none
