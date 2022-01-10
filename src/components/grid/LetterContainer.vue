@@ -42,7 +42,7 @@ export default {
             width: 48px
             height: 48px
     &.validated
-        border: 2px solid #121213
+        border: 2px solid transparent
         animation: flip
         animation-duration: 0.5s
         animation-timing-function: ease-in-out
@@ -81,6 +81,8 @@ export default {
         justify-content: center
         font-weight: bolder
         font-size: 36px
+        position: relative
+        z-index: 3
 
     @keyframes flip
         from
