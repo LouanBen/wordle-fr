@@ -156,6 +156,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="soluce" v-if="finished">Le mot était : <strong>{{ wordOfTheDay }}</strong></div>
                         <div class="share">
                             <button class="share-button" @click="share" v-if="finished">
                                 <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
@@ -747,8 +748,10 @@ export default {
                                     min-width: 20px
                                     &.best
                                         background: #538D4E
+                .soluce
+                    margin-top: 24px
                 .share
-                    margin-top: 36px
+                    margin-top: 24px
                     .share-button
                         display: flex
                         align-items: center
