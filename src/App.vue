@@ -38,4 +38,5 @@ body
   height: 100%
   display: flex
   justify-content: center
+  touch-action: manipulation
 </style>
