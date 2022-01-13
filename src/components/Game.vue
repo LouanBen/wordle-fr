@@ -129,7 +129,7 @@
                                     <p class="stat-item-label">Parties</p>
                                 </div>
                                 <div class="stats-item win-rate">
-                                    <p class="stat-item-figure">{{ Math.round(userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0 ) * 100 }}</p>
+                                    <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
                                     <p class="stat-item-label">Victoires (%)</p>
                                 </div>
                                 <div class="stats-item current-streak">
