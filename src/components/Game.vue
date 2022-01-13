@@ -231,6 +231,7 @@ export default {
             NB_ATTEMPTS,
             KEYBOARD,
             today: new Date(),
+            todayUTC: null,
             words,
             attempts: [],
             results: [],
@@ -288,6 +289,9 @@ export default {
             this.results.push(new Array(5));
         }
         // this.today.setDate(this.today.getDate() + 1);
+        this.todayUTC = new Date(Date.UTC(this.today.getUTCFullYear(), this.today.getUTCMonth(), this.today.getUTCDate(), this.today.getUTCHours(), this.today.getUTCMinutes(), this.today.getUTCSeconds()));
+        console.log(this.today);
+        console.log(this.todayUTC);
         this.getWordOfTheDay();
         this.getSavedData();
 
