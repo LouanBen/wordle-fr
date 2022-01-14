@@ -13,7 +13,7 @@ export default {
     Game
   },
   mounted() {
-    if(window.location.protocol != 'https:' && window.location.hostname != 'localhost' && window.location.hostname != '127.0.0.1') {
+    if(window.location.protocol != 'https:' && !/^(.*\.?localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)$/.test(window.location.hostname)) {
       location.href = location.href.replace("http://", "https://");
     }
   }
