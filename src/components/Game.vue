@@ -208,7 +208,8 @@ import * as seedrandom from 'seedrandom';
 
 import LetterContainer from "./grid/LetterContainer.vue";
 import Key from "./keyboard/Key.vue";
-import words from "../assets/json/words.json";
+import words from "../assets/json/drawable-words.json";
+import playableWords from "../assets/json/playable-words.json";
 
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
@@ -305,7 +306,11 @@ export default {
             const formatedDate = this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
             const seed = seedrandom(formatedDate);
             const random = seed();
-            this.wordOfTheDay = this.words[Math.floor(random * this.words.length)];
+            this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
+
+            // Forcing temporaire pour éviter de changer le mot du jour de déploiement
+            if (formatedDate === '2022-1-14')
+                this.wordOfTheDay = 'SMURA'.split('').reverse().join('')
         },
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
@@ -392,7 +397,7 @@ export default {
         },
         verifyWord(attempt) {
             if (attempt.length === NB_LETTERS) {
-                if (this.words.includes(attempt.join(''))) {
+                if (this.words.includes(attempt.join('')) || playableWords.includes(attempt.join(''))) {
                     this.verifyLetters(attempt);
                 } else {
                     this.error = 'Ce mot n\'est pas dans la liste';
