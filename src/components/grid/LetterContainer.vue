@@ -41,6 +41,9 @@ export default {
         @media (max-width: 300px)
             width: 48px
             height: 48px
+    @media (max-height: 600px)
+        width: 48px
+        height: 48px
     &.validated
         animation: flip
         animation-duration: 0.5s

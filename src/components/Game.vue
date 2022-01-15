@@ -529,6 +529,7 @@ export default {
     overflow: hidden
     display: flex
     flex-direction: column
+    background: #121213
     header
         padding: 6px 0
         border-bottom: 1px solid #919191
@@ -557,7 +558,6 @@ export default {
         .header-left 
             width: 75px
         .icon
-            //margin: 0 12px
             width: 24px
             height: 24px
             cursor: pointer
