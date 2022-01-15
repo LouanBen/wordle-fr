@@ -526,9 +526,10 @@ export default {
     max-width: 500px
     width: 100%
     height: 100%
-    overflow: hidden
+    // overflow: hidden
     display: flex
     flex-direction: column
+    background: #121213
     header
         padding: 6px 0
         border-bottom: 1px solid #919191
@@ -611,6 +612,7 @@ export default {
                     animation-name: shake
         .keyboard
             margin-bottom: 12px
+            background: #121213
         .help-modal
             position: fixed
             width: 100vw
