@@ -29,7 +29,7 @@ export default {
       xhr.open('GET', '/');
       xhr.setRequestHeader("Cache-Control", "no-cache")
       xhr.onload = (e) => {
-        console.log('new', e, xhr, new Date(xhr.getResponseHeader('date')))
+        console.log('new2', e, xhr, new Date(xhr.getResponseHeader('date')))
       }
       xhr.send()
     }
