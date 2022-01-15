@@ -13,6 +13,30 @@ export default {
     Game
   },
   mounted() {
+    //let lastTime = Date.now()
+    /*let interval
+    
+    const startInterval = () => {
+      setInterval(() => {
+        if (Date.now() - lastTime > 10000) {
+          alert((Date.now() - lastTime)/1000)
+        }
+        lastTime = Date.now()
+      }, 5000)
+    }*/
+    function checkCache () {
+      let xhr = new XMLHttpRequest;
+      xhr.open('GET', '/');
+      xhr.setRequestHeader("Cache-Control", "no-cache")
+      xhr.onload = (e) => {
+        console.log(e, xhr, new Date(xhr.getResponseHeader('date')))
+      }
+      xhr.send()
+    }
+    
+    checkCache()
+    window.addEventListener('focus', checkCache)
+    
     if(window.location.protocol != 'https:' && !/^(.*\.?localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)$/.test(window.location.hostname)) {
       location.href = location.href.replace("http://", "https://");
     }
