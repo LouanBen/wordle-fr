@@ -18,13 +18,13 @@ export default {
     // Called whenever we need to reload the app, to reset cache before reloading.
     function resetCacheAndReload () {
       let xhr = new XMLHttpRequest;
-      let loc = window.location
+      let loc = window.location;
       xhr.open('GET', loc.href.replace(loc.hash, ''));
       xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.onload = () => {
         loc.reload();
       }
-      xhr.send()
+      xhr.send();
     }
 
     // Called at mount, and when the window is focused after 1min+ since the last check
@@ -45,8 +45,8 @@ export default {
       xhr.send()
     }
 
-    checkCache()
-    window.addEventListener('focus', () => checkCache(true))
+    checkCache();
+    window.addEventListener('focus', () => checkCache(true));
     
     if(window.location.protocol != 'https:' && !/^(.*\.?localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)$/.test(window.location.hostname)) {
       location.href = location.href.replace("http://", "https://");
