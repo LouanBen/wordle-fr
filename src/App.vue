@@ -19,6 +19,7 @@ export default {
     function resetCacheAndReload () {
       let xhr = new XMLHttpRequest;
       let loc = window.location;
+
       xhr.open('GET', loc.href.replace(loc.hash, ''));
       xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.onload = () => {
