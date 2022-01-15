@@ -26,10 +26,11 @@ export default {
     }*/
     function checkCache () {
       let xhr = new XMLHttpRequest;
-      xhr.open('GET', '/');
-      xhr.setRequestHeader("Cache-Control", "no-cache")
-      xhr.onload = (e) => {
-        console.log('new2', process.env.VUE_APP_BUILD_ID, process.env.BUILD_ID, e, xhr, new Date(xhr.getResponseHeader('date')))
+      xhr.open('GET', '/build_id.json');
+      xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
+      xhr.onload = () => {
+        let res = JSON.parse(xhr.responseText)
+        console.log('build-id-check', process.env.VUE_APP_BUILD_ID, res.BUILD_ID)
       }
       xhr.send()
     }
