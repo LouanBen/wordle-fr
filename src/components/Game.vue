@@ -323,7 +323,6 @@ export default {
             this.attempts.push([]);
             this.results.push(new Array(5));
         }
-        // this.today.setDate(this.today.getDate() + 1);
         this.getWordOfTheDay();
         this.getSavedData();
 
@@ -540,7 +539,7 @@ export default {
             return attemptPercent;
         },
         getWordID() {
-            return Math.round((new Date().setHours(0, 0, 0, 0) - new Date("2022-01-10T00:00:00").setHours(0, 0, 0, 0)) / (86400*1000)) + 1;
+            return this.today.clone().startOf('day').diff(moment("2022-01-10T00:00:00"), 'days') + 1
         },
         share() {
             const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
