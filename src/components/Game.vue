@@ -662,8 +662,9 @@ export default {
             .help-modal-content
                 max-width: 450px
                 width: 90%
-                min-height: 500px
+                min-height: 420px
                 max-height: 100%
+                overflow-y: auto
                 background: #121213
                 border-radius: 8px
                 padding: 12px
@@ -671,6 +672,7 @@ export default {
                 flex-direction: column
                 align-items: center
                 font-size: 14px
+                position: relative
                 .close-btn
                     align-self: flex-end
                     cursor: pointer
@@ -719,7 +721,7 @@ export default {
                                 background: #3A3A3C
                     p
                         span
-                            font-weight: bold
+                            font-weight: bold  
         .endgame-modal
             position: fixed
             width: 100vw
@@ -734,7 +736,9 @@ export default {
             .endgame-modal-content
                 max-width: 450px
                 width: 90%
-                height: 500px
+                min-height: 420px
+                max-height: 100%
+                overflow-y: auto
                 background: #121213
                 border-radius: 8px
                 padding: 12px
@@ -841,7 +845,9 @@ export default {
             .settings-modal-content
                 max-width: 450px
                 width: 90%
-                height: 500px
+                min-height: 420px
+                max-height: 100%
+                overflow-y: auto
                 background: #121213
                 border-radius: 8px
                 padding: 12px
@@ -912,6 +918,9 @@ export default {
                                 @media (max-width: 320px)
                                     button
                                         font-size: 10px
+                                    @media (max-width: 300px)
+                                        button
+                                            padding: 0.3em
                         &.credits
                             h3
                                 text-align: left

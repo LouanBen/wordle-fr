@@ -65,9 +65,16 @@ export default {
     @media (max-width: 500px)
         width: 32px
         &.big
-            width: 58px
-        @media (max-width: 320px)
+            width: 54px
+        @media (max-width: 330px)
             width: 24px
             &.big
                 width: 50px
+            @media (max-width: 300px)
+                width: 22px
+                &.big
+                    width: 40px
+                    font-size: 0.6em
+    @media (max-height: 600px)
+        height: 48px
 </style>
