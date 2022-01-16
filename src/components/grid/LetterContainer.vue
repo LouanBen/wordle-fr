@@ -44,6 +44,9 @@ export default {
     @media (max-height: 600px)
         width: 48px
         height: 48px
+        @media (max-height: 480px)
+            width: 40px
+            height: 40px
     &.validated
         animation: flip
         animation-duration: 0.5s
@@ -90,6 +93,8 @@ export default {
         font-size: 36px
         position: relative
         z-index: 3
+        @media (max-height: 480px)
+            font-size: 28px
 
     @keyframes flip
         from
