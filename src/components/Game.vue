@@ -213,11 +213,15 @@
 
 <script>
 import * as seedrandom from 'seedrandom';
+import moment from 'moment-timezone';
 
 import LetterContainer from "./grid/LetterContainer.vue";
 import Key from "./keyboard/Key.vue";
 import words from "../assets/json/drawable-words.json";
 import playableWords from "../assets/json/playable-words.json";
+
+moment.locale('fr')
+moment.tz.setDefault('Europe/Paris')
 
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
@@ -261,7 +265,7 @@ export default {
             KEYBOARD_QWERTY,
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
-            today: new Date(),
+            today: moment(),
             words,
             attempts: [],
             results: [],
@@ -304,6 +308,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.today.format('LLLL'))
         window.addEventListener('keydown', event => {
             if (/^[a-zA-Z]$/.test(event.key)) {
                 this.handleKeyClick(event.key.toUpperCase());
@@ -340,7 +345,7 @@ export default {
     },
     methods: {
         async getWordOfTheDay() {
-            const formatedDate = this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
+            const formatedDate = this.today.format('YYYY-M-D');
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
@@ -352,7 +357,7 @@ export default {
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
                 const lastSave = localStorage.getItem('lastSave');
-                if (lastSave === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate()) {
+                if (lastSave === this.today.format('YYYY-M-D')) {
                     if (localStorage.getItem('attempts')) {
                         this.attempts = JSON.parse(localStorage.getItem('attempts'));
                     }
@@ -394,12 +399,11 @@ export default {
             localStorage.setItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
             localStorage.setItem('won', JSON.stringify(this.won));
             localStorage.setItem('finished', JSON.stringify(this.finished));
-            let yesterday = new Date();
-            yesterday.setDate(this.today.getDate() - 1);
-            if (localStorage.getItem('lastSave') === yesterday.getFullYear() + '-' + (yesterday.getMonth() + 1) + '-' + yesterday.getDate()) {
+            let yesterday = moment().subtract(1, 'day')
+            if (localStorage.getItem('lastSave') === yesterday.format('YYYY-M-D')) {
                 this.isStreak = true;
             }
-            localStorage.setItem('lastSave', this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate());
+            localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
             if (localStorage.getItem('userResults')) {
                 this.userResults = JSON.parse(localStorage.getItem('userResults'));
             }
@@ -416,14 +420,14 @@ export default {
             }
         },
         handleKeyClick(key) {
-            localStorage.setItem('lastSave', this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate());
+            localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
             this.animateLetter = true;
             this.error = '';
             if (key === 'Entrer') {
                 this.verifyWord(this.attempts[this.currentAttempt - 1]);
             } else if (key === 'Suppr') {
                 if(!this.userResults.games.find((game) => {
-                    return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
+                    return game.date === this.today.format('YYYY-M-D');
                 })) {
                     this.attempts[this.currentAttempt - 1].pop();
                 }
@@ -501,7 +505,7 @@ export default {
         },
         getStats() {
             if(!this.userResults.games.find((game) => {
-                return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
+                return game.date === this.today.format('YYYY-M-D');
             })) {
                 this.userResults.nbGames++;
                 this.userResults.nbWins += this.won ? 1 : 0;
@@ -510,7 +514,7 @@ export default {
                     this.userResults.bestStreak = this.userResults.currentStreak;
                 }
                 this.userResults.games.push({
-                    date: this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate(),
+                    date: this.today.format('YYYY-M-D'),
                     won: this.won,
                     nbAttempts: this.currentAttempt,
                 });
