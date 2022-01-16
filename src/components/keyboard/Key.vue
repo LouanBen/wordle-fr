@@ -70,6 +70,4 @@ export default {
             width: 24px
             &.big
                 width: 50px
-    @media (max-height: 600px)
-        height: 48px
 </style>
