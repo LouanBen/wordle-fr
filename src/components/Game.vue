@@ -322,6 +322,13 @@ export default {
         this.getWordOfTheDay();
         this.getSavedData();
 
+        if (localStorage.getItem('tokenUUID')) {
+            this.tokenUUID = localStorage.getItem('tokenUUID')
+        } else {
+            this.tokenUUID = new Array(2).fill().map(() => Math.floor(Math.random() * (2**32)).toString(16)).join('-')
+            localStorage.setItem('tokenUUID', this.tokenUUID)
+        }
+
         if (localStorage.getItem('colorBlindMode')) {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
         }
@@ -498,6 +505,20 @@ export default {
             localStorage.setItem('currentAttempt', JSON.stringify(this.currentAttempt));
             localStorage.setItem('won', JSON.stringify(this.won));
             localStorage.setItem('finished', JSON.stringify(this.finished));
+
+            // Stats anonymes des mots joués :
+            let xhr = new XMLHttpRequest;
+            xhr.open('POST', 'https://wordle.xi.richie.fr/play_word');
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.send(JSON.stringify({
+                tokenUUID: this.tokenUUID,
+                buildId: process.env.VUE_APP_BUILD_ID,
+                wordId: this.getWordID(),
+                lineNum: this.currentAttempt - (this.won ? 0 : 1),
+                won: this.won,
+                played: attempt.join(''),
+                result: currentResult.map(e => ['incorrect', 'partial', 'correct'].indexOf(e)).join('')
+            }))
         },
         getStats() {
             if(!this.userResults.games.find((game) => {
