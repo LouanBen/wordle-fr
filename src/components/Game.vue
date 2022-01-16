@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="keyboard">
-                <div class="keyboard-line" v-for="line, index in keyboard" :key="index">
+                <div class="keyboard-line" v-for="line, index in keyboard.content" :key="index">
                     <Key
                         :keyContent="key"
                         :color="getKeyColor(key)"
@@ -180,9 +180,13 @@
                                     <div class="toggle"></div>
                                 </div>
                             </div>
-                            <div class="settings-item">
+                            <div class="settings-item setting-button">
                                 <h3>Clavier</h3>
-                                
+                                <div class="buttons">
+                                    <button class="first" :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_QWERTY.name }" @click="keyboard = KEYBOARD_QWERTY">QWERTY</button>
+                                    <button class="last" :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
+                                </div>
                             </div>
                             <div class="settings-item credits">
                                 <h3>Crédits</h3>
@@ -217,21 +221,30 @@ import playableWords from "../assets/json/playable-words.json";
 
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
-const KEYBOARD_AZERTY = [
-    ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-    ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
-    ['Entrer', 'W', 'X', 'C', 'V', 'B', 'N', 'Suppr'],
-];
-const KEYBOARD_QWERTY = [
-    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Entrer', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
-];
-const KEYBOARD_QUERTZ = [
-    ['Q', 'W', 'E', 'R', 'T', 'Z', 'U', 'I', 'O', 'P'],
-    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Entrer', 'Y', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
-];
+const KEYBOARD_AZERTY = {
+    name: 'azerty',
+    content: [
+        ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+        ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+        ['Entrer', 'W', 'X', 'C', 'V', 'B', 'N', 'Suppr'],
+    ],
+};
+const KEYBOARD_QWERTY = {
+    name: 'qwerty',
+    content: [
+        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+        ['Entrer', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
+    ],
+}
+const KEYBOARD_QWERTZ = {
+    name: 'qwertz',
+    content: [
+        ['Q', 'W', 'E', 'R', 'T', 'Z', 'U', 'I', 'O', 'P'],
+        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+        ['Entrer', 'Y', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
+    ]
+};
 
 export default {
     name: 'Game',
@@ -246,7 +259,7 @@ export default {
             NB_ATTEMPTS,
             KEYBOARD_AZERTY,
             KEYBOARD_QWERTY,
-            KEYBOARD_QUERTZ,
+            KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
             today: new Date(),
             words,
@@ -312,10 +325,17 @@ export default {
         if (localStorage.getItem('colorBlindMode')) {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
         }
+
+        if (localStorage.getItem('keyboard')) {
+            this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
+        }
     },
     watch: {
         colorBlindMode() {
             localStorage.setItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
+        },
+        keyboard() {
+            localStorage.setItem('keyboard', JSON.stringify(this.keyboard));
         },
     },
     methods: {
@@ -868,6 +888,30 @@ export default {
                                     .toggle
                                         background: white
                                         left: 50%
+                        &.setting-button
+                            display: flex
+                            justify-content: space-between
+                            align-items: center
+                            button
+                                background: transparent
+                                cursor: pointer
+                                color: #919191
+                                border: 1px solid #919191
+                                padding: 0.5em 1em
+                                &.first
+                                    border-radius: 8px 0 0 8px
+                                &.last
+                                    border-radius: 0 8px 8px 0
+                                &.selected
+                                    background: #919191
+                                    color: white
+                                    font-weight: bold
+                            @media (max-width: 375px)
+                                button
+                                    font-size: 12px
+                                @media (max-width: 320px)
+                                    button
+                                        font-size: 10px
                         &.credits
                             h3
                                 text-align: left
