@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="keyboard">
-                <div class="keyboard-line" v-for="line, index in KEYBOARD" :key="index">
+                <div class="keyboard-line" v-for="line, index in keyboard" :key="index">
                     <Key
                         :keyContent="key"
                         :color="getKeyColor(key)"
@@ -180,6 +180,10 @@
                                     <div class="toggle"></div>
                                 </div>
                             </div>
+                            <div class="settings-item">
+                                <h3>Clavier</h3>
+                                
+                            </div>
                             <div class="settings-item credits">
                                 <h3>Crédits</h3>
                                 <p>
@@ -213,10 +217,20 @@ import playableWords from "../assets/json/playable-words.json";
 
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
-const KEYBOARD = [
+const KEYBOARD_AZERTY = [
     ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
     ['Entrer', 'W', 'X', 'C', 'V', 'B', 'N', 'Suppr'],
+];
+const KEYBOARD_QWERTY = [
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+    ['Entrer', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
+];
+const KEYBOARD_QUERTZ = [
+    ['Q', 'W', 'E', 'R', 'T', 'Z', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+    ['Entrer', 'Y', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
 ];
 
 export default {
@@ -230,7 +244,10 @@ export default {
             seedrandom,
             NB_LETTERS,
             NB_ATTEMPTS,
-            KEYBOARD,
+            KEYBOARD_AZERTY,
+            KEYBOARD_QWERTY,
+            KEYBOARD_QUERTZ,
+            keyboard: KEYBOARD_AZERTY,
             today: new Date(),
             words,
             attempts: [],
