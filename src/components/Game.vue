@@ -157,6 +157,7 @@
                             </div>
                         </div>
                         <div class="soluce" v-if="finished">Le mot était : <strong>{{ wordOfTheDay }}</strong></div>
+                        <div class="next-in" v-if="finished">Prochain mot dans : <strong>{{ countdownToNextWord }}</strong></div>
                         <div class="share">
                             <button class="share-button" @click="share" v-if="finished">
                                 <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
@@ -270,6 +271,7 @@ export default {
             attempts: [],
             results: [],
             currentAttempt: 1,
+            countdownToNextWord: '',
             wordOfTheDay: '',
             error: '',
             correctLetters: [],
@@ -308,7 +310,17 @@ export default {
         }
     },
     mounted() {
-        console.log(this.today.format('LLLL'))
+
+        // Update timer to next word
+        setInterval((function () {
+            let duration = moment.duration(this.today.clone().endOf('day').diff(moment()))
+            this.countdownToNextWord = moment.utc(duration.as('milliseconds')).format('HH:mm:ss')
+            console.log(this.today.format('LLLL'), duration.as('milliseconds'))
+            if (duration.as('milliseconds') < 0)
+                this.countdownToNextWord = '00:00:00'
+
+        }).bind(this), 1000)
+
         window.addEventListener('keydown', event => {
             if (/^[a-zA-Z]$/.test(event.key)) {
                 this.handleKeyClick(event.key.toUpperCase());
