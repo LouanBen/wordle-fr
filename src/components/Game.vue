@@ -157,12 +157,15 @@
                             </div>
                         </div>
                         <div class="soluce" v-if="finished">Le mot était : <strong>{{ wordOfTheDay }}</strong></div>
-                        <div class="next-in" v-if="finished">Prochain mot dans : <strong>{{ countdownToNextWord }}</strong></div>
-                        <div class="share">
-                            <button class="share-button" @click="share" v-if="finished">
-                                <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
-                                <svg v-if="!resultsCopied" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Partager</title><path d="M384 336a63.78 63.78 0 00-46.12 19.7l-148-83.27a63.85 63.85 0 000-32.86l148-83.27a63.8 63.8 0 10-15.73-27.87l-148 83.27a64 64 0 100 88.6l148 83.27A64 64 0 10384 336z"/></svg>
-                            </button>
+                        <div class="modal-footer">
+                            <div class="next-in" v-if="finished">Prochain mot dans : <strong class="time">{{ countdownToNextWord }}</strong></div>
+                            <div class="separator"></div>
+                            <div class="share">
+                                <button class="share-button" @click="share" v-if="finished">
+                                    <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
+                                    <svg v-if="!resultsCopied" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Partager</title><path d="M384 336a63.78 63.78 0 00-46.12 19.7l-148-83.27a63.85 63.85 0 000-32.86l148-83.27a63.8 63.8 0 10-15.73-27.87l-148 83.27a64 64 0 100 88.6l148 83.27A64 64 0 10384 336z"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -315,7 +318,6 @@ export default {
         setInterval((function () {
             let duration = moment.duration(this.today.clone().endOf('day').diff(moment()))
             this.countdownToNextWord = moment.utc(duration.as('milliseconds')).format('HH:mm:ss')
-            console.log(this.today.format('LLLL'), duration.as('milliseconds'))
             if (duration.as('milliseconds') < 0)
                 this.countdownToNextWord = '00:00:00'
 
@@ -823,29 +825,51 @@ export default {
                                         background: #538D4E
                 .soluce
                     margin-top: 24px
-                .share
+                .modal-footer
+                    display: flex
+                    width: 100%
+                    max-width: 400px
+                    justify-content: space-around
+                    align-items: center
                     margin-top: 24px
-                    .share-button
+                    .next-in
                         display: flex
-                        align-items: center
-                        justify-content: space-around
-                        background: #538D4E
-                        border: none
-                        padding: 0.5em 1em
-                        border-radius: 8px
-                        cursor: pointer
-                        width: 136px
-                        p
-                            text-transform: uppercase
-                            font-weight: bold
-                            font-size: 14px
-                            color: white
-                        svg
-                            width: 24px
-                            height: 24px
-                            margin-left: 8px
-                            path
-                                fill: white
+                        flex-direction: column
+                        .time
+                            font-size: 24px
+                            color: darken(white, 20%)
+                    @media (max-width: 400px)
+                        margin-top: 12px
+                        .next-in
+                            font-size: 12px
+                            .time
+                                font-size: 20px
+                    .separator
+                        width: 1px
+                        height: 36px
+                        background: #919191
+                    .share
+                        .share-button
+                            display: flex
+                            align-items: center
+                            justify-content: space-around
+                            background: #538D4E
+                            border: none
+                            padding: 0.5em 1em
+                            border-radius: 8px
+                            cursor: pointer
+                            width: 136px
+                            p
+                                text-transform: uppercase
+                                font-weight: bold
+                                font-size: 14px
+                                color: white
+                            svg
+                                width: 24px
+                                height: 24px
+                                margin-left: 8px
+                                path
+                                    fill: white
         .settings-modal
             position: fixed
             width: 100vw
