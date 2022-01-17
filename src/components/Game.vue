@@ -157,11 +157,15 @@
                             </div>
                         </div>
                         <div class="soluce" v-if="finished">Le mot était : <strong>{{ wordOfTheDay }}</strong></div>
-                        <div class="share">
-                            <button class="share-button" @click="share" v-if="finished">
-                                <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
-                                <svg v-if="!resultsCopied" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Partager</title><path d="M384 336a63.78 63.78 0 00-46.12 19.7l-148-83.27a63.85 63.85 0 000-32.86l148-83.27a63.8 63.8 0 10-15.73-27.87l-148 83.27a64 64 0 100 88.6l148 83.27A64 64 0 10384 336z"/></svg>
-                            </button>
+                        <div class="modal-footer">
+                            <div class="next-in" v-if="finished">Prochain mot dans : <strong class="time">{{ countdownToNextWord }}</strong></div>
+                            <div class="separator"></div>
+                            <div class="share">
+                                <button class="share-button" @click="share" v-if="finished">
+                                    <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
+                                    <svg v-if="!resultsCopied" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Partager</title><path d="M384 336a63.78 63.78 0 00-46.12 19.7l-148-83.27a63.85 63.85 0 000-32.86l148-83.27a63.8 63.8 0 10-15.73-27.87l-148 83.27a64 64 0 100 88.6l148 83.27A64 64 0 10384 336z"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -213,11 +217,15 @@
 
 <script>
 import * as seedrandom from 'seedrandom';
+import moment from 'moment-timezone';
 
 import LetterContainer from "./grid/LetterContainer.vue";
 import Key from "./keyboard/Key.vue";
 import words from "../assets/json/drawable-words.json";
 import playableWords from "../assets/json/playable-words.json";
+
+moment.locale('fr')
+moment.tz.setDefault('Europe/Paris')
 
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
@@ -261,11 +269,12 @@ export default {
             KEYBOARD_QWERTY,
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
-            today: new Date(),
+            today: moment(),
             words,
             attempts: [],
             results: [],
             currentAttempt: 1,
+            countdownToNextWord: '',
             wordOfTheDay: '',
             error: '',
             correctLetters: [],
@@ -304,6 +313,16 @@ export default {
         }
     },
     mounted() {
+
+        // Update timer to next word
+        setInterval((function () {
+            let duration = moment.duration(this.today.clone().endOf('day').diff(moment()))
+            this.countdownToNextWord = moment.utc(duration.as('milliseconds')).format('HH:mm:ss')
+            if (duration.as('milliseconds') < 0)
+                this.countdownToNextWord = '00:00:00'
+
+        }).bind(this), 1000)
+
         window.addEventListener('keydown', event => {
             if (/^[a-zA-Z]$/.test(event.key)) {
                 this.handleKeyClick(event.key.toUpperCase());
@@ -318,7 +337,6 @@ export default {
             this.attempts.push([]);
             this.results.push(new Array(5));
         }
-        // this.today.setDate(this.today.getDate() + 1);
         this.getWordOfTheDay();
         this.getSavedData();
 
@@ -340,7 +358,7 @@ export default {
     },
     methods: {
         async getWordOfTheDay() {
-            const formatedDate = this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
+            const formatedDate = this.today.format('YYYY-M-D');
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
@@ -352,7 +370,7 @@ export default {
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
                 const lastSave = localStorage.getItem('lastSave');
-                if (lastSave === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate()) {
+                if (lastSave === this.today.format('YYYY-M-D')) {
                     if (localStorage.getItem('attempts')) {
                         this.attempts = JSON.parse(localStorage.getItem('attempts'));
                     }
@@ -394,12 +412,11 @@ export default {
             localStorage.setItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
             localStorage.setItem('won', JSON.stringify(this.won));
             localStorage.setItem('finished', JSON.stringify(this.finished));
-            let yesterday = new Date();
-            yesterday.setDate(this.today.getDate() - 1);
-            if (localStorage.getItem('lastSave') === yesterday.getFullYear() + '-' + (yesterday.getMonth() + 1) + '-' + yesterday.getDate()) {
+            let yesterday = moment().subtract(1, 'day')
+            if (localStorage.getItem('lastSave') === yesterday.format('YYYY-M-D')) {
                 this.isStreak = true;
             }
-            localStorage.setItem('lastSave', this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate());
+            localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
             if (localStorage.getItem('userResults')) {
                 this.userResults = JSON.parse(localStorage.getItem('userResults'));
             }
@@ -416,14 +433,14 @@ export default {
             }
         },
         handleKeyClick(key) {
-            localStorage.setItem('lastSave', this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate());
+            localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
             this.animateLetter = true;
             this.error = '';
             if (key === 'Entrer') {
                 this.verifyWord(this.attempts[this.currentAttempt - 1]);
             } else if (key === 'Suppr') {
                 if(!this.userResults.games.find((game) => {
-                    return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
+                    return game.date === this.today.format('YYYY-M-D');
                 })) {
                     this.attempts[this.currentAttempt - 1].pop();
                 }
@@ -501,7 +518,7 @@ export default {
         },
         getStats() {
             if(!this.userResults.games.find((game) => {
-                return game.date === this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate();
+                return game.date === this.today.format('YYYY-M-D');
             })) {
                 this.userResults.nbGames++;
                 this.userResults.nbWins += this.won ? 1 : 0;
@@ -510,7 +527,7 @@ export default {
                     this.userResults.bestStreak = this.userResults.currentStreak;
                 }
                 this.userResults.games.push({
-                    date: this.today.getFullYear() + '-' + (this.today.getMonth() + 1) + '-' + this.today.getDate(),
+                    date: this.today.format('YYYY-M-D'),
                     won: this.won,
                     nbAttempts: this.currentAttempt,
                 });
@@ -536,7 +553,7 @@ export default {
             return attemptPercent;
         },
         getWordID() {
-            return Math.round((new Date().setHours(0, 0, 0, 0) - new Date("2022-01-10T00:00:00").setHours(0, 0, 0, 0)) / (86400*1000)) + 1;
+            return this.today.clone().startOf('day').diff(moment("2022-01-10T00:00:00"), 'days') + 1
         },
         share() {
             const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
@@ -808,29 +825,51 @@ export default {
                                         background: #538D4E
                 .soluce
                     margin-top: 24px
-                .share
+                .modal-footer
+                    display: flex
+                    width: 100%
+                    max-width: 400px
+                    justify-content: space-around
+                    align-items: center
                     margin-top: 24px
-                    .share-button
+                    .next-in
                         display: flex
-                        align-items: center
-                        justify-content: space-around
-                        background: #538D4E
-                        border: none
-                        padding: 0.5em 1em
-                        border-radius: 8px
-                        cursor: pointer
-                        width: 136px
-                        p
-                            text-transform: uppercase
-                            font-weight: bold
-                            font-size: 14px
-                            color: white
-                        svg
-                            width: 24px
-                            height: 24px
-                            margin-left: 8px
-                            path
-                                fill: white
+                        flex-direction: column
+                        .time
+                            font-size: 24px
+                            color: darken(white, 20%)
+                    @media (max-width: 400px)
+                        margin-top: 12px
+                        .next-in
+                            font-size: 12px
+                            .time
+                                font-size: 20px
+                    .separator
+                        width: 1px
+                        height: 36px
+                        background: #919191
+                    .share
+                        .share-button
+                            display: flex
+                            align-items: center
+                            justify-content: space-around
+                            background: #538D4E
+                            border: none
+                            padding: 0.5em 1em
+                            border-radius: 8px
+                            cursor: pointer
+                            width: 136px
+                            p
+                                text-transform: uppercase
+                                font-weight: bold
+                                font-size: 14px
+                                color: white
+                            svg
+                                width: 24px
+                                height: 24px
+                                margin-left: 8px
+                                path
+                                    fill: white
         .settings-modal
             position: fixed
             width: 100vw

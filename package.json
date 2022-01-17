@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34",
     "seedrandom": "^3.0.5",
     "vue": "^2.6.11"
   },
@@ -19,6 +21,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "moment-timezone-data-webpack-plugin": "^1.5.0",
     "sass": "^1.46.0",
     "sass-loader": "^10.2.0",
     "vue-template-compiler": "^2.6.11"
