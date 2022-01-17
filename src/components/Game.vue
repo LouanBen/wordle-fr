@@ -156,7 +156,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="soluce" v-if="finished">Le mot était : <strong>{{ wordOfTheDay }}</strong></div>
+                        <div class="soluce" v-if="finished">Le mot était : <strong>{{ wordOfTheDay }}</strong> (<a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank">définition</a>)</div>
                         <div class="modal-footer" v-if="finished">
                             <div class="next-in">Prochain mot dans : <strong class="time">{{ countdownToNextWord }}</strong></div>
                             <div class="separator"></div>
@@ -825,6 +825,9 @@ export default {
                                         background: #538D4E
                 .soluce
                     margin-top: 24px
+                    a
+                        color: white
+                        text-decoration: none
                 .modal-footer
                     display: flex
                     width: 100%
