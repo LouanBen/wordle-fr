@@ -184,6 +184,12 @@
                         <div class="settings-content">
                             <h2>Paramètres</h2>
                             <div class="settings-item setting-toggle">
+                                <h3>Lien partagé</h3>
+                                <div class="toggle-button" @click="sharedLink = !sharedLink" :class="{ activated: sharedLink }">
+                                    <div class="toggle"></div>
+                                </div>
+                            </div>
+                            <div class="settings-item setting-toggle">
                                 <h3>Mode daltoniens</h3>
                                 <div class="toggle-button" @click="colorBlindMode = !colorBlindMode" :class="{ activated: colorBlindMode }">
                                     <div class="toggle"></div>
@@ -291,6 +297,7 @@ export default {
             settingsOpened: false,
             helpOpened: false,
             colorBlindMode: false,
+            sharedLink: true,
             isStreak: false,
             animateLetter: true,
             bestAttemptPercent: 0,
@@ -345,6 +352,10 @@ export default {
         this.getWordOfTheDay();
         this.getSavedData();
 
+        if (localStorage.getItem('sharedLink')) {
+            this.sharedLink = JSON.parse(localStorage.getItem('sharedLink'));
+        }
+
         if (localStorage.getItem('colorBlindMode')) {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
         }
@@ -354,6 +365,9 @@ export default {
         }
     },
     watch: {
+        sharedLink() {
+            localStorage.setItem('sharedLink', JSON.stringify(this.sharedLink));
+        },
         colorBlindMode() {
             localStorage.setItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
         },
@@ -573,7 +587,15 @@ export default {
                     }
                 }).join('');
             }).join('\n');
-            navigator.clipboard.writeText(title + schema);
+            const url = "wordle.louan.me";
+
+            let sharedContent = title + schema;
+
+            if (this.sharedLink) {
+                sharedContent = sharedContent + '\n\n' + url;
+            }
+
+            navigator.clipboard.writeText(sharedContent);
             this.resultsCopied = true;
         }
     }
