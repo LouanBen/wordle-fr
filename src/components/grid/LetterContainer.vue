@@ -29,12 +29,15 @@ export default {
 
 <style lang="sass" scoped>
 #letter-container
-    width: 64px
-    height: 64px
-    border: 2px solid #919191
+    width: 62px
+    height: 62px
+    border: 3px solid #2F2F2F
+    border-radius: 6px
     box-sizing: border-box
-    margin: 2px
+    margin: 4px
     transition: transform 0.1s, background 0.1s, border 0.1s
+    &.color-blind
+            border-color: #919191
     @media (max-width: 380px)
         width: 54px
         height: 54px
@@ -59,21 +62,21 @@ export default {
             .letter
                 color: white
     &.correct
-        border: 2px solid #538D4E
-        background: #538D4E
+        border-color: #3EAA42
+        background: #3EAA42
         animation-name: flip
         &.color-blind
-            border: 2px solid #F5793A
+            border-color: #F5793A
             background: #F5793A
     &.partial
-        border: 2px solid #B59E3B
-        background: #B59E3B
+        border-color: #CA9F31
+        background: #CA9F31
         animation-name: flip
         &.color-blind
-            border: 2px solid #85C0F9
+            border-color: #85C0F9
             background: #85C0F9
     &.incorrect
-        border: 2px solid #3A3A3C
+        border-color: #3A3A3C
         background: #3A3A3C
     &.no-animation
         transition: none
@@ -85,12 +88,12 @@ export default {
     .letter
         width: 100%
         height: 100%
-        color: #D1DFD4
+        color: #FFFFFF
         display: flex
         align-items: center
         justify-content: center
         font-weight: bolder
-        font-size: 36px
+        font-size: 28px
         position: relative
         z-index: 3
         @media (max-height: 480px)
