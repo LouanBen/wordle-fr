@@ -470,13 +470,20 @@ export default {
         },
         verifyWord(attempt) {
             if (attempt.length === NB_LETTERS) {
-                if (this.words.includes(attempt.join('')) || playableWords.includes(attempt.join(''))) {
-                    this.verifyLetters(attempt);
-                } else {
-                    this.error = 'Ce mot n\'est pas dans la liste';
+                if('STPBG' === attempt.join('')) {
+                    this.error = `Le mot c'est ${this.wordOfTheDay}, mais chut 🤫`;
                     window.setTimeout(() => {
                         this.error = '';
-                    }, 1000);
+                    }, 2000);
+                } else {
+                    if (this.words.includes(attempt.join('')) || playableWords.includes(attempt.join(''))) {
+                        this.verifyLetters(attempt);
+                    } else {
+                        this.error = 'Ce mot n\'est pas dans la liste';
+                        window.setTimeout(() => {
+                            this.error = '';
+                        }, 1000);
+                    }
                 }
             } else {
                 this.error = 'Veuillez entrer un mot de ' + NB_LETTERS + ' lettres';
