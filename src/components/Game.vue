@@ -191,10 +191,10 @@
                 <div class="settings-modal" v-if="settingsOpened">
                     <div class="settings-modal-content">
                         <div class="close-btn" @click="settingsOpened = false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#919191" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Paramètres</h2>
                         <div class="settings-content">
-                            <h2>Paramètres</h2>
                             <div class="settings-item setting-toggle">
                                 <h3>Lien partagé</h3>
                                 <div class="toggle-button" @click="sharedLink = !sharedLink" :class="{ activated: sharedLink }">
@@ -210,13 +210,13 @@
                             <div class="settings-item setting-button">
                                 <h3>Clavier</h3>
                                 <div class="buttons">
-                                    <button class="first" :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTY.name }" @click="keyboard = KEYBOARD_QWERTY">QWERTY</button>
-                                    <button class="last" :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
                             </div>
-                            <div class="settings-item credits">
-                                <h3>Crédits</h3>
+                            <div class="credits">
+                                <h2>Crédits</h2>
                                 <p>
                                     Jeu développé par <a href="https://twitter.com/louanben">@louanben</a>.
                                 </p>
@@ -1075,105 +1075,153 @@ export default {
                     color: white
         .settings-modal
             position: fixed
+            display: flex
+            flex-direction: column
             width: 100vw
             height: 100vh
             display: flex
             justify-content: center
             align-items: center
-            background: rgba(0, 0, 0, 0.5)
+            background: rgba(0, 0, 0, 0.7)
             top: 0
             left: 0
             z-index: 10
             .settings-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
                 max-width: 450px
                 width: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
+                border-radius: 8px
                 min-height: 420px
                 max-height: 100%
                 overflow-y: auto
                 background: #121213
                 border-radius: 8px
-                padding: 12px
-                display: flex
-                flex-direction: column
-                align-items: center
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
                 .close-btn
-                    align-self: flex-end
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
                     cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
                 h2
-                    text-transform: uppercase
-                    padding-bottom: 12px
-                    border-bottom: 1px solid #919191
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 16px
+                h3
+                    font-size: 14px
+                    font-weight: 700
+                    color: #8E8E90
                 .settings-content
                     width: 100%
                     .settings-item
                         width: 100%
-                        padding: 12px 0
-                        border-bottom: 1px solid #919191
+                        padding: 8px 0
                         &.setting-toggle
                             display: flex
                             justify-content: space-between
                             align-items: center
                             .toggle-button
                                 background: #3A3A3C
-                                width: 36px
-                                height: 1.2em
-                                border-radius: 1.2em
+                                width: 46px
+                                height: 25px
+                                border-radius: 100px
                                 box-sizing: border-box
                                 cursor: pointer
                                 transition: all 0.3s
                                 position: relative
                                 .toggle
-                                    background: #919191
-                                    height: calc(100% - 4px)
-                                    width: 45%
-                                    border-radius: 1.2em
+                                    background: white
+                                    width: 17px
+                                    height: 17px
+                                    border-radius: 100px
                                     position: absolute
-                                    left: 2px
-                                    top: 1px
+                                    left: 4px
+                                    top: 4px
                                     transition: all 0.3s
                                 &.activated
-                                    background: #538D4E
+                                    background: #3EAA42
                                     .toggle
-                                        background: white
-                                        left: 50%
+                                        transform: translateX(21px)
                         &.setting-button
                             display: flex
                             justify-content: space-between
                             align-items: center
-                            button
-                                background: transparent
-                                cursor: pointer
-                                color: #919191
-                                border: 1px solid #919191
-                                padding: 0.5em 1em
-                                &.first
-                                    border-radius: 8px 0 0 8px
-                                &.last
-                                    border-radius: 0 8px 8px 0
-                                &.selected
-                                    background: #919191
-                                    color: white
-                                    font-weight: bold
-                            @media (max-width: 375px)
+                            .buttons
+                                background: #3A3A3C
+                                border-radius: 100px
+                                height: 25px
                                 button
-                                    font-size: 12px
-                                @media (max-width: 320px)
-                                    button
-                                        font-size: 10px
-                                    @media (max-width: 300px)
-                                        button
-                                            padding: 0.3em
-                        &.credits
-                            h3
-                                text-align: left
-                            p
-                                text-align: left
-                                margin-top: 6px
-                                font-size: 12px
-                                line-height: 16px
-                                a
+                                    font-family: Outfit, Avenir, Helvetica, Arial, sans-serif
+                                    height: 25px
+                                    padding: 0
+                                    width: 68px
+                                    background: none
+                                    cursor: pointer
+                                    font-size: 11px
+                                    font-weight: 700
                                     color: white
-                                    text-decoration: none
+                                    border: none
+                                    &.selected
+                                        background: #3EAA42
+                                        border-radius: 100px
+
+                                @media (max-width: 360px)
+                                    button
+                                        width: 60px
+                                        font-size: 10px
+                    .credits
+                        h2
+                            text-align: left
+                            margin-top: 32px
+                        p
+                            font-size: 14px
+                            line-height: 1.3
+                            margin-bottom: 12px
+                            text-align: left
+                            color: #8E8E90
+                            &:last-child
+                                margin-bottom: 0
+                            a
+                                color: white
+                                text-decoration: none
+                                &:hover
+                                    text-decoration: underline
 
 @keyframes shake
     0%
