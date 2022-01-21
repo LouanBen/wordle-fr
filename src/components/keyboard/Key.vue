@@ -8,7 +8,7 @@
             'color-blind': colorBlindMode,
         }, isBig && keyboardName]"
     >
-        <div v-if="['Entrer', 'Suppr'].includes(keyContent)">
+        <div v-if="isBig">
             <img :src="`/icons/${keyContent.toLowerCase()}.svg`" :alt="keyContent" class="icon" />
         </div>
         <template v-else>
