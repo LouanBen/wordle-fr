@@ -49,6 +49,7 @@
                         :colorBlindMode="colorBlindMode"
                         v-for="key in line"
                         :key="key"
+                        :keyboardName="keyboard.name"
                         @update:handleClick="handleKeyClick($event)"
                     />
                 </div>

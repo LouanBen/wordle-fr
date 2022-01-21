@@ -1,11 +1,13 @@
 <template>
-    <button id="key" @click="handleClick" :class="{ 
-        big,
-        correct: color === 'correct', 
-        partial: color === 'partial', 
-        incorrect: color === 'incorrect',
-        'color-blind': colorBlindMode,
-    }">
+    <button id="key" @click="handleClick"
+        :class="[{
+            big,
+            correct: color === 'correct', 
+            partial: color === 'partial', 
+            incorrect: color === 'incorrect',
+            'color-blind': colorBlindMode,
+        }, isBig && keyboardName]"
+    >
         <div v-if="['Entrer', 'Suppr'].includes(keyContent)">
             <img :src="`/icons/${keyContent.toLowerCase()}.svg`" :alt="keyContent" class="icon" />
         </div>
@@ -23,6 +25,7 @@ export default {
         keyContent: String,
         color: String,
         colorBlindMode: Boolean,
+        keyboardName: String
     },
     data() {
         return {
@@ -32,6 +35,11 @@ export default {
     mounted() {
         if (this.keyContent === 'Entrer' || this.keyContent === 'Suppr') {
             this.big = true;
+        }
+    },
+    computed: {
+        isBig() {
+            return ['Entrer','Suppr'].includes(this.keyContent);
         }
     },
     methods: {
@@ -59,6 +67,8 @@ export default {
         background: #4D4D4D
     &.big
         width: 90px
+        &.qwerty, &.qwertz
+            width: 66px
     &.correct
         background: #3EAA42
         border-color: #157D19
@@ -92,18 +102,26 @@ export default {
         width: 34px
         &.big
             width: 72px
+            &.qwerty, &.qwertz
+                width: 53px
     @media (max-width: 393px)
         width: 32px
         &.big
             width: 68px
+            &.qwerty, &.qwertz
+                width: 50px
     @media (max-width: 372px)
         width: 28px
         &.big
             width: 60px
+            &.qwerty, &.qwertz
+                width: 44px
     @media (max-width: 320px)
         width: 22px
         &.big
             width: 48px
+            &.qwerty, &.qwertz
+                width: 35px
     @media (max-height: 600px)
         height: 48px
 </style>
