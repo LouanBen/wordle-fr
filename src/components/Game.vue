@@ -1029,6 +1029,7 @@ export default {
                             font-size: 14px
                             font-weight: 700
                             cursor: pointer
+                            user-select: none
                             .icon
                                 height: 14px
                                 margin-right: 8px

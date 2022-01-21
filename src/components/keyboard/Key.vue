@@ -63,6 +63,7 @@ export default {
     border-radius: 4px
     border: none
     border-bottom: 2px solid #4D4D4D
+    user-select: none
     &:active
         background: #4D4D4D
     &.big
