@@ -1,5 +1,6 @@
 <template>
-    <div id="letter-container" :style="{ transitionDelay: `${0.15 + 0.3 * (placement - 1)}s`, animationDelay: `${0.3 * (placement - 1)}s` }" :class="{ 
+    <div id="letter-container" :style="{ transitionDelay: !color ? '0s' : `${0.15 + 0.3 * (placement - 1)}s`, animationDelay: `${0.3 * (placement - 1)}s` }" :class="{ 
+        'has-letter': letter,
         validated: color, 
         correct: color === 'correct', 
         partial: color === 'partial', 
@@ -50,6 +51,8 @@ export default {
         @media (max-height: 480px)
             width: 40px
             height: 40px
+    &.has-letter
+        border-color: #646464
     &.validated
         animation: flip
         animation-duration: 0.5s
