@@ -50,24 +50,37 @@ export default {
     border-radius: 4px
     border: none
     border-bottom: 2px solid #4D4D4D
+    &:active
+        background: #4D4D4D
     &.big
         width: 90px
     &.correct
         background: #3EAA42
         border-color: #157D19
+        &:active
+            background: #157D19
         &.color-blind
             background: #F5793A
             border-color: #CB581E
+            &:active
+                background: #CB581E
     &.partial
         background: #D3952A
         border-color: #A06F19
+        &:active
+            background: #A06F19
         &.color-blind
             background: #85C0F9
             border-color: #3C80C1
+            &:active
+                background: #3C80C1
     &.incorrect
         background: #2C2C2C
         border-color: #212121
         color: #969696
+
+        &:active
+            background: #212121
     @media (max-width: 500px)
         width: 34px
         &.big
