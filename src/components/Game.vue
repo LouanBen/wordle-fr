@@ -127,12 +127,12 @@
             </transition>
             <transition name="fadeup">
                 <div class="endgame-modal" v-if="statsOpened">
-                    <div class="endgame-modal-content">
+                    <div class="endgame-modal-content" v-bind:class="{ 'finished' : finished}">
                         <div class="close-btn" @click="statsOpened = false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#919191" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Statistiques</h2>
                         <div class="stats">
-                            <h2>Statistiques</h2>
                             <div class="stats-content">
                                 <div class="stats-item games-played">
                                     <p class="stat-item-figure">{{ userResults.nbGames }}</p>
@@ -152,13 +152,13 @@
                                 </div>
                             </div>
                         </div>
+                        <h2>Performances</h2>
                         <div class="graph">
-                            <h2>Performances</h2>
                             <div class="graph-content">
                                 <div class="graph-item" v-for="attempt in NB_ATTEMPTS + 1" :key="attempt">
                                     <div class="attempt-number" v-if="attempt <= NB_ATTEMPTS">{{ attempt }}</div>
                                     <div class="attempt-skull" v-else>
-                                        💀
+                                        <img class="icon" src="/icons/skull.svg" alt="Mort" />
                                     </div>
                                     <div class="attempt-stat">
                                         <div class="attempt-bar" :class="{ best: getAttemptStatPercent(attempt) === bestAttemptPercent && getAttemptStat(attempt) > 0 }" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
@@ -166,22 +166,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="soluce" v-if="finished">Le mot était : 
-                            <strong>{{ wordOfTheDay }}</strong> 
-                            <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="definition-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Définition</title><path d="M256 56C145.72 56 56 145.72 56 256s89.72 200 200 200 200-89.72 200-200S366.28 56 256 56zm0 82a26 26 0 11-26 26 26 26 0 0126-26zm48 226h-88a16 16 0 010-32h28v-88h-16a16 16 0 010-32h32a16 16 0 0116 16v104h28a16 16 0 010 32z"/></svg>
-                            </a>
-                        </div>
-                        <div class="modal-footer" v-if="finished">
-                            <div class="next-in">Prochain mot dans : <strong class="time">{{ countdownToNextWord }}</strong></div>
-                            <div class="separator"></div>
-                            <div class="share">
-                                <button class="share-button" @click="share">
+                        <div class="soluce" v-if="finished">
+                            <div class="subtitle">Le mot était</div>
+                            <h2>{{ wordOfTheDay }}</h2>
+                            <div class="ctas">
+                                <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
+                                    <img class="icon" src="/icons/book.svg" />
+                                    <p>1mot.net</p>
+                                </a>
+                                <div class="btn share-btn" @click="share">
+                                    <img class="icon" src="/icons/copy.svg" />
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
-                                    <svg v-if="!resultsCopied" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Partager</title><path d="M384 336a63.78 63.78 0 00-46.12 19.7l-148-83.27a63.85 63.85 0 000-32.86l148-83.27a63.8 63.8 0 10-15.73-27.87l-148 83.27a64 64 0 100 88.6l148 83.27A64 64 0 10384 336z"/></svg>
-                                </button>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="modal-footer" v-if="finished">
+                        <div class="next-in">Prochain mot dans</div>
+                        <div class="time">{{ countdownToNextWord }}</div>
                     </div>
                 </div>
             </transition>
@@ -686,6 +688,7 @@ export default {
                     border-color: #313131
                 &:active
                     background-color: #2B2B2B
+                    border-color: #2B2B2B
                 .icon
                     height: 13px
     main
@@ -810,145 +813,219 @@ export default {
                             font-weight: bold  
         .endgame-modal
             position: fixed
+            display: flex
+            flex-direction: column
             width: 100vw
             height: 100vh
             display: flex
             justify-content: center
             align-items: center
-            background: rgba(0, 0, 0, 0.5)
+            background: rgba(0, 0, 0, 0.7)
             top: 0
             left: 0
             z-index: 10
             .endgame-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
                 max-width: 450px
                 width: 90%
-                min-height: 420px
-                max-height: 100%
-                overflow-y: auto
-                background: #121213
+                max-height: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
                 border-radius: 8px
-                padding: 12px
-                display: flex
-                flex-direction: column
-                align-items: center
-                h2
-                    font-size: 18px
-                    text-transform: uppercase
-                    font-weight: bold
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
+                &.finished
+                    border-bottom-left-radius: 0
+                    border-bottom-right-radius: 0
                 .close-btn
-                    align-self: flex-end
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
                     cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
+                h2
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 16px
                 .stats
+                    margin-bottom: 32px
+                    width: 100%
                     .stats-content
                         display: flex
                         .stats-item
-                            margin-top: 12px
-                            width: 70px
+                            display: flex
+                            flex: 1
+                            flex-direction: column
+                            align-items: center
+                            justify-content: center
+                            height: 80px
+                            margin-right: 8px
+                            background-color: #0E0E0F
+                            border-radius: 6px
+                            &:last-child
+                                margin-right: 0
                             .stat-item-figure
-                                font-size: 30px
+                                font-size: 28px
                                 font-weight: bold
+                                color: #3EAA42
                             .stat-item-label
+                                display: flex
+                                align-items: center
+                                height: 30px
                                 font-size: 12px
+                                color: white
+                                margin: 0 8px
                 .graph
-                    margin-top: 18px
                     width: 100%
                     display: flex
                     flex-direction: column
-                    align-items: center
                     .graph-content
-                        margin-top: 12px
-                        width: 80%
+                        width: 100%
                         display: flex
                         flex-direction: column
                         .graph-item
-                            margin-top: 6px
+                            margin-top: 8px
                             width: 100%
                             display: flex
-                            font-size: 14px
+                            align-items: center
+                            font-size: 12px
+                            font-weight: 700
+                            color: white
+                            &:first-child
+                                margin-top: 0
                             .attempt-number
-                                width: 20px
-                                height: 20px
+                                width: 18px
                                 display: flex
                                 align-items: center
-                                justify-content: center
                             .attempt-skull
-                                width: 20px
-                                height: 20px
+                                width: 18px
                                 display: flex
                                 align-items: center
+                                .icon
+                                    height: 10px
                             .attempt-stat
-                                height: 100%
+                                height: 17px
                                 width: 100%
                                 .attempt-bar
-                                    margin-left: 6px
                                     height: 100%
                                     background: #3A3A3C
                                     color: white
+                                    font-size: 10px
+                                    font-weight: 400
                                     display: flex
                                     box-sizing: border-box
                                     padding: 0 6px
                                     justify-content: flex-end
                                     align-items: center
-                                    min-width: 20px
+                                    min-width: 28px
+                                    border-radius: 3px
                                     &.best
-                                        background: #538D4E
+                                        background: #3EAA42
                 .soluce
-                    margin-top: 24px
                     display: flex
-                    strong
-                        padding-left: 4px
-                        display: block
-                    .definition-icon
-                        svg
-                            width: 1em
-                            height: 1em
-                            margin-left: 8px
-                            fill: #919191
-                .modal-footer
-                    display: flex
+                    flex-direction: column
+                    margin-top: 16px
                     width: 100%
-                    max-width: 400px
-                    justify-content: space-around
-                    align-items: center
-                    margin-top: 24px
-                    .next-in
+                    .subtitle
+                        font-size: 12px
+                        font-weight: 700
+                        color: rgba(255, 255, 255, 0.5)
+                    h2
+                        margin-bottom: 8px
+                    .ctas
                         display: flex
-                        flex-direction: column
-                        .time
-                            font-size: 24px
-                            color: darken(white, 20%)
-                    @media (max-width: 400px)
-                        margin-top: 12px
-                        .next-in
-                            font-size: 12px
-                            .time
-                                font-size: 20px
-                    .separator
-                        width: 1px
-                        height: 36px
-                        background: #919191
-                    .share
-                        .share-button
+                        align-items: center
+                        justify-content: center
+                        .btn
                             display: flex
                             align-items: center
-                            justify-content: space-around
-                            background: #538D4E
-                            border: none
-                            padding: 0.5em 1em
-                            border-radius: 8px
+                            justify-content: center
+                            width: 108px
+                            height: 36px
+                            border-radius: 5px
+                            margin: 0 4px
+                            color: white
+                            text-decoration: none
+                            font-size: 14px
+                            font-weight: 700
                             cursor: pointer
-                            width: 136px
-                            p
-                                text-transform: uppercase
-                                font-weight: bold
-                                font-size: 14px
-                                color: white
-                            svg
-                                width: 24px
-                                height: 24px
-                                margin-left: 8px
-                                path
-                                    fill: white
+                            .icon
+                                height: 14px
+                                margin-right: 8px
+                            &.definition-btn
+                                background-color: #3A3A3C
+                                border-bottom: 2px solid #2B2B2B
+                                &:hover
+                                    background-color: #474748
+                                    border-color: #313131
+                                &:active
+                                    background-color: #2B2B2B
+                                    border-color: #2B2B2B
+                            &.share-btn
+                                background-color: #3EAA42
+                                border-bottom: 2px solid #157D19
+                                &:hover
+                                    background-color: #44b848
+                                    border-color: #1c9320
+                                &:active
+                                    background-color: #157D19
+                                    border-color: #157D19
+            .modal-footer
+                display: flex
+                flex-direction: column
+                width: 100%
+                justify-content: center
+                align-items: center
+                max-width: 450px
+                width: 90%
+                box-sizing: border-box
+                padding: 12px
+                background-color: #141415
+                border-bottom-left-radius: 8px
+                border-bottom-right-radius: 8px
+                .next-in
+                    display: flex
+                    font-size: 12px
+                    font-weight: 700
+                    color: rgba(255, 255, 255, 0.5)
+                    margin-bottom: 2px
+                .time
+                    font-size: 20px
+                    font-weight: 700
+                    color: white
         .settings-modal
             position: fixed
             width: 100vw
