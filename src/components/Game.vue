@@ -722,6 +722,7 @@ export default {
             .attempt
                 display: flex
                 animation-duration: 0.3s
+                perspective: 800px
                 &.shake
                     animation-name: shake
         .keyboard
