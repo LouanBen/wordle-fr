@@ -58,10 +58,10 @@
                 <div class="help-modal" v-if="helpOpened">
                     <div class="help-modal-content">
                         <div class="close-btn" @click="helpOpened = false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#919191" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Comment jouer ?</h2>
                         <div class="help-content">
-                            <h2>Comment jouer ?</h2>
                             <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>, mais en français.</p>
                             <p>Chaque jour, un mot de 5 lettres est choisi aléatoirement. Vous devez le deviner en 6 essais.</p>
                             <p>À chaque essai, les lettres du mot que vous avez proposé changeront de couleur en fonction de à quel point vous êtes proche de le trouver.</p>
@@ -83,7 +83,7 @@
                                         T
                                     </div>
                                 </div>
-                                <p>La lettre <span>F</span> est dans le mot, à la bonne place.</p>
+                                <p>La lettre <span class="correct" :class="{ 'color-blind': colorBlindMode }">F</span> est dans le mot, à la bonne place.</p>
                                 <div class="help-word">
                                     <div class="help-letter-container">
                                         P
@@ -101,7 +101,7 @@
                                         E
                                     </div>
                                 </div>
-                                <p>La lettre <span>C</span> est dans le mot, mais pas à la bonne place.</p>
+                                <p>La lettre <span class="partial" :class="{ 'color-blind': colorBlindMode }">C</span> est dans le mot, mais pas à la bonne place.</p>
                                 <div class="help-word">
                                     <div class="help-letter-container">
                                         S
@@ -739,70 +739,109 @@ export default {
                     margin: 0
         .help-modal
             position: fixed
+            display: flex
             width: 100vw
             height: 100vh
             display: flex
             justify-content: center
             align-items: center
-            background: rgba(0, 0, 0, 0.5)
+            background: rgba(0, 0, 0, 0.7)
             top: 0
             left: 0
             z-index: 10
             .help-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
                 max-width: 450px
                 width: 90%
-                min-height: 420px
-                max-height: 100%
-                overflow-y: auto
-                background: #121213
+                max-height: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
                 border-radius: 8px
-                padding: 12px
-                display: flex
-                flex-direction: column
-                align-items: center
-                font-size: 14px
-                position: relative
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
+                
                 .close-btn
-                    align-self: flex-end
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
                     cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
                 h2
-                    text-transform: uppercase
-                    padding-bottom: 12px
-                    border-bottom: 1px solid #919191
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 16px
                 p
-                    margin-top: 12px
+                    font-size: 14px
+                    line-height: 1.3
+                    margin-bottom: 12px
                     text-align: left
+                    color: #8E8E90
+                    &:last-child
+                        margin-bottom: 0
                     a
                         color: white
                         text-decoration: none
+                        &:hover
+                            text-decoration: underline
                 .help-exemple
-                    border-top: 1px solid #919191
-                    border-bottom: 1px solid #919191
-                    margin-top: 12px
-                    padding-bottom: 12px
                     .help-word
                         display: flex
-                        margin-top: 12px
+                        margin-top: 24px
+                        margin-bottom: 8px
                         .help-letter-container
                             width: 36px
                             height: 36px
-                            border: 2px solid #919191
+                            border: 2px solid #646464
                             box-sizing: border-box
                             margin: 2px
+                            border-radius: 4px
                             display: flex
                             align-items: center
                             justify-content: center
-                            font-size: 20px
+                            font-size: 16px
                             font-weight: bold
                             color: white
                             &.correct
                                 border: none
-                                background: #538D4E
+                                background: #3EAA42
                                 &.color-blind
                                     background: #F5793A
                             &.partial
                                 border: none
-                                background: #B59E3B
+                                background: #D3952A
                                 &.color-blind
                                     background: #85C0F9
                             &.incorrect
@@ -810,7 +849,15 @@ export default {
                                 background: #3A3A3C
                     p
                         span
-                            font-weight: bold  
+                            font-weight: bold
+                            &.correct
+                                color: #3EAA42
+                                &.color-blind
+                                    color: #F5793A
+                            &.partial
+                                color: #D3952A
+                                &.color-blind
+                                    color: #85C0F9
         .endgame-modal
             position: fixed
             display: flex
