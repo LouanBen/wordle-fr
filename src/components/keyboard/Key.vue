@@ -6,7 +6,12 @@
         incorrect: color === 'incorrect',
         'color-blind': colorBlindMode,
     }">
-        {{ keyContent }}
+        <div v-if="['Entrer', 'Suppr'].includes(keyContent)">
+            <img :src="`/icons/${keyContent.toLowerCase()}.svg`" :alt="keyContent" class="icon" />
+        </div>
+        <template v-else>
+            {{ keyContent }}
+        </template>
     </button>
 </template>
 
@@ -81,6 +86,8 @@ export default {
 
         &:active
             background: #212121
+    .icon
+        height: 13px
     @media (max-width: 500px)
         width: 34px
         &.big
