@@ -99,6 +99,7 @@ export default {
             background: #212121
     .icon
         height: 13px
+        transform: translateY(1px)
     @media (max-width: 500px)
         width: 34px
         &.big
