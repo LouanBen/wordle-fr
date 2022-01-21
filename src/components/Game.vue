@@ -3,8 +3,8 @@
         <header>
             <div class="header-container">
                 <div class="header-left">
-                    <div class="icon-btn help" @click="helpOpened = true">
-                        <img class="icon" src="/icons/help.svg" />
+                    <div class="icon-btn help" @click="helpOpened = true" title="Aide">
+                        <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
                 </div>
                 <div class="game-title"><!--MORDLE-->
@@ -16,11 +16,11 @@
                     <div class="letter incorrect">T</div>
                 </div> 
                 <div class="header-right">
-                    <div class="icon-btn stats" @click="statsOpened = true">
-                        <img class="icon" src="/icons/stats.svg" />
+                    <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
+                        <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
                     </div>
-                    <div class="icon-btn settings" @click="settingsOpened = true">
-                        <img class="icon" src="/icons/settings.svg" />
+                    <div class="icon-btn settings" @click="settingsOpened = true" title="Paramètres">
+                        <img class="icon" src="/icons/settings.svg" alt="Paramètres" />
                     </div>
                 </div>
             </div>
