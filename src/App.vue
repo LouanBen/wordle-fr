@@ -71,7 +71,7 @@ body
   -moz-osx-font-smoothing: grayscale
   text-align: center
   color: #919191
-  background: #121213
+  background: #0E0E0F
   width: 100vw
   height: 100%
   display: flex

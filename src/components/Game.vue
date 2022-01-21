@@ -1,18 +1,27 @@
 <template>
     <div id="game">
         <header>
-            <div class="header-left">
-                <div class="help icon" @click="helpOpened = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Aide</title><path d="M256 80a176 176 0 10176 176A176 176 0 00256 80z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path d="M200 202.29s.84-17.5 19.57-32.57C230.68 160.77 244 158.18 256 158c10.93-.14 20.69 1.67 26.53 4.45 10 4.76 29.47 16.38 29.47 41.09 0 26-17 37.81-36.37 50.8S251 281.43 251 296" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"/><circle cx="250" cy="348" r="20"/></svg>
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="icon-btn help" @click="helpOpened = true">
+                        <img class="icon" src="/icons/help.svg" />
+                    </div>
                 </div>
-            </div>
-            <h1>LE MOT</h1> <!--MORDLE-->
-            <div class="header-right">
-                <div class="icon" @click="statsOpened = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Statistiques</title><path d="M104 496H72a24 24 0 01-24-24V328a24 24 0 0124-24h32a24 24 0 0124 24v144a24 24 0 01-24 24zM328 496h-32a24 24 0 01-24-24V232a24 24 0 0124-24h32a24 24 0 0124 24v240a24 24 0 01-24 24zM440 496h-32a24 24 0 01-24-24V120a24 24 0 0124-24h32a24 24 0 0124 24v352a24 24 0 01-24 24zM216 496h-32a24 24 0 01-24-24V40a24 24 0 0124-24h32a24 24 0 0124 24v432a24 24 0 01-24 24z"/></svg>
-                </div>
-                <div class="icon" @click="settingsOpened = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Paramètres</title><circle cx="256" cy="256" r="48"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>
+                <div class="game-title"><!--MORDLE-->
+                    <div class="letter correct">L</div>
+                    <div class="letter incorrect">E</div>
+                    <div class="space"></div>
+                    <div class="letter partial">M</div>
+                    <div class="letter incorrect">O</div>
+                    <div class="letter incorrect">T</div>
+                </div> 
+                <div class="header-right">
+                    <div class="icon-btn stats" @click="statsOpened = true">
+                        <img class="icon" src="/icons/stats.svg" />
+                    </div>
+                    <div class="icon-btn settings" @click="settingsOpened = true">
+                        <img class="icon" src="/icons/settings.svg" />
+                    </div>
                 </div>
             </div>
         </header>
@@ -604,57 +613,87 @@ export default {
 
 <style lang="sass" scoped>
 #game
-    max-width: 500px
+    display: flex
+    align-items: center
+    justify-content: center
     width: 100%
     height: 100%
     overflow: hidden
     display: flex
     flex-direction: column
-    background: #121213
+    background: #0E0E0F
     header
-        padding: 6px 0
-        border-bottom: 1px solid #919191
         width: 100%
-        height: 5%
+        height: 60px
         display: flex
-        align-items: center
-        justify-content: space-between
-        @media (max-width: 500px)
-            padding: 0 12px
-            box-sizing: border-box
-            @media (max-width: 380px)
-                h1
-                    font-size: 1.5rem
-                .header-right, .header-left
-                    width: 50px !important
-                    .icon
-                        width: 20px
-                        height: 20px
-        h1
-            text-transform: uppercase
-        .header-right
+        justify-content: center
+        background: #1D1D20
+        .header-container
+            max-width: 500px
+            width: 100%
+            height: 100%
             display: flex
-            width: 75px
+            align-items: center
             justify-content: space-between
-        .header-left 
-            width: 75px
-        .icon
-            width: 24px
-            height: 24px
-            cursor: pointer
-            svg
-                path
-                    fill: #919191
-            &.help
-                width: 28px
-                height: 28px
-                svg
-                    path
-                        fill: none
-                        stroke: #919191
-                    circle
-                        fill: #919191
+            @media (max-width: 512px)
+                padding: 0 12px
+                box-sizing: border-box
+                @media (max-width: 380px)
+                    h1
+                        font-size: 1.5rem
+                    .header-right, .header-left
+                        width: 50px !important
+            .game-title
+                display: flex
+                align-items: center
+                justify-content: center
+                .letter
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    margin: 0 3px
+                    font-size: 11px
+                    font-weight: 700
+                    border-radius: 4px
+                    text-transform: uppercase
+                    color: white
+                    &.correct
+                        background-color: #3EAA42
+                    &.partial
+                        background-color: #D3952A
+                    &.incorrect
+                        background-color: none
+                        width: 16px
+                .space
+                    width: 10px
+            .header-right
+                display: flex
+                width: 70px
+                justify-content: space-between
+            .header-left 
+                width: 70px
+            .icon-btn
+                display: flex
+                align-items: center
+                justify-content: center
+                width: 32px
+                height: 32px
+                background-color: #3A3A3C
+                border-radius: 5px
+                border-bottom: 2px solid #2B2B2B
+                cursor: pointer
+                transition: all .3s
+                &:hover
+                    background-color: #474748
+                    border-color: #313131
+                &:active
+                    background-color: #2B2B2B
+                .icon
+                    height: 13px
     main
+        max-width: 500px
         height: 95%
         display: flex
         flex-direction: column
