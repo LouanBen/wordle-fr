@@ -40,41 +40,50 @@ export default {
 <style lang="sass" scoped>
 #key
     width: 43px
-    height: 58px
+    height: 50px
     cursor: pointer
     margin: 2px
-    font-weight: bold
-    color: #D7DADC
-    background: #818384
+    font-size: 18px
+    font-weight: 700
+    color: #FFFFFF
+    background: #636363
     border-radius: 4px
     border: none
+    border-bottom: 2px solid #4D4D4D
     &.big
-        width: 64px
+        width: 90px
     &.correct
-        background: #538D4E
+        background: #3EAA42
+        border-color: #157D19
         &.color-blind
             background: #F5793A
+            border-color: #CB581E
     &.partial
-        background: #B59E3B
+        background: #D3952A
+        border-color: #A06F19
         &.color-blind
             background: #85C0F9
+            border-color: #3C80C1
     &.incorrect
-        background: #3A3A3C
-    &.color-blind
-        color: white
+        background: #2C2C2C
+        border-color: #212121
+        color: #969696
     @media (max-width: 500px)
+        width: 34px
+        &.big
+            width: 72px
+    @media (max-width: 393px)
         width: 32px
         &.big
-            width: 54px
-        @media (max-width: 330px)
-            width: 24px
-            &.big
-                width: 50px
-            @media (max-width: 300px)
-                width: 22px
-                &.big
-                    width: 40px
-                    font-size: 0.6em
+            width: 68px
+    @media (max-width: 372px)
+        width: 28px
+        &.big
+            width: 60px
+    @media (max-width: 320px)
+        width: 22px
+        &.big
+            width: 48px
     @media (max-height: 600px)
         height: 48px
 </style>

@@ -691,7 +691,13 @@ export default {
                 &.shake
                     animation-name: shake
         .keyboard
-            margin-bottom: 12px
+            margin-bottom: 20px
+            @media (max-height: 900px)
+                margin-bottom: 7px
+            .keyboard-line
+                margin-top: 10px
+                &:first-child
+                    margin: 0
         .help-modal
             position: fixed
             width: 100vw
