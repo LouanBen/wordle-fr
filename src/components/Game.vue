@@ -652,7 +652,7 @@ export default {
                     width: 24px
                     height: 24px
                     margin: 0 3px
-                    font-size: 11px
+                    font-size: 14px
                     font-weight: 700
                     border-radius: 4px
                     text-transform: uppercase
@@ -663,9 +663,9 @@ export default {
                         background-color: #D3952A
                     &.incorrect
                         background-color: none
-                        width: 16px
+                        width: 14px
                 .space
-                    width: 10px
+                    width: 14px
             .header-right
                 display: flex
                 width: 70px
