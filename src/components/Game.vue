@@ -62,7 +62,7 @@
                         </div>
                         <h2>Comment jouer ?</h2>
                         <div class="help-content">
-                            <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>, mais en français.</p>
+                            <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/" target="_blank">Wordle</a>, mais en français.</p>
                             <p>Chaque jour, un mot de 5 lettres est choisi aléatoirement. Vous devez le deviner en 6 essais.</p>
                             <p>À chaque essai, les lettres du mot que vous avez proposé changeront de couleur en fonction de à quel point vous êtes proche de le trouver.</p>
                             <div class="help-exemple">
@@ -218,13 +218,13 @@
                             <div class="credits">
                                 <h2>Crédits</h2>
                                 <p>
-                                    Jeu développé par <a href="https://twitter.com/louanben">@louanben</a>.
+                                    Jeu développé par <a href="https://twitter.com/louanben" target="_blank">@louanben</a>.
                                 </p>
                                 <p>
-                                    Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish">@powerlanguish</a> (Josh Wardle).
+                                    Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish" target="_blank">@powerlanguish</a> (Josh Wardle).
                                 </p>
                                 <p>
-                                    Merci à <a href="https://twitter.com/Richiesque">Richie</a> pour son aide précieuse !
+                                    Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse !
                                 </p>
                                 <p>
                                     Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
