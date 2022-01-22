@@ -46,12 +46,13 @@ export default {
         @media (max-width: 300px)
             width: 48px
             height: 48px
-    @media (max-height: 600px)
+    @media (max-height: 680px)
         width: 48px
         height: 48px
-        @media (max-height: 480px)
+        @media (max-height: 600px)
             width: 40px
             height: 40px
+            border-radius: 4px
     &.has-letter
         border-color: #646464
     &.validated
