@@ -22,13 +22,13 @@
             </transition>
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
-                    <LetterContainer 
-                        :letter="attempts[indexA][indexL]" 
-                        :color="results[indexA][indexL]" 
-                        :placement="letter" 
-                        :animate="animateLetter" 
+                    <LetterContainer
+                        :letter="attempts[indexA][indexL]"
+                        :color="results[indexA][indexL]"
+                        :placement="letter"
+                        :animate="animateLetter"
                         :colorBlindMode="colorBlindMode"
-                        v-for="letter, indexL in NB_LETTERS" 
+                        v-for="letter, indexL in NB_LETTERS"
                         :key="letter" />
                 </div>
             </div>
@@ -156,8 +156,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="soluce" v-if="finished">Le mot était : 
-                            <strong>{{ wordOfTheDay }}</strong> 
+                        <div class="soluce" v-if="finished">Le mot était :
+                            <strong>{{ wordOfTheDay }}</strong>
                             <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="definition-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Définition</title><path d="M256 56C145.72 56 56 145.72 56 256s89.72 200 200 200 200-89.72 200-200S366.28 56 256 56zm0 82a26 26 0 11-26 26 26 26 0 0126-26zm48 226h-88a16 16 0 010-32h28v-88h-16a16 16 0 010-32h32a16 16 0 0116 16v104h28a16 16 0 010 32z"/></svg>
                             </a>
@@ -488,7 +488,7 @@ export default {
         verifyLetters(attempt) {
             let wordToGuess = this.wordOfTheDay.split('');
             let currentResult = this.results[this.currentAttempt - 1];
-            
+
             attempt.forEach((letter, index) => {
                 if (wordToGuess[index] === letter) {
                     currentResult[index] = 'correct';
@@ -636,7 +636,7 @@ export default {
             display: flex
             width: 75px
             justify-content: space-between
-        .header-left 
+        .header-left
             width: 75px
         .icon
             width: 24px
@@ -681,7 +681,7 @@ export default {
             border-radius: 0.5em
             font-size: 18px
             font-weight: bold
-            z-index: 2
+            z-index: 10
         .grid
             margin-top: auto
             margin-bottom: auto
@@ -765,7 +765,7 @@ export default {
                                 background: #3A3A3C
                     p
                         span
-                            font-weight: bold  
+                            font-weight: bold
         .endgame-modal
             position: fixed
             width: 100vw
