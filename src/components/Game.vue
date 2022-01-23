@@ -631,6 +631,8 @@ export default {
         display: flex
         justify-content: center
         background: #1D1D20
+        @media (max-height: 540px)
+            height: 40px
         .header-container
             max-width: 500px
             width: 100%
@@ -657,6 +659,16 @@ export default {
                     border-radius: 4px
                     text-transform: uppercase
                     color: white
+                    @media (max-height: 540px)
+                        width: 20px
+                        height: 20px
+                        font-size: 12px
+                        margin: 0 2px
+                    @media (max-width: 320px)
+                        width: 20px
+                        height: 20px
+                        font-size: 12px
+                        margin: 0 1px
                     &.correct
                         background-color: #3EAA42
                     &.partial
@@ -666,10 +678,14 @@ export default {
                         width: 14px
                 .space
                     width: 14px
+                    @media (max-width: 320px)
+                        width: 10px
             .header-right
                 display: flex
                 width: 70px
                 justify-content: space-between
+                @media (max-height: 540px)
+                    width: 62px
             .header-left 
                 width: 70px
             .icon-btn
@@ -683,6 +699,9 @@ export default {
                 border-bottom: 2px solid #2B2B2B
                 cursor: pointer
                 transition: all .3s
+                @media (max-height: 540px)
+                    width: 28px
+                    height: 28px
                 &:hover
                     background-color: #474748
                     border-color: #313131
@@ -737,6 +756,8 @@ export default {
                 margin-top: 10px
                 &:first-child
                     margin: 0
+                @media (max-height: 540px)
+                    margin-top: 4px
         .help-modal
             position: fixed
             display: flex
@@ -1206,6 +1227,12 @@ export default {
                                     button
                                         width: 60px
                                         font-size: 10px
+                                @media (max-width: 330px)
+                                    height: 28px // Expend hitbox on height
+                                    button
+                                        width: 48px
+                                        height: 28px
+                                        font-size: 9px
                     .credits
                         h2
                             text-align: left

@@ -53,7 +53,7 @@ export default {
 <style lang="sass" scoped>
 #key
     width: 43px
-    height: 50px
+    height: 60px
     cursor: pointer
     margin: 2px
     font-size: 18px
@@ -65,6 +65,8 @@ export default {
     border-bottom: 2px solid #4D4D4D
     user-select: none
     -webkit-tap-highlight-color: transparent
+    @media (max-height: 700px)
+        height: 50px
     &:active
         background: #4D4D4D
     &.big

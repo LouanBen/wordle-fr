@@ -43,16 +43,20 @@ export default {
     @media (max-width: 380px)
         width: 54px
         height: 54px
-        @media (max-width: 300px)
-            width: 48px
-            height: 48px
-    @media (max-height: 680px)
+    @media (max-width: 300px)
         width: 48px
         height: 48px
-        @media (max-height: 600px)
-            width: 40px
-            height: 40px
-            border-radius: 4px
+    @media (max-height: 700px)
+        width: 48px
+        height: 48px
+    @media (max-height: 600px)
+        width: 40px
+        height: 40px
+        border-radius: 4px
+    @media (max-height: 540px)
+        width: 32px
+        height: 32px
+        border-radius: 3px
     &.has-letter
         border-color: #646464
     &.validated
@@ -101,8 +105,8 @@ export default {
         font-size: 28px
         position: relative
         z-index: 3
-        @media (max-height: 480px)
-            font-size: 28px
+        @media (max-height: 540px)
+            font-size: 24px
 
     @keyframes flip
         from
