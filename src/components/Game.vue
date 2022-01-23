@@ -1,18 +1,27 @@
 <template>
     <div id="game">
         <header>
-            <div class="header-left">
-                <div class="help icon" @click="helpOpened = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Aide</title><path d="M256 80a176 176 0 10176 176A176 176 0 00256 80z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path d="M200 202.29s.84-17.5 19.57-32.57C230.68 160.77 244 158.18 256 158c10.93-.14 20.69 1.67 26.53 4.45 10 4.76 29.47 16.38 29.47 41.09 0 26-17 37.81-36.37 50.8S251 281.43 251 296" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"/><circle cx="250" cy="348" r="20"/></svg>
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="icon-btn help" @click="helpOpened = true" title="Aide">
+                        <img class="icon" src="/icons/help.svg" alt="Aide" />
+                    </div>
                 </div>
-            </div>
-            <h1>LE MOT</h1> <!--MORDLE-->
-            <div class="header-right">
-                <div class="icon" @click="statsOpened = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Statistiques</title><path d="M104 496H72a24 24 0 01-24-24V328a24 24 0 0124-24h32a24 24 0 0124 24v144a24 24 0 01-24 24zM328 496h-32a24 24 0 01-24-24V232a24 24 0 0124-24h32a24 24 0 0124 24v240a24 24 0 01-24 24zM440 496h-32a24 24 0 01-24-24V120a24 24 0 0124-24h32a24 24 0 0124 24v352a24 24 0 01-24 24zM216 496h-32a24 24 0 01-24-24V40a24 24 0 0124-24h32a24 24 0 0124 24v432a24 24 0 01-24 24z"/></svg>
-                </div>
-                <div class="icon" @click="settingsOpened = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Paramètres</title><circle cx="256" cy="256" r="48"/><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>
+                <div class="game-title"><!--MORDLE-->
+                    <div class="letter correct">L</div>
+                    <div class="letter incorrect">E</div>
+                    <div class="space"></div>
+                    <div class="letter partial">M</div>
+                    <div class="letter incorrect">O</div>
+                    <div class="letter incorrect">T</div>
+                </div> 
+                <div class="header-right">
+                    <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
+                        <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
+                    </div>
+                    <div class="icon-btn settings" @click="settingsOpened = true" title="Paramètres">
+                        <img class="icon" src="/icons/settings.svg" alt="Paramètres" />
+                    </div>
                 </div>
             </div>
         </header>
@@ -40,6 +49,7 @@
                         :colorBlindMode="colorBlindMode"
                         v-for="key in line"
                         :key="key"
+                        :keyboardName="keyboard.name"
                         @update:handleClick="handleKeyClick($event)"
                     />
                 </div>
@@ -48,11 +58,11 @@
                 <div class="help-modal" v-if="helpOpened">
                     <div class="help-modal-content">
                         <div class="close-btn" @click="helpOpened = false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#919191" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Comment jouer ?</h2>
                         <div class="help-content">
-                            <h2>Comment jouer ?</h2>
-                            <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/">Wordle</a>, mais en français.</p>
+                            <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/" target="_blank">Wordle</a>, mais en français.</p>
                             <p>Chaque jour, un mot de 5 lettres est choisi aléatoirement. Vous devez le deviner en 6 essais.</p>
                             <p>À chaque essai, les lettres du mot que vous avez proposé changeront de couleur en fonction de à quel point vous êtes proche de le trouver.</p>
                             <div class="help-exemple">
@@ -73,7 +83,7 @@
                                         T
                                     </div>
                                 </div>
-                                <p>La lettre <span>F</span> est dans le mot, à la bonne place.</p>
+                                <p>La lettre <span class="correct" :class="{ 'color-blind': colorBlindMode }">F</span> est dans le mot, à la bonne place.</p>
                                 <div class="help-word">
                                     <div class="help-letter-container">
                                         P
@@ -91,7 +101,7 @@
                                         E
                                     </div>
                                 </div>
-                                <p>La lettre <span>C</span> est dans le mot, mais pas à la bonne place.</p>
+                                <p>La lettre <span class="partial" :class="{ 'color-blind': colorBlindMode }">C</span> est dans le mot, mais pas à la bonne place.</p>
                                 <div class="help-word">
                                     <div class="help-letter-container">
                                         S
@@ -117,38 +127,42 @@
             </transition>
             <transition name="fadeup">
                 <div class="endgame-modal" v-if="statsOpened">
-                    <div class="endgame-modal-content">
+                    <div class="endgame-modal-content" v-bind:class="{ 'finished' : finished}">
                         <div class="close-btn" @click="statsOpened = false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#919191" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Statistiques</h2>
                         <div class="stats">
-                            <h2>Statistiques</h2>
                             <div class="stats-content">
-                                <div class="stats-item games-played">
-                                    <p class="stat-item-figure">{{ userResults.nbGames }}</p>
-                                    <p class="stat-item-label">Parties</p>
+                                <div class="stats-line">
+                                    <div class="stats-item games-played">
+                                        <p class="stat-item-figure">{{ userResults.nbGames }}</p>
+                                        <p class="stat-item-label">Parties</p>
+                                    </div>
+                                    <div class="stats-item win-rate">
+                                        <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
+                                        <p class="stat-item-label">Victoires (%)</p>
+                                    </div>
                                 </div>
-                                <div class="stats-item win-rate">
-                                    <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
-                                    <p class="stat-item-label">Victoires (%)</p>
-                                </div>
-                                <div class="stats-item current-streak">
-                                    <p class="stat-item-figure">{{ userResults.currentStreak }}</p>
-                                    <p class="stat-item-label">Série actuelle</p>
-                                </div>
-                                <div class="stats-item current-streak">
-                                    <p class="stat-item-figure">{{ userResults.bestStreak }}</p>
-                                    <p class="stat-item-label">Meilleure série</p>
+                                <div class="stats-line">
+                                    <div class="stats-item current-streak">
+                                        <p class="stat-item-figure">{{ userResults.currentStreak }}</p>
+                                        <p class="stat-item-label">Série actuelle</p>
+                                    </div>
+                                    <div class="stats-item current-streak">
+                                        <p class="stat-item-figure">{{ userResults.bestStreak }}</p>
+                                        <p class="stat-item-label">Meilleure série</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <h2>Performances</h2>
                         <div class="graph">
-                            <h2>Performances</h2>
                             <div class="graph-content">
                                 <div class="graph-item" v-for="attempt in NB_ATTEMPTS + 1" :key="attempt">
                                     <div class="attempt-number" v-if="attempt <= NB_ATTEMPTS">{{ attempt }}</div>
                                     <div class="attempt-skull" v-else>
-                                        💀
+                                        <img class="icon" src="/icons/skull.svg" alt="Mort" />
                                     </div>
                                     <div class="attempt-stat">
                                         <div class="attempt-bar" :class="{ best: getAttemptStatPercent(attempt) === bestAttemptPercent && getAttemptStat(attempt) > 0 }" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
@@ -156,22 +170,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="soluce" v-if="finished">Le mot était : 
-                            <strong>{{ wordOfTheDay }}</strong> 
-                            <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="definition-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Définition</title><path d="M256 56C145.72 56 56 145.72 56 256s89.72 200 200 200 200-89.72 200-200S366.28 56 256 56zm0 82a26 26 0 11-26 26 26 26 0 0126-26zm48 226h-88a16 16 0 010-32h28v-88h-16a16 16 0 010-32h32a16 16 0 0116 16v104h28a16 16 0 010 32z"/></svg>
-                            </a>
-                        </div>
-                        <div class="modal-footer" v-if="finished">
-                            <div class="next-in">Prochain mot dans : <strong class="time">{{ countdownToNextWord }}</strong></div>
-                            <div class="separator"></div>
-                            <div class="share">
-                                <button class="share-button" @click="share">
+                        <div class="soluce" v-if="finished">
+                            <div class="subtitle">Le mot était</div>
+                            <h2>{{ wordOfTheDay }}</h2>
+                            <div class="ctas">
+                                <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
+                                    <img class="icon" src="/icons/book.svg" />
+                                    <p>Définition</p>
+                                </a>
+                                <div class="btn share-btn" @click="share">
+                                    <img class="icon" src="/icons/copy.svg" />
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
-                                    <svg v-if="!resultsCopied" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Partager</title><path d="M384 336a63.78 63.78 0 00-46.12 19.7l-148-83.27a63.85 63.85 0 000-32.86l148-83.27a63.8 63.8 0 10-15.73-27.87l-148 83.27a64 64 0 100 88.6l148 83.27A64 64 0 10384 336z"/></svg>
-                                </button>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="modal-footer" v-if="finished">
+                        <div class="next-in">Prochain mot dans</div>
+                        <div class="time">{{ countdownToNextWord }}</div>
                     </div>
                 </div>
             </transition>
@@ -179,10 +195,10 @@
                 <div class="settings-modal" v-if="settingsOpened">
                     <div class="settings-modal-content">
                         <div class="close-btn" @click="settingsOpened = false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#919191" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Paramètres</h2>
                         <div class="settings-content">
-                            <h2>Paramètres</h2>
                             <div class="settings-item setting-toggle">
                                 <h3>Lien partagé</h3>
                                 <div class="toggle-button" @click="sharedLink = !sharedLink" :class="{ activated: sharedLink }">
@@ -198,21 +214,21 @@
                             <div class="settings-item setting-button">
                                 <h3>Clavier</h3>
                                 <div class="buttons">
-                                    <button class="first" :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTY.name }" @click="keyboard = KEYBOARD_QWERTY">QWERTY</button>
-                                    <button class="last" :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
                             </div>
-                            <div class="settings-item credits">
-                                <h3>Crédits</h3>
+                            <div class="credits">
+                                <h2>Crédits</h2>
                                 <p>
-                                    Jeu développé par <a href="https://twitter.com/louanben">@louanben</a>.
+                                    Jeu développé par <a href="https://twitter.com/louanben" target="_blank">@louanben</a>.
                                 </p>
                                 <p>
-                                    Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish">@powerlanguish</a> (Josh Wardle).
+                                    Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish" target="_blank">@powerlanguish</a> (Josh Wardle).
                                 </p>
                                 <p>
-                                    Merci à <a href="https://twitter.com/Richiesque">Richie</a> pour son aide précieuse !
+                                    Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">Reelwens</a> pour le design !
                                 </p>
                                 <p>
                                     Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
@@ -604,57 +620,102 @@ export default {
 
 <style lang="sass" scoped>
 #game
-    max-width: 500px
+    display: flex
+    align-items: center
+    justify-content: center
     width: 100%
     height: 100%
     overflow: hidden
     display: flex
     flex-direction: column
-    background: #121213
+    background: #0E0E0F
     header
-        padding: 6px 0
-        border-bottom: 1px solid #919191
         width: 100%
-        height: 5%
+        height: 60px
         display: flex
-        align-items: center
-        justify-content: space-between
-        @media (max-width: 500px)
-            padding: 0 12px
-            box-sizing: border-box
-            @media (max-width: 380px)
-                h1
-                    font-size: 1.5rem
-                .header-right, .header-left
-                    width: 50px !important
-                    .icon
+        justify-content: center
+        background: #1D1D20
+        @media (max-height: 540px)
+            height: 40px
+        .header-container
+            max-width: 500px
+            width: 100%
+            height: 100%
+            display: flex
+            align-items: center
+            justify-content: space-between
+            @media (max-width: 512px)
+                padding: 0 12px
+                box-sizing: border-box
+            .game-title
+                display: flex
+                align-items: center
+                justify-content: center
+                .letter
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    margin: 0 3px
+                    font-size: 14px
+                    font-weight: 700
+                    border-radius: 4px
+                    text-transform: uppercase
+                    color: white
+                    @media (max-height: 540px)
                         width: 20px
                         height: 20px
-        h1
-            text-transform: uppercase
-        .header-right
-            display: flex
-            width: 75px
-            justify-content: space-between
-        .header-left 
-            width: 75px
-        .icon
-            width: 24px
-            height: 24px
-            cursor: pointer
-            svg
-                path
-                    fill: #919191
-            &.help
-                width: 28px
-                height: 28px
-                svg
-                    path
-                        fill: none
-                        stroke: #919191
-                    circle
-                        fill: #919191
+                        font-size: 12px
+                        margin: 0 2px
+                    @media (max-width: 320px)
+                        width: 20px
+                        height: 20px
+                        font-size: 12px
+                        margin: 0 1px
+                    &.correct
+                        background-color: #3EAA42
+                    &.partial
+                        background-color: #D3952A
+                    &.incorrect
+                        background-color: none
+                        width: 14px
+                .space
+                    width: 14px
+                    @media (max-width: 320px)
+                        width: 10px
+            .header-right
+                display: flex
+                width: 70px
+                justify-content: space-between
+                @media (max-height: 540px)
+                    width: 62px
+            .header-left 
+                width: 70px
+            .icon-btn
+                display: flex
+                align-items: center
+                justify-content: center
+                width: 32px
+                height: 32px
+                background-color: #3A3A3C
+                border-radius: 5px
+                border-bottom: 2px solid #2B2B2B
+                cursor: pointer
+                transition: all .3s
+                @media (max-height: 540px)
+                    width: 28px
+                    height: 28px
+                &:hover
+                    background-color: #474748
+                    border-color: #313131
+                &:active
+                    background-color: #2B2B2B
+                    border-color: #2B2B2B
+                .icon
+                    height: 13px
     main
+        max-width: 500px
         height: 95%
         display: flex
         flex-direction: column
@@ -681,83 +742,131 @@ export default {
             border-radius: 0.5em
             font-size: 18px
             font-weight: bold
-            z-index: 2
+            z-index: 10
         .grid
             margin-top: auto
             margin-bottom: auto
             .attempt
                 display: flex
                 animation-duration: 0.3s
+                perspective: 800px
                 &.shake
                     animation-name: shake
         .keyboard
-            margin-bottom: 12px
+            margin-bottom: 20px
+            @media (max-height: 900px)
+                margin-bottom: 7px
+            .keyboard-line
+                margin-top: 10px
+                &:first-child
+                    margin: 0
+                @media (max-height: 540px)
+                    margin-top: 4px
         .help-modal
             position: fixed
+            display: flex
             width: 100vw
             height: 100vh
             display: flex
             justify-content: center
             align-items: center
-            background: rgba(0, 0, 0, 0.5)
+            background: rgba(0, 0, 0, 0.7)
             top: 0
             left: 0
             z-index: 10
             .help-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
                 max-width: 450px
                 width: 90%
-                min-height: 420px
-                max-height: 100%
-                overflow-y: auto
-                background: #121213
+                max-height: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
                 border-radius: 8px
-                padding: 12px
-                display: flex
-                flex-direction: column
-                align-items: center
-                font-size: 14px
-                position: relative
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
+                
                 .close-btn
-                    align-self: flex-end
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
                     cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
                 h2
-                    text-transform: uppercase
-                    padding-bottom: 12px
-                    border-bottom: 1px solid #919191
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 16px
                 p
-                    margin-top: 12px
+                    font-size: 14px
+                    line-height: 1.3
+                    margin-bottom: 12px
                     text-align: left
+                    color: #8E8E90
+                    &:last-child
+                        margin-bottom: 0
                     a
                         color: white
                         text-decoration: none
+                        &:hover
+                            text-decoration: underline
                 .help-exemple
-                    border-top: 1px solid #919191
-                    border-bottom: 1px solid #919191
-                    margin-top: 12px
-                    padding-bottom: 12px
                     .help-word
                         display: flex
-                        margin-top: 12px
+                        margin-top: 24px
+                        margin-bottom: 8px
                         .help-letter-container
                             width: 36px
                             height: 36px
-                            border: 2px solid #919191
+                            border: 2px solid #646464
                             box-sizing: border-box
                             margin: 2px
+                            border-radius: 4px
                             display: flex
                             align-items: center
                             justify-content: center
-                            font-size: 20px
+                            font-size: 16px
                             font-weight: bold
                             color: white
                             &.correct
                                 border: none
-                                background: #538D4E
+                                background: #3EAA42
                                 &.color-blind
                                     background: #F5793A
                             &.partial
                                 border: none
-                                background: #B59E3B
+                                background: #D3952A
                                 &.color-blind
                                     background: #85C0F9
                             &.incorrect
@@ -765,249 +874,398 @@ export default {
                                 background: #3A3A3C
                     p
                         span
-                            font-weight: bold  
+                            font-weight: bold
+                            &.correct
+                                color: #3EAA42
+                                &.color-blind
+                                    color: #F5793A
+                            &.partial
+                                color: #D3952A
+                                &.color-blind
+                                    color: #85C0F9
         .endgame-modal
             position: fixed
+            display: flex
+            flex-direction: column
             width: 100vw
             height: 100vh
             display: flex
             justify-content: center
             align-items: center
-            background: rgba(0, 0, 0, 0.5)
+            background: rgba(0, 0, 0, 0.7)
             top: 0
             left: 0
             z-index: 10
             .endgame-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
                 max-width: 450px
                 width: 90%
-                min-height: 420px
-                max-height: 100%
-                overflow-y: auto
-                background: #121213
+                max-height: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
                 border-radius: 8px
-                padding: 12px
-                display: flex
-                flex-direction: column
-                align-items: center
-                h2
-                    font-size: 18px
-                    text-transform: uppercase
-                    font-weight: bold
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
+                &.finished
+                    border-bottom-left-radius: 0
+                    border-bottom-right-radius: 0
                 .close-btn
-                    align-self: flex-end
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
                     cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
+                h2
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 16px
                 .stats
+                    margin-bottom: 32px
+                    width: 100%
                     .stats-content
                         display: flex
-                        .stats-item
-                            margin-top: 12px
-                            width: 70px
-                            .stat-item-figure
-                                font-size: 30px
-                                font-weight: bold
-                            .stat-item-label
-                                font-size: 12px
+                        @media (max-width: 380px)
+                            flex-direction: column
+                        .stats-line
+                            display: flex
+                            flex: 1
+                            &:first-child
+                                margin-right: 8px
+                            @media (max-width: 380px)
+                                &:first-child
+                                    margin-right: 0px
+                                &:first-child
+                                    margin-bottom: 8px
+                            .stats-item
+                                display: flex
+                                flex: 1
+                                flex-direction: column
+                                align-items: center
+                                justify-content: center
+                                height: 80px
+                                margin-right: 8px
+                                background-color: #0E0E0F
+                                border-radius: 6px
+                                &:last-child
+                                    margin-right: 0
+                                .stat-item-figure
+                                    font-size: 28px
+                                    font-weight: bold
+                                    color: #3EAA42
+                                .stat-item-label
+                                    display: flex
+                                    align-items: center
+                                    height: 30px
+                                    font-size: 12px
+                                    color: white
+                                    margin: 0 8px
                 .graph
-                    margin-top: 18px
                     width: 100%
                     display: flex
                     flex-direction: column
-                    align-items: center
                     .graph-content
-                        margin-top: 12px
-                        width: 80%
+                        width: 100%
                         display: flex
                         flex-direction: column
                         .graph-item
-                            margin-top: 6px
+                            margin-top: 8px
                             width: 100%
                             display: flex
-                            font-size: 14px
+                            align-items: center
+                            font-size: 12px
+                            font-weight: 700
+                            color: white
+                            &:first-child
+                                margin-top: 0
                             .attempt-number
-                                width: 20px
-                                height: 20px
+                                width: 18px
                                 display: flex
                                 align-items: center
-                                justify-content: center
                             .attempt-skull
-                                width: 20px
-                                height: 20px
+                                width: 18px
                                 display: flex
                                 align-items: center
+                                .icon
+                                    height: 10px
                             .attempt-stat
-                                height: 100%
+                                height: 17px
                                 width: 100%
                                 .attempt-bar
-                                    margin-left: 6px
                                     height: 100%
                                     background: #3A3A3C
                                     color: white
+                                    font-size: 10px
+                                    font-weight: 400
                                     display: flex
                                     box-sizing: border-box
                                     padding: 0 6px
                                     justify-content: flex-end
                                     align-items: center
-                                    min-width: 20px
+                                    min-width: 28px
+                                    border-radius: 3px
                                     &.best
-                                        background: #538D4E
+                                        background: #3EAA42
                 .soluce
-                    margin-top: 24px
                     display: flex
-                    strong
-                        padding-left: 4px
-                        display: block
-                    .definition-icon
-                        svg
-                            width: 1em
-                            height: 1em
-                            margin-left: 8px
-                            fill: #919191
-                .modal-footer
-                    display: flex
+                    flex-direction: column
+                    margin-top: 16px
                     width: 100%
-                    max-width: 400px
-                    justify-content: space-around
-                    align-items: center
-                    margin-top: 24px
-                    .next-in
+                    .subtitle
+                        font-size: 12px
+                        font-weight: 700
+                        color: rgba(255, 255, 255, 0.5)
+                    h2
+                        margin-bottom: 8px
+                    .ctas
                         display: flex
-                        flex-direction: column
-                        .time
-                            font-size: 24px
-                            color: darken(white, 20%)
-                    @media (max-width: 400px)
-                        margin-top: 12px
-                        .next-in
-                            font-size: 12px
-                            .time
-                                font-size: 20px
-                    .separator
-                        width: 1px
-                        height: 36px
-                        background: #919191
-                    .share
-                        .share-button
+                        align-items: center
+                        justify-content: center
+                        .btn
                             display: flex
                             align-items: center
-                            justify-content: space-around
-                            background: #538D4E
-                            border: none
-                            padding: 0.5em 1em
-                            border-radius: 8px
+                            justify-content: center
+                            width: 108px
+                            height: 36px
+                            border-radius: 5px
+                            margin: 0 4px
+                            color: white
+                            text-decoration: none
+                            font-size: 14px
+                            font-weight: 700
                             cursor: pointer
-                            width: 136px
-                            p
-                                text-transform: uppercase
-                                font-weight: bold
-                                font-size: 14px
-                                color: white
-                            svg
-                                width: 24px
-                                height: 24px
-                                margin-left: 8px
-                                path
-                                    fill: white
+                            user-select: none
+                            .icon
+                                height: 14px
+                                margin-right: 8px
+                            &.definition-btn
+                                background-color: #3A3A3C
+                                border-bottom: 2px solid #2B2B2B
+                                &:hover
+                                    background-color: #474748
+                                    border-color: #313131
+                                &:active
+                                    background-color: #2B2B2B
+                                    border-color: #2B2B2B
+                            &.share-btn
+                                background-color: #3EAA42
+                                border-bottom: 2px solid #157D19
+                                &:hover
+                                    background-color: #44b848
+                                    border-color: #1c9320
+                                &:active
+                                    background-color: #157D19
+                                    border-color: #157D19
+            .modal-footer
+                display: flex
+                flex-direction: column
+                width: 100%
+                justify-content: center
+                align-items: center
+                max-width: 450px
+                width: 90%
+                box-sizing: border-box
+                padding: 12px
+                background-color: #141415
+                border-bottom-left-radius: 8px
+                border-bottom-right-radius: 8px
+                .next-in
+                    display: flex
+                    font-size: 12px
+                    font-weight: 700
+                    color: rgba(255, 255, 255, 0.5)
+                    margin-bottom: 2px
+                .time
+                    font-size: 20px
+                    font-weight: 700
+                    color: white
         .settings-modal
             position: fixed
+            display: flex
+            flex-direction: column
             width: 100vw
             height: 100vh
             display: flex
             justify-content: center
             align-items: center
-            background: rgba(0, 0, 0, 0.5)
+            background: rgba(0, 0, 0, 0.7)
             top: 0
             left: 0
             z-index: 10
             .settings-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
                 max-width: 450px
                 width: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
+                border-radius: 8px
                 min-height: 420px
                 max-height: 100%
                 overflow-y: auto
                 background: #121213
                 border-radius: 8px
-                padding: 12px
-                display: flex
-                flex-direction: column
-                align-items: center
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
                 .close-btn
-                    align-self: flex-end
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
                     cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
                 h2
-                    text-transform: uppercase
-                    padding-bottom: 12px
-                    border-bottom: 1px solid #919191
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 16px
+                h3
+                    font-size: 14px
+                    font-weight: 700
+                    color: #8E8E90
                 .settings-content
                     width: 100%
                     .settings-item
                         width: 100%
-                        padding: 12px 0
-                        border-bottom: 1px solid #919191
+                        padding: 8px 0
                         &.setting-toggle
                             display: flex
                             justify-content: space-between
                             align-items: center
                             .toggle-button
                                 background: #3A3A3C
-                                width: 36px
-                                height: 1.2em
-                                border-radius: 1.2em
+                                width: 46px
+                                height: 25px
+                                border-radius: 100px
                                 box-sizing: border-box
                                 cursor: pointer
                                 transition: all 0.3s
                                 position: relative
                                 .toggle
-                                    background: #919191
-                                    height: calc(100% - 4px)
-                                    width: 45%
-                                    border-radius: 1.2em
+                                    background: white
+                                    width: 17px
+                                    height: 17px
+                                    border-radius: 100px
                                     position: absolute
-                                    left: 2px
-                                    top: 1px
+                                    left: 4px
+                                    top: 4px
                                     transition: all 0.3s
                                 &.activated
-                                    background: #538D4E
+                                    background: #3EAA42
                                     .toggle
-                                        background: white
-                                        left: 50%
+                                        transform: translateX(21px)
                         &.setting-button
                             display: flex
                             justify-content: space-between
                             align-items: center
-                            button
-                                background: transparent
-                                cursor: pointer
-                                color: #919191
-                                border: 1px solid #919191
-                                padding: 0.5em 1em
-                                &.first
-                                    border-radius: 8px 0 0 8px
-                                &.last
-                                    border-radius: 0 8px 8px 0
-                                &.selected
-                                    background: #919191
-                                    color: white
-                                    font-weight: bold
-                            @media (max-width: 375px)
+                            .buttons
+                                background: #3A3A3C
+                                border-radius: 100px
+                                height: 25px
                                 button
-                                    font-size: 12px
-                                @media (max-width: 320px)
-                                    button
-                                        font-size: 10px
-                                    @media (max-width: 300px)
-                                        button
-                                            padding: 0.3em
-                        &.credits
-                            h3
-                                text-align: left
-                            p
-                                text-align: left
-                                margin-top: 6px
-                                font-size: 12px
-                                line-height: 16px
-                                a
+                                    font-family: Outfit, Avenir, Helvetica, Arial, sans-serif
+                                    height: 25px
+                                    padding: 0
+                                    width: 68px
+                                    background: none
+                                    cursor: pointer
+                                    font-size: 11px
+                                    font-weight: 700
                                     color: white
-                                    text-decoration: none
+                                    border: none
+                                    &.selected
+                                        background: #3EAA42
+                                        border-radius: 100px
+
+                                @media (max-width: 360px)
+                                    button
+                                        width: 60px
+                                        font-size: 10px
+                                @media (max-width: 330px)
+                                    height: 28px // Expend hitbox on height
+                                    button
+                                        width: 48px
+                                        height: 28px
+                                        font-size: 9px
+                    .credits
+                        h2
+                            text-align: left
+                            margin-top: 32px
+                        p
+                            font-size: 14px
+                            line-height: 1.3
+                            margin-bottom: 12px
+                            text-align: left
+                            color: #8E8E90
+                            &:last-child
+                                margin-bottom: 0
+                            a
+                                color: white
+                                text-decoration: none
+                                &:hover
+                                    text-decoration: underline
 
 @keyframes shake
     0%
