@@ -742,7 +742,7 @@ export default {
             border-radius: 0.5em
             font-size: 18px
             font-weight: bold
-            z-index: 2
+            z-index: 10
         .grid
             margin-top: auto
             margin-bottom: auto
