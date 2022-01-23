@@ -134,21 +134,25 @@
                         <h2>Statistiques</h2>
                         <div class="stats">
                             <div class="stats-content">
-                                <div class="stats-item games-played">
-                                    <p class="stat-item-figure">{{ userResults.nbGames }}</p>
-                                    <p class="stat-item-label">Parties</p>
+                                <div class="stats-line">
+                                    <div class="stats-item games-played">
+                                        <p class="stat-item-figure">{{ userResults.nbGames }}</p>
+                                        <p class="stat-item-label">Parties</p>
+                                    </div>
+                                    <div class="stats-item win-rate">
+                                        <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
+                                        <p class="stat-item-label">Victoires (%)</p>
+                                    </div>
                                 </div>
-                                <div class="stats-item win-rate">
-                                    <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
-                                    <p class="stat-item-label">Victoires (%)</p>
-                                </div>
-                                <div class="stats-item current-streak">
-                                    <p class="stat-item-figure">{{ userResults.currentStreak }}</p>
-                                    <p class="stat-item-label">Série actuelle</p>
-                                </div>
-                                <div class="stats-item current-streak">
-                                    <p class="stat-item-figure">{{ userResults.bestStreak }}</p>
-                                    <p class="stat-item-label">Meilleure série</p>
+                                <div class="stats-line">
+                                    <div class="stats-item current-streak">
+                                        <p class="stat-item-figure">{{ userResults.currentStreak }}</p>
+                                        <p class="stat-item-label">Série actuelle</p>
+                                    </div>
+                                    <div class="stats-item current-streak">
+                                        <p class="stat-item-figure">{{ userResults.bestStreak }}</p>
+                                        <p class="stat-item-label">Meilleure série</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -953,29 +957,39 @@ export default {
                     width: 100%
                     .stats-content
                         display: flex
-                        .stats-item
+                        @media (max-width: 380px)
+                            flex-direction: column
+                        .stats-line
                             display: flex
                             flex: 1
-                            flex-direction: column
-                            align-items: center
-                            justify-content: center
-                            height: 80px
-                            margin-right: 8px
-                            background-color: #0E0E0F
-                            border-radius: 6px
-                            &:last-child
-                                margin-right: 0
-                            .stat-item-figure
-                                font-size: 28px
-                                font-weight: bold
-                                color: #3EAA42
-                            .stat-item-label
+                            &:first-child
+                                margin-right: 8px
+                            @media (max-width: 380px)
+                                &:first-child
+                                    margin-right: 0px
+                                &:first-child
+                                    margin-bottom: 8px
+                            .stats-item
                                 display: flex
                                 align-items: center
-                                height: 30px
-                                font-size: 12px
-                                color: white
-                                margin: 0 8px
+                                justify-content: center
+                                height: 80px
+                                margin-right: 8px
+                                background-color: #0E0E0F
+                                border-radius: 6px
+                                &:last-child
+                                    margin-right: 0
+                                .stat-item-figure
+                                    font-size: 28px
+                                    font-weight: bold
+                                    color: #3EAA42
+                                .stat-item-label
+                                    display: flex
+                                    align-items: center
+                                    height: 30px
+                                    font-size: 12px
+                                    color: white
+                                    margin: 0 8px
                 .graph
                     width: 100%
                     display: flex
