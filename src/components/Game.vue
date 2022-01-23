@@ -176,7 +176,7 @@
                             <div class="ctas">
                                 <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
                                     <img class="icon" src="/icons/book.svg" />
-                                    <p>1mot.net</p>
+                                    <p>Définition</p>
                                 </a>
                                 <div class="btn share-btn" @click="share">
                                     <img class="icon" src="/icons/copy.svg" />
@@ -228,7 +228,7 @@
                                     Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish" target="_blank">@powerlanguish</a> (Josh Wardle).
                                 </p>
                                 <p>
-                                    Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse !
+                                    Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">Reelwens</a> pour le design !
                                 </p>
                                 <p>
                                     Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
@@ -971,6 +971,8 @@ export default {
                                     margin-bottom: 8px
                             .stats-item
                                 display: flex
+                                flex: 1
+                                flex-direction: column
                                 align-items: center
                                 justify-content: center
                                 height: 80px
