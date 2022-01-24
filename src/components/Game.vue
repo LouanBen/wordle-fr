@@ -165,7 +165,7 @@
                                         <img class="icon" src="/icons/skull.svg" alt="Mort" />
                                     </div>
                                     <div class="attempt-stat">
-                                        <div class="attempt-bar" :class="{ best: getAttemptStatPercent(attempt) === bestAttemptPercent && getAttemptStat(attempt) > 0 }" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
+                                        <div class="attempt-bar" :class="{ best: finished && attempt === currentAttempt}" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
                                     </div>
                                 </div>
                             </div>
