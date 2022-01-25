@@ -178,7 +178,7 @@
                                     <img class="icon" src="/icons/book.svg" />
                                     <p>Définition</p>
                                 </a>
-                                <div class="btn share-btn" @click="share">
+                                <div class="btn share-btn-anti-adblock" @click="shareAntiAdblock">
                                     <img class="icon" src="/icons/copy.svg" />
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
                                 </div>
@@ -590,7 +590,8 @@ export default {
         getWordID() {
             return this.today.clone().startOf('day').diff(moment("2022-01-10T00:00:00"), 'days') + 1
         },
-        share() {
+        // Shitty function name to avoid shitty adblockers
+        shareAntiAdblock() {
             const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
             let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
@@ -1079,7 +1080,8 @@ export default {
                                 &:active
                                     background-color: #2B2B2B
                                     border-color: #2B2B2B
-                            &.share-btn
+                            // Shitty class name to avoid shitty adblocker
+                            &.share-btn-anti-adblock
                                 background-color: #3EAA42
                                 border-bottom: 2px solid #157D19
                                 &:hover
