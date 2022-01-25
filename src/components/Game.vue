@@ -663,9 +663,16 @@ export default {
             if (this.sharedLink) {
                 sharedContent = sharedContent + '\n\n' + url;
             }
+            
+            const errMsg = "Votre navigateur ne permet pas de copier du texte via un bouton. Une solution alternative sera proposée dans une prochaine mise à jour."
+            if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+                alert(errMsg);
+                return;
+            }
 
-            navigator.clipboard.writeText(sharedContent);
-            this.resultsCopied = true;
+            navigator.clipboard.writeText(sharedContent).then(() => {
+                this.resultsCopied = true;
+            }).catch(() => alert(errMsg));
         }
     }
 }
