@@ -6,6 +6,7 @@
             partial: color === 'partial', 
             incorrect: color === 'incorrect',
             'color-blind': colorBlindMode,
+            'hardcore': hardcoreMode,
         }, isBig && keyboardName]"
     >
         <div v-if="isBig">
@@ -25,6 +26,7 @@ export default {
         keyContent: String,
         color: String,
         colorBlindMode: Boolean,
+        hardcoreMode: Boolean,
         keyboardName: String
     },
     data() {
@@ -87,6 +89,11 @@ export default {
             border-color: #CB581E
             &:active
                 background: #CB581E
+        &.hardcore
+            background: #b82e47
+            border-color: #96263a
+            &:active
+                background: #db3755
     &.partial
         background: #D3952A
         border-color: #A06F19
@@ -97,6 +104,11 @@ export default {
             border-color: #3C80C1
             &:active
                 background: #3C80C1
+        &.hardcore
+            background: #b82e47
+            border-color: #96263a
+            &:active
+                background: #db3755
     &.incorrect
         background: #2C2C2C
         border-color: #212121

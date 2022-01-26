@@ -7,6 +7,7 @@
         incorrect: color === 'incorrect',
         'no-animation': !animate,
         'color-blind': colorBlindMode,
+        'hardcore': hardcoreMode,
     }">
         <div class="letter" v-if="letter" :style="{ transitionDelay: `${0.15 + 0.3 * (placement - 1)}s`}">
             {{ letter }}
@@ -24,6 +25,7 @@ export default {
         color: String,
         animate: Boolean,
         colorBlindMode: Boolean,
+        hardcoreMode: Boolean,
     },
 }
 </script>
@@ -79,6 +81,9 @@ export default {
         &.color-blind
             border-color: #F5793A
             background: #F5793A
+        &.hardcore
+            border-color: #b82e47
+            background: #b82e47
     &.partial
         border-color: #D3952A
         background: #D3952A
@@ -86,6 +91,9 @@ export default {
         &.color-blind
             border-color: #85C0F9
             background: #85C0F9
+        &.hardcore
+            border-color: #b82e47
+            background: #b82e47
     &.incorrect
         border-color: #3A3A3C
         background: #3A3A3C

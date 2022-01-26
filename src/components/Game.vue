@@ -37,6 +37,7 @@
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
+                        :hardcoreMode="hardcoreMode"
                         v-for="letter, indexL in NB_LETTERS" 
                         :key="letter" />
                 </div>
@@ -47,6 +48,7 @@
                         :keyContent="key"
                         :color="getKeyColor(key)"
                         :colorBlindMode="colorBlindMode"
+                        :hardcoreMode="hardcoreMode"
                         v-for="key in line"
                         :key="key"
                         :keyboardName="keyboard.name"
@@ -120,6 +122,24 @@
                                     </div>
                                 </div>
                                 <p>La lettre <span>R</span> n'est pas dans le mot.</p>
+                                <div class="help-word">
+                                    <div class="help-letter-container">
+                                        V
+                                    </div>
+                                    <div class="help-letter-container">
+                                        I
+                                    </div>
+                                    <div class="help-letter-container">
+                                        N
+                                    </div>
+                                    <div class="help-letter-container hardcore">
+                                        G
+                                    </div>
+                                    <div class="help-letter-container" :class="{ 'color-blind': colorBlindMode }">
+                                        T
+                                    </div>
+                                </div>
+                                <p>En mode hardcore, vous ne saurez pas si une lettre est bien placée ou non. Vous saurez si cette lettre se trouve dans le mot, mais le jeu ne vous indiquera pas si celle-ci est à la bonne place.</p>
                             </div>
                         </div>
                     </div>
@@ -219,6 +239,12 @@
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
                             </div>
+                            <div class="settings-item setting-toggle">
+                                <h3 style="color: #b82e47">Mode hardcore</h3>
+                                <div class="toggle-button hardcore-mode-button" @click="hardcoreMode = !hardcoreMode" :class="{ activated: hardcoreMode }">
+                                    <div class="toggle"></div>
+                                </div>
+                            </div>
                             <div class="credits">
                                 <h2>Crédits</h2>
                                 <p>
@@ -313,6 +339,7 @@ export default {
             settingsOpened: false,
             helpOpened: false,
             colorBlindMode: false,
+            hardcoreMode: false,
             sharedLink: true,
             animateLetter: true,
             bestAttemptPercent: 0,
@@ -375,6 +402,10 @@ export default {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
         }
 
+        if (localStorage.getItem('hardcoreMode')) {
+            this.hardcoreMode = JSON.parse(localStorage.getItem('hardcoreMode'));
+        }
+
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
@@ -385,6 +416,9 @@ export default {
         },
         colorBlindMode() {
             localStorage.setItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
+        },
+        hardcoreMode() {
+            localStorage.setItem('hardcoreMode', JSON.stringify(this.hardcoreMode));
         },
         keyboard() {
             localStorage.setItem('keyboard', JSON.stringify(this.keyboard));
@@ -738,6 +772,8 @@ export default {
                         background-color: #3EAA42
                     &.partial
                         background-color: #D3952A
+                    &.hardcore
+                        background-color: #D3952A
                     &.incorrect
                         background-color: none
                         width: 14px
@@ -933,6 +969,9 @@ export default {
                             &.incorrect
                                 border: none
                                 background: #3A3A3C
+                            &.hardcore
+                                border: none
+                                background: #b82e47
                     p
                         span
                             font-weight: bold
@@ -1276,6 +1315,8 @@ export default {
                                     transition: all 0.3s
                                 &.activated
                                     background: #3EAA42
+                                    &.hardcore-mode-button
+                                        background: #b82e47
                                     .toggle
                                         transform: translateX(21px)
                         &.setting-button
