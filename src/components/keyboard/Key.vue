@@ -67,6 +67,10 @@ export default {
     -webkit-tap-highlight-color: transparent
     @media (max-height: 700px)
         height: 50px
+    &:hover
+        background: #5A5A5A
+        transition-duration: .5s
+        transform: translateY(1px)
     &:active
         background: #4D4D4D
     &.big
