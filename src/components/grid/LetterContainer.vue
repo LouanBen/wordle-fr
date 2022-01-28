@@ -60,7 +60,7 @@ export default {
     &.has-letter
         border-color: #646464
         &.color-blind
-            border-color: #ffffff
+            border-color: #FFFFFF
     &.validated
         animation: flip
         animation-duration: 0.5s
@@ -70,6 +70,7 @@ export default {
             transition: all 0.1s
             transform: rotateX(180deg)
         &.color-blind
+            border-color: #3A3A3C
             .letter
                 color: white
     &.correct

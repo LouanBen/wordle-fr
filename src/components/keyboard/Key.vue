@@ -70,9 +70,9 @@ export default {
         height: 50px
     &:hover
         background: #5A5A5A
-        transform: translateY(1px)
     &:active
         background: #4D4D4D
+        transform: translateY(1px)
     &.big
         width: 90px
         &.qwerty, &.qwertz
