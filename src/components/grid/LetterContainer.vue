@@ -61,8 +61,6 @@ export default {
         border-radius: 3px
     &.has-letter
         border-color: #646464
-        &.color-blind
-            border-color: #ffffff
     &.validated
         animation: flip
         animation-duration: 0.5s

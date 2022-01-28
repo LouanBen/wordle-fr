@@ -66,13 +66,9 @@ export default {
     border: none
     border-bottom: 2px solid #4D4D4D
     user-select: none
-    transition: transform 0.2s
     -webkit-tap-highlight-color: transparent
     @media (max-height: 700px)
         height: 50px
-    &:hover
-        background: #5A5A5A
-        transform: translateY(1px)
     &:active
         background: #4D4D4D
     &.big
