@@ -43,8 +43,6 @@ export default {
     margin: 4px
     transition: transform 0.1s, background 0.1s, border 0.1s
     user-select: none
-    &.color-blind
-            border-color: #919191
     @media (max-width: 380px)
         width: 54px
         height: 54px
