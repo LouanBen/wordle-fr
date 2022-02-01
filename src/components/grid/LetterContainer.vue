@@ -30,6 +30,9 @@ export default {
 
 <style lang="sass" scoped>
 #letter-container
+    display: flex
+    align-items: center
+    justify-content: center
     width: 62px
     height: 62px
     border: 3px solid #2F2F2F
@@ -59,6 +62,14 @@ export default {
         border-radius: 3px
     &.has-letter
         border-color: #646464
+    &.selected
+        border-color: #73ADFF
+        &::after
+            content: ''
+            width: 1px
+            height: 60%
+            background-color: white
+            animation: 1.2s linear infinite blink
     &.validated
         animation: flip
         animation-duration: 0.5s
@@ -113,4 +124,13 @@ export default {
             transform: rotateX(0deg)
         to
             transform: rotateX(180deg)
+    @keyframes blink
+        0%
+            opacity: 1
+        1%
+            opacity: 0
+        50%
+            opacity: 0
+        51%
+            opacity: 1
 </style>
