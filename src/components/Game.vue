@@ -37,6 +37,7 @@
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
+                        :hasCursor="indexA === currentAttempt - 1 && indexL === attempts[indexA].length"
                         v-for="letter, indexL in NB_LETTERS" 
                         :key="letter" />
                 </div>
