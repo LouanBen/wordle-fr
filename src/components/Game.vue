@@ -676,7 +676,8 @@ export default {
                     &.correct
                         background-color: #3EAA42
                     &.partial
-                        background-color: #D3952A
+                        background-color: #CD8729
+
                     &.incorrect
                         background-color: none
                         width: 14px
@@ -866,7 +867,8 @@ export default {
                                     background: #F5793A
                             &.partial
                                 border: none
-                                background: #D3952A
+                                background: #CD8729
+
                                 &.color-blind
                                     background: #85C0F9
                             &.incorrect
@@ -880,7 +882,7 @@ export default {
                                 &.color-blind
                                     color: #F5793A
                             &.partial
-                                color: #D3952A
+                                color: #CD8729
                                 &.color-blind
                                     color: #85C0F9
         .endgame-modal

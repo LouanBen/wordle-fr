@@ -86,10 +86,10 @@ export default {
             &:active
                 background: #CB581E
     &.partial
-        background: #D3952A
-        border-color: #A06F19
+        background: #CD8729
+        border-color: #9f6414
         &:active
-            background: #A06F19
+            background: #9f6414
         &.color-blind
             background: #85C0F9
             border-color: #3C80C1

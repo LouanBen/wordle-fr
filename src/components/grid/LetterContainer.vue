@@ -89,8 +89,8 @@ export default {
             border-color: #F5793A
             background: #F5793A
     &.partial
-        border-color: #D3952A
-        background: #D3952A
+        border-color: #CD8729
+        background: #CD8729
         animation-name: flip
         &.color-blind
             border-color: #85C0F9
