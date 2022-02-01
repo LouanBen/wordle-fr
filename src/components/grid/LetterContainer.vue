@@ -113,9 +113,11 @@ export default {
         align-items: center
         justify-content: center
         font-weight: bolder
-        font-size: 28px
+        font-size: 32px
         position: relative
         z-index: 3
+        @media (max-height: 700px)
+            font-size: 28px
         @media (max-height: 540px)
             font-size: 24px
 
