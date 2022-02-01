@@ -37,6 +37,7 @@
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
+                        :hasCursor="indexA === currentAttempt - 1 && indexL === attempts[indexA].length"
                         v-for="letter, indexL in NB_LETTERS" 
                         :key="letter" />
                 </div>
@@ -165,7 +166,7 @@
                                         <img class="icon" src="/icons/skull.svg" alt="Mort" />
                                     </div>
                                     <div class="attempt-stat">
-                                        <div class="attempt-bar" :class="{ best: getAttemptStatPercent(attempt) === bestAttemptPercent && getAttemptStat(attempt) > 0 }" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
+                                        <div class="attempt-bar" :class="{ best: finished && attempt === currentAttempt}" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +179,7 @@
                                     <img class="icon" src="/icons/book.svg" />
                                     <p>Définition</p>
                                 </a>
-                                <div class="btn share-btn" @click="share">
+                                <div class="btn sh4re-btn-anti-adblock" @click="sh4reAntiAdblock">
                                     <img class="icon" src="/icons/copy.svg" />
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
                                 </div>
@@ -314,7 +315,6 @@ export default {
             helpOpened: false,
             colorBlindMode: false,
             sharedLink: true,
-            isStreak: false,
             animateLetter: true,
             bestAttemptPercent: 0,
             resultsCopied: false,
@@ -436,6 +436,8 @@ export default {
                 } else {
                     this.reset();
                 }
+            } else {
+                this.reset();
             }
         },
         reset() {
@@ -447,10 +449,6 @@ export default {
             localStorage.setItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
             localStorage.setItem('won', JSON.stringify(this.won));
             localStorage.setItem('finished', JSON.stringify(this.finished));
-            let yesterday = moment().subtract(1, 'day')
-            if (localStorage.getItem('lastSave') === yesterday.format('YYYY-M-D')) {
-                this.isStreak = true;
-            }
             localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
             if (localStorage.getItem('userResults')) {
                 this.userResults = JSON.parse(localStorage.getItem('userResults'));
@@ -468,7 +466,6 @@ export default {
             }
         },
         handleKeyClick(key) {
-            localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
             this.animateLetter = true;
             this.error = '';
             if (key === 'Entrer') {
@@ -539,34 +536,91 @@ export default {
             if (attempt.join('') === this.wordOfTheDay) {
                 this.won = true;
                 this.finished = true;
-                this.getStats();
+                this.computeStats();
             } else {
                 this.currentAttempt++;
                 if (this.currentAttempt > NB_ATTEMPTS) {
                     this.finished = true;
-                    this.getStats();
+                    this.computeStats();
                 }
             }
             localStorage.setItem('currentAttempt', JSON.stringify(this.currentAttempt));
             localStorage.setItem('won', JSON.stringify(this.won));
             localStorage.setItem('finished', JSON.stringify(this.finished));
         },
-        getStats() {
-            if(!this.userResults.games.find((game) => {
-                return game.date === this.today.format('YYYY-M-D');
-            })) {
+        computeStats() {
+            let games = this.userResults.games;
+            let todaysGame = games.find((game) => game.date === this.today.format('YYYY-M-D'));
+
+            if(!todaysGame) {
+                let yesterday = this.today.clone().subtract(1, 'day');
+                let yesterdaysGame = games.find(game => game.date === yesterday.format('YYYY-M-D'));
+                let isStreak = Boolean(yesterdaysGame && yesterdaysGame.won);
+
                 this.userResults.nbGames++;
-                this.userResults.nbWins += this.won ? 1 : 0;
-                this.userResults.currentStreak = this.isStreak && this.won ? this.userResults.currentStreak + 1 : 1;
+
+                if (this.won) {
+                    this.userResults.nbWins += 1;
+                    this.userResults.currentStreak = isStreak ? this.userResults.currentStreak + 1 : 1;
+                } else {
+                    this.userResults.currentStreak = 0;
+                }
+
                 if (this.userResults.currentStreak > this.userResults.bestStreak) {
                     this.userResults.bestStreak = this.userResults.currentStreak;
                 }
-                this.userResults.games.push({
+                games.push({
                     date: this.today.format('YYYY-M-D'),
                     won: this.won,
                     nbAttempts: this.currentAttempt,
                 });
+
                 localStorage.setItem('userResults', JSON.stringify(this.userResults));
+
+                // Recalcul des streaks & victoires (temporaire)
+                try {
+                    let expected = games.reduce((ac, game, i) => {
+                        let today = moment(game.date, 'YYYY-M-D');
+                        let yesterday = today.clone().subtract(1, 'day');
+                        let yesterdaysGame = games.slice(i - 1, i).find(g => g.date === yesterday.format('YYYY-M-D'));
+                        // console.log('parse', game.date, today.format('YYYY-M-D'), yesterday.format('YYYY-M-D'), yesterdaysGame)
+                        let isStreak = Boolean(yesterdaysGame && yesterdaysGame.won);
+                        ac.nbGames++;
+                        if (game.won) {
+                            ac.nbWins += 1;
+                            ac.currentStreak = isStreak ? ac.currentStreak + 1 : 1;
+                        } else {
+                            ac.currentStreak = 0;
+                        }
+
+                        if (ac.currentStreak > ac.bestStreak) {
+                            ac.bestStreak = ac.currentStreak;
+                        }
+
+                        return ac;
+                    }, {
+                        nbGames: 0,
+                        nbWins: 0,
+                        currentStreak: 0,
+                        bestStreak: 0
+                    });
+
+                    // console.log(expected, this.userResults);
+                    
+                    let updated = false;
+                    Object.entries(expected).filter(([k, v]) => this.userResults[k] !== v).forEach(([k, v]) => {
+                        // console.log(`fixing "${k}" value, expected ${v}, got ${this.userResults[k]}`)
+                        this.userResults[k] = v;
+                        updated = true;
+                    });
+
+                    if (updated) {
+                        localStorage.setItem('userResults', JSON.stringify(this.userResults));
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+
             }
             window.setTimeout(() => { this.statsOpened = true }, 2000);
         },
@@ -590,7 +644,8 @@ export default {
         getWordID() {
             return this.today.clone().startOf('day').diff(moment("2022-01-10T00:00:00"), 'days') + 1
         },
-        share() {
+        // Shitty function name to avoid shitty adblockers
+        sh4reAntiAdblock() {
             const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
             let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
@@ -610,9 +665,16 @@ export default {
             if (this.sharedLink) {
                 sharedContent = sharedContent + '\n\n' + url;
             }
+            
+            const errMsg = "Votre navigateur ne permet pas de copier du texte via un bouton. Une solution alternative sera proposée dans une prochaine mise à jour."
+            if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+                alert(errMsg);
+                return;
+            }
 
-            navigator.clipboard.writeText(sharedContent);
-            this.resultsCopied = true;
+            navigator.clipboard.writeText(sharedContent).then(() => {
+                this.resultsCopied = true;
+            }).catch(() => alert(errMsg));
         }
     }
 }
@@ -1081,7 +1143,8 @@ export default {
                                 &:active
                                     background-color: #2B2B2B
                                     border-color: #2B2B2B
-                            &.share-btn
+                            // Shitty class name to avoid shitty adblocker
+                            &.sh4re-btn-anti-adblock
                                 background-color: #3EAA42
                                 border-bottom: 2px solid #157D19
                                 &:hover
