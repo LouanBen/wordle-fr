@@ -60,7 +60,7 @@ export default {
     font-weight: 700
     color: #FFFFFF
     background: #636363
-    border-radius: 4px
+    border-radius: 6px
     border: none
     border-bottom: 2px solid #4D4D4D
     user-select: none
