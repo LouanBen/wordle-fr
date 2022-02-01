@@ -56,7 +56,7 @@ export default {
     height: 60px
     cursor: pointer
     margin: 2px
-    font-size: 18px
+    font-size: 22px
     font-weight: 700
     color: #FFFFFF
     background: #636363
@@ -67,6 +67,8 @@ export default {
     -webkit-tap-highlight-color: transparent
     @media (max-height: 700px)
         height: 50px
+    @media (max-height: 700px), (max-width: 500px)
+        font-size: 18px
     &:active
         background: #4D4D4D
     &.big
@@ -101,8 +103,10 @@ export default {
         &:active
             background: #212121
     .icon
-        height: 13px
+        height: 15px
         transform: translateY(1px)
+        @media (max-height: 700px), (max-width: 500px)
+            height: 13px
     @media (max-width: 500px)
         width: 34px
         &.big
