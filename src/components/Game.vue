@@ -521,12 +521,13 @@ export default {
         handleKeyClick(key) {
             this.animateLetter = true;
             this.error = '';
+
+            if (this.finished) return;
+
             if (key === 'Entrer') {
                 this.verifyWord(this.attempts[this.currentAttempt - 1]);
             } else if (key === 'Suppr') {
-                if(this.archivesMode || !this.userResults.games.find((game) => {// TODO: WTF is happening here?! :D
-                    return game.date === this.today.format('YYYY-M-D');
-                })) {
+                if(this.attempts[this.currentAttempt - 1].length > 0) {
                     this.attempts[this.currentAttempt - 1].pop();
                 }
             } else if (this.attempts[this.currentAttempt - 1].length < NB_LETTERS) {
