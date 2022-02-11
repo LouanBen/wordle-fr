@@ -152,44 +152,47 @@
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
                         <h2>Statistiques</h2>
-                        <div class="stats">
-                            <div class="stats-content">
-                                <div class="stats-line">
-                                    <div class="stats-item games-played">
-                                        <p class="stat-item-figure">{{ userResults.nbGames }}</p>
-                                        <p class="stat-item-label">Parties</p>
+                        <template v-if="!archivesMode">
+                            <div class="stats">
+                                <div class="stats-content">
+                                    <div class="stats-line">
+                                        <div class="stats-item games-played">
+                                            <p class="stat-item-figure">{{ userResults.nbGames }}</p>
+                                            <p class="stat-item-label">Parties</p>
+                                        </div>
+                                        <div class="stats-item win-rate">
+                                            <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
+                                            <p class="stat-item-label">Victoires (%)</p>
+                                        </div>
                                     </div>
-                                    <div class="stats-item win-rate">
-                                        <p class="stat-item-figure">{{ Math.round((userResults.nbGames > 0 ? userResults.nbWins / userResults.nbGames : 0) * 100) }}</p>
-                                        <p class="stat-item-label">Victoires (%)</p>
-                                    </div>
-                                </div>
-                                <div class="stats-line">
-                                    <div class="stats-item current-streak">
-                                        <p class="stat-item-figure">{{ userResults.currentStreak }}</p>
-                                        <p class="stat-item-label">Série actuelle</p>
-                                    </div>
-                                    <div class="stats-item current-streak">
-                                        <p class="stat-item-figure">{{ userResults.bestStreak }}</p>
-                                        <p class="stat-item-label">Meilleure série</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <h2>Performances</h2>
-                        <div class="graph">
-                            <div class="graph-content">
-                                <div class="graph-item" v-for="attempt in NB_ATTEMPTS + 1" :key="attempt">
-                                    <div class="attempt-number" v-if="attempt <= NB_ATTEMPTS">{{ attempt }}</div>
-                                    <div class="attempt-skull" v-else>
-                                        <img class="icon" src="/icons/skull.svg" alt="Mort" />
-                                    </div>
-                                    <div class="attempt-stat">
-                                        <div class="attempt-bar" :class="{ best: finished && attempt === currentAttempt}" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
+                                    <div class="stats-line">
+                                        <div class="stats-item current-streak">
+                                            <p class="stat-item-figure">{{ userResults.currentStreak }}</p>
+                                            <p class="stat-item-label">Série actuelle</p>
+                                        </div>
+                                        <div class="stats-item current-streak">
+                                            <p class="stat-item-figure">{{ userResults.bestStreak }}</p>
+                                            <p class="stat-item-label">Meilleure série</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <h2>Performances</h2>
+                            <div class="graph">
+                                <div class="graph-content">
+                                    <div class="graph-item" v-for="attempt in NB_ATTEMPTS + 1" :key="attempt">
+                                        <div class="attempt-number" v-if="attempt <= NB_ATTEMPTS">{{ attempt }}</div>
+                                        <div class="attempt-skull" v-else>
+                                            <img class="icon" src="/icons/skull.svg" alt="Mort" />
+                                        </div>
+                                        <div class="attempt-stat">
+                                            <div class="attempt-bar" :class="{ best: finished && attempt === currentAttempt}" :style="{ width: `${getAttemptStatPercent(attempt)}%`}">{{ getAttemptStat(attempt) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
                         <div class="soluce" v-if="finished">
                             <div class="subtitle">Le mot était</div>
                             <h2>{{ wordOfTheDay }}</h2>
@@ -205,7 +208,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer" v-if="finished">
+                    <div class="modal-footer" v-if="finished && !archivesMode">
                         <div class="next-in">Prochain mot dans</div>
                         <div class="time">{{ countdownToNextWord }}</div>
                     </div>
@@ -274,6 +277,7 @@ import playableWords from "../assets/json/playable-words.json";
 moment.locale('fr')
 moment.tz.setDefault('Europe/Paris')
 
+const FIRST_DAY = moment("2022-01-10T00:00:00");
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
 const KEYBOARD_AZERTY = {
@@ -347,19 +351,6 @@ export default {
                 bestStreak: 0,
                 games: [],
             },
-            // {
-            //     nbGames: 0,
-            //     nbWins: 0,
-            //     currentStreak: 0,
-            //     bestStreak: 0,
-            //     games: [
-            //         {
-            //              date: '',
-            //              won: false,
-            //              nbAttempts: 6,
-            //          }
-            //     ],
-            // }
         }
     },
     mounted() {
@@ -404,22 +395,49 @@ export default {
     },
     watch: {
         sharedLink() {
-            localStorage.setItem('sharedLink', JSON.stringify(this.sharedLink));
+            this.setLSItem('sharedLink', JSON.stringify(this.sharedLink));
         },
         colorBlindMode() {
-            localStorage.setItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
+            this.setLSItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
         },
         keyboard() {
-            localStorage.setItem('keyboard', JSON.stringify(this.keyboard));
+            this.setLSItem('keyboard', JSON.stringify(this.keyboard));
         },
         archivesMode() {
             this.getWordOfTheDay()
             if (!this.archivesMode) {
                 this.getSavedData();
+            } else {
+                this.resetGridData();
             }
         },
     },
     methods: {
+        setLSItem (key, val) {
+            if (this.archivesMode && !['colorBlindMode', 'keyboard', 'sharedLink'].includes(key))
+                return
+            
+            if (typeof val !== 'string')
+                val = JSON.stringify(val)
+
+            localStorage.setItem(key, val)
+        },
+        resetGridData () {
+            this.attempts = [];
+            this.results = [];
+            this.correctLetters = [];
+            this.partialLetters = [];
+            this.incorrectLetters = [];
+            this.won = false;
+            this.finished = false;
+            this.currentAttempt = 1;
+
+            for (let i = 0; i < NB_ATTEMPTS; i++) {
+                this.attempts.push([]);
+                this.results.push(new Array(5));
+            }
+
+        },
         async getWordOfTheDay() {
             const date = this.archivesMode ? this.archivesDate : this.today;
             const formatedDate = date.format('YYYY-M-D');
@@ -433,8 +451,11 @@ export default {
                     this.archivesDate = this.archivesDate.add(nbDays, 'days');
                 }
             } else {
-                this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
+                if (this.archivesDate > moment(FIRST_DAY).add(1, 'days')) {
+                    this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
+                }
             }
+            this.resetGridData();
             this.getWordOfTheDay();
         },
         getSavedData() {
@@ -476,15 +497,15 @@ export default {
             }
         },
         reset() {
-            localStorage.setItem('attempts', JSON.stringify(this.attempts));
-            localStorage.setItem('results', JSON.stringify(this.results));
-            localStorage.setItem('currentAttempt', JSON.stringify(this.currentAttempt));
-            localStorage.setItem('correctLetters', JSON.stringify(this.correctLetters));
-            localStorage.setItem('partialLetters', JSON.stringify(this.partialLetters));
-            localStorage.setItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
-            localStorage.setItem('won', JSON.stringify(this.won));
-            localStorage.setItem('finished', JSON.stringify(this.finished));
-            localStorage.setItem('lastSave', this.today.format('YYYY-M-D'));
+            this.setLSItem('attempts', JSON.stringify(this.attempts));
+            this.setLSItem('results', JSON.stringify(this.results));
+            this.setLSItem('currentAttempt', JSON.stringify(this.currentAttempt));
+            this.setLSItem('correctLetters', JSON.stringify(this.correctLetters));
+            this.setLSItem('partialLetters', JSON.stringify(this.partialLetters));
+            this.setLSItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
+            this.setLSItem('won', JSON.stringify(this.won));
+            this.setLSItem('finished', JSON.stringify(this.finished));
+            this.setLSItem('lastSave', this.today.format('YYYY-M-D'));
             if (localStorage.getItem('userResults')) {
                 this.userResults = JSON.parse(localStorage.getItem('userResults'));
             }
@@ -506,7 +527,7 @@ export default {
             if (key === 'Entrer') {
                 this.verifyWord(this.attempts[this.currentAttempt - 1]);
             } else if (key === 'Suppr') {
-                if(!this.userResults.games.find((game) => {
+                if(this.archivesMode || !this.userResults.games.find((game) => {// TODO: WTF is happening here?! :D
                     return game.date === this.today.format('YYYY-M-D');
                 })) {
                     this.attempts[this.currentAttempt - 1].pop();
@@ -514,7 +535,7 @@ export default {
             } else if (this.attempts[this.currentAttempt - 1].length < NB_LETTERS) {
                 this.attempts[this.currentAttempt - 1].push(key);
             }
-            localStorage.setItem('attempts', JSON.stringify(this.attempts));
+            this.setLSItem('attempts', JSON.stringify(this.attempts));
         },
         verifyWord(attempt) {
             if (attempt.length === NB_LETTERS) {
@@ -564,10 +585,10 @@ export default {
                     }
                 }
             });
-            localStorage.setItem('results', JSON.stringify(this.results));
-            localStorage.setItem('correctLetters', JSON.stringify(this.correctLetters));
-            localStorage.setItem('partialLetters', JSON.stringify(this.partialLetters));
-            localStorage.setItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
+            this.setLSItem('results', JSON.stringify(this.results));
+            this.setLSItem('correctLetters', JSON.stringify(this.correctLetters));
+            this.setLSItem('partialLetters', JSON.stringify(this.partialLetters));
+            this.setLSItem('incorrectLetters', JSON.stringify(this.incorrectLetters));
             if (attempt.join('') === this.wordOfTheDay) {
                 this.won = true;
                 this.finished = true;
@@ -579,9 +600,9 @@ export default {
                     this.computeStats();
                 }
             }
-            localStorage.setItem('currentAttempt', JSON.stringify(this.currentAttempt));
-            localStorage.setItem('won', JSON.stringify(this.won));
-            localStorage.setItem('finished', JSON.stringify(this.finished));
+            this.setLSItem('currentAttempt', JSON.stringify(this.currentAttempt));
+            this.setLSItem('won', JSON.stringify(this.won));
+            this.setLSItem('finished', JSON.stringify(this.finished));
         },
         computeStats() {
             let games = this.userResults.games;
@@ -610,9 +631,10 @@ export default {
                     nbAttempts: this.currentAttempt,
                 });
 
-                localStorage.setItem('userResults', JSON.stringify(this.userResults));
+                this.setLSItem('userResults', JSON.stringify(this.userResults));
 
                 // Recalcul des streaks & victoires (temporaire)
+                if (!this.archivesMode)
                 try {
                     let expected = games.reduce((ac, game, i) => {
                         let today = moment(game.date, 'YYYY-M-D');
@@ -650,7 +672,7 @@ export default {
                     });
 
                     if (updated) {
-                        localStorage.setItem('userResults', JSON.stringify(this.userResults));
+                        this.setLSItem('userResults', JSON.stringify(this.userResults));
                     }
                 } catch (err) {
                     console.error(err);
@@ -677,11 +699,15 @@ export default {
             return attemptPercent;
         },
         getWordID() {
-            return this.today.clone().startOf('day').diff(moment("2022-01-10T00:00:00"), 'days') + 1
+            let day = this.archivesMode ? this.archivesDate : this.today
+            return day.clone().startOf('day').diff(FIRST_DAY, 'days') + 1
         },
         // Shitty function name to avoid shitty adblockers
         sh4reAntiAdblock() {
-            const title = `Le Mot (@WordleFR) #${this.getWordID()} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
+            const wordID = this.getWordID()
+            const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
+
+            const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
             let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
                     if (letter === 'correct') {
@@ -709,6 +735,7 @@ export default {
 
             navigator.clipboard.writeText(sharedContent).then(() => {
                 this.resultsCopied = true;
+                setTimeout(() => (this.resultsCopied = false), 10000);
             }).catch(() => alert(errMsg));
         },
         formatDate(date) {
