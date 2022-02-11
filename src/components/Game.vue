@@ -6,14 +6,22 @@
                     <div class="icon-btn help" @click="helpOpened = true" title="Aide">
                         <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
+                    <div class="icon-btn archives" @click="archivesMode = !archivesMode" title="Archives">
+                        <img class="icon" src="/icons/archive.svg" alt="Archives" />
+                    </div>
                 </div>
                 <div class="game-title"><!--MORDLE-->
-                    <div class="letter correct">L</div>
-                    <div class="letter incorrect">E</div>
-                    <div class="space"></div>
-                    <div class="letter partial">M</div>
-                    <div class="letter incorrect">O</div>
-                    <div class="letter incorrect">T</div>
+                    <div class="title">
+                        <div class="letter correct">L</div>
+                        <div class="letter incorrect">E</div>
+                        <div class="space"></div>
+                        <div class="letter partial">M</div>
+                        <div class="letter incorrect">O</div>
+                        <div class="letter incorrect">T</div>
+                    </div>
+                    <div class="subtitle" v-if="archivesMode">
+                        mode archives
+                    </div>
                 </div> 
                 <div class="header-right">
                     <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
@@ -29,6 +37,18 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
+            <!--- here --->
+            <div class="archives-selector" v-if="archivesMode">
+                <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
+                    <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
+                </div>
+                <div class="archives-date">
+                    {{ formatDate(archivesDate) }}
+                </div>
+                <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
+                    <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
+                </div>
+            </div>
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
@@ -297,6 +317,7 @@ export default {
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
             today: moment(),
+            yesterday: moment().subtract(1, 'day'),
             words,
             attempts: [],
             results: [],
@@ -317,6 +338,8 @@ export default {
             animateLetter: true,
             bestAttemptPercent: 0,
             resultsCopied: false,
+            archivesMode: false,
+            archivesDate: moment().subtract(1, 'days'),
             userResults: {
                 nbGames: 0,
                 nbWins: 0,
@@ -389,17 +412,28 @@ export default {
         keyboard() {
             localStorage.setItem('keyboard', JSON.stringify(this.keyboard));
         },
+        archivesMode() {
+            this.getWordOfTheDay()
+            if (!this.archivesMode) {
+                this.getSavedData();
+            }
+        },
     },
     methods: {
         async getWordOfTheDay() {
-            const formatedDate = this.today.format('YYYY-M-D');
+            const date = this.archivesMode ? this.archivesDate : this.today;
+            const formatedDate = date.format('YYYY-M-D');
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
-
-            // Forcing temporaire pour éviter de changer le mot du jour de déploiement
-            if (formatedDate === '2022-1-14')
-                this.wordOfTheDay = 'SMURA'.split('').reverse().join('')
+        },
+        changeArchivesDate(nbDays) {
+            if (nbDays > 0) {
+                this.archivesDate = this.archivesDate.add(nbDays, 'days');
+            } else {
+                this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
+            }
+            this.getWordOfTheDay();
         },
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
@@ -674,7 +708,10 @@ export default {
             navigator.clipboard.writeText(sharedContent).then(() => {
                 this.resultsCopied = true;
             }).catch(() => alert(errMsg));
-        }
+        },
+        formatDate(date) {
+            return moment(date).format('DD/MM/YYYY');
+        },
     }
 }
 </script>
@@ -709,50 +746,52 @@ export default {
                 padding: 0 12px
                 box-sizing: border-box
             .game-title
-                display: flex
-                align-items: center
-                justify-content: center
-                .letter
+                .title
                     display: flex
                     align-items: center
                     justify-content: center
-                    width: 24px
-                    height: 24px
-                    margin: 0 3px
-                    font-size: 14px
-                    font-weight: 700
-                    border-radius: 4px
-                    text-transform: uppercase
-                    color: white
-                    @media (max-height: 540px)
-                        width: 20px
-                        height: 20px
-                        font-size: 12px
-                        margin: 0 2px
-                    @media (max-width: 320px)
-                        width: 20px
-                        height: 20px
-                        font-size: 12px
-                        margin: 0 1px
-                    &.correct
-                        background-color: #3EAA42
-                    &.partial
-                        background-color: #D3952A
-                    &.incorrect
-                        background-color: none
+                    .letter
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        width: 24px
+                        height: 24px
+                        margin: 0 3px
+                        font-size: 14px
+                        font-weight: 700
+                        border-radius: 4px
+                        text-transform: uppercase
+                        color: white
+                        @media (max-height: 540px)
+                            width: 20px
+                            height: 20px
+                            font-size: 12px
+                            margin: 0 2px
+                        @media (max-width: 320px)
+                            width: 20px
+                            height: 20px
+                            font-size: 12px
+                            margin: 0 1px
+                        &.correct
+                            background-color: #3EAA42
+                        &.partial
+                            background-color: #D3952A
+                        &.incorrect
+                            background-color: none
+                            width: 14px
+                    .space
                         width: 14px
-                .space
-                    width: 14px
-                    @media (max-width: 320px)
-                        width: 10px
-            .header-right
+                        @media (max-width: 320px)
+                            width: 10px
+                .subtitle
+                    margin-top: 0.5em
+                    font-size: 0.8em
+            .header-right, .header-left
                 display: flex
                 width: 70px
                 justify-content: space-between
                 @media (max-height: 540px)
                     width: 62px
-            .header-left 
-                width: 70px
             .icon-btn
                 display: flex
                 align-items: center
@@ -804,6 +843,16 @@ export default {
             font-size: 18px
             font-weight: bold
             z-index: 10
+        .archives-selector
+            margin: 12px 0
+            color: white
+            display: flex
+            justify-content: space-around
+            width: 100%
+            .archives-arrow
+                width: 16px
+                height: 16px
+                cursor: pointer
         .grid
             margin-top: auto
             margin-bottom: auto
