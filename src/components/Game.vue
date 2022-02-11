@@ -56,6 +56,7 @@
             </div>
             <transition name="fadeup">
                 <div class="help-modal" v-if="helpOpened">
+                    <div class="modal-backdrop" @click="helpOpened = false"></div>
                     <div class="help-modal-content">
                         <div class="close-btn" @click="helpOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
@@ -127,6 +128,7 @@
             </transition>
             <transition name="fadeup">
                 <div class="endgame-modal" v-if="statsOpened">
+                    <div class="modal-backdrop" @click="statsOpened = false"></div>
                     <div class="endgame-modal-content" v-bind:class="{ 'finished' : finished}">
                         <div class="close-btn" @click="statsOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
@@ -193,6 +195,7 @@
             </transition>
             <transition name="fadeup">
                 <div class="settings-modal" v-if="settingsOpened">
+                    <div class="modal-backdrop" @click="settingsOpened = false"></div>
                     <div class="settings-modal-content">
                         <div class="close-btn" @click="settingsOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
@@ -823,6 +826,12 @@ export default {
                     margin: 0
                 @media (max-height: 540px)
                     margin-top: 4px
+        .modal-backdrop
+                position: fixed
+                width: 100vw
+                height: 100vh
+                top: 0
+                left: 0
         .help-modal
             position: fixed
             display: flex
