@@ -6,7 +6,7 @@
                     <div class="icon-btn help" @click="helpOpened = true" title="Aide">
                         <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
-                    <div class="icon-btn archives" @click="archivesMode = !archivesMode" title="Archives">
+                    <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="archivesMode = !archivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
                     </div>
                 </div>
@@ -18,9 +18,6 @@
                         <div class="letter partial">M</div>
                         <div class="letter incorrect">O</div>
                         <div class="letter incorrect">T</div>
-                    </div>
-                    <div class="subtitle" v-if="archivesMode">
-                        mode archives
                     </div>
                 </div> 
                 <div class="header-right">
@@ -841,6 +838,9 @@ export default {
                 &:active
                     background-color: #2B2B2B
                     border-color: #2B2B2B
+                &.pressed
+                    background-color: #1AA7EC
+                    border-color: #1AA7EC
                 .icon
                     height: 13px
     main
