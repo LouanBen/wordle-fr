@@ -429,7 +429,9 @@ export default {
         },
         changeArchivesDate(nbDays) {
             if (nbDays > 0) {
-                this.archivesDate = this.archivesDate.add(nbDays, 'days');
+                if (this.archivesDate < this.yesterday) {
+                    this.archivesDate = this.archivesDate.add(nbDays, 'days');
+                }
             } else {
                 this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
             }
