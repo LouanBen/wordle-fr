@@ -3,7 +3,7 @@
         <header>
             <div class="header-container">
                 <div class="header-left">
-                    <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="switchArchivesMode" title="Archives">
+                    <div class="icon-btn archives" :class="{ pressed: archivesMode, nopin: visitedArchives }" @click="switchArchivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
                     </div>
                     <div class="icon-btn stats" @click="statsOpened = true" v-if="!archivesMode" title="Statistiques">
@@ -21,13 +21,13 @@
                     </div>
                 </div>
                 <div class="archives-selector" v-if="archivesMode">
-                    <div class="icon-btn archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
+                    <div class="icon-btn archives-arrow archives-date-previous" :class="{ disabled: !canChangeArchivesDate(-1) }" @click="changeArchivesDate(-1)">
                         <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
                     </div>
                     <div class="archives-date">
                         {{ formatDate(archivesDate) }}
                     </div>
-                    <div class="icon-btn archives-arrow archives-date-next" @click="changeArchivesDate(1)">
+                    <div class="icon-btn archives-arrow archives-date-next" :class="{ disabled: !canChangeArchivesDate(1) }" @click="changeArchivesDate(1)">
                         <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
                     </div>
                 </div>
@@ -454,15 +454,23 @@ export default {
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
         },
-        changeArchivesDate(nbDays) {
+        canChangeArchivesDate (nbDays) {
+            if (nbDays > 0 && this.archivesDate >= this.yesterday)
+                return false;
+            else if (nbDays < 0 && this.archivesDate <= moment(FIRST_DAY).add(1, 'days'))
+                return false;
+
+            return true;
+        },
+        changeArchivesDate (nbDays) {
+
+            if (!this.canChangeArchivesDate(nbDays))
+                return;
+
             if (nbDays > 0) {
-                if (this.archivesDate < this.yesterday) {
-                    this.archivesDate = this.archivesDate.add(nbDays, 'days');
-                }
+                this.archivesDate = this.archivesDate.add(nbDays, 'days');
             } else {
-                if (this.archivesDate > moment(FIRST_DAY).add(1, 'days')) {
-                    this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
-                }
+                this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
             }
             this.resetGridData();
             this.getWordOfTheDay();
