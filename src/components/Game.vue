@@ -34,7 +34,7 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
-            <!--- here --->
+            <!-- here -->
             <div class="archives-selector" v-if="archivesMode">
                 <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
                     <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
@@ -840,8 +840,8 @@ export default {
                     background-color: #2B2B2B
                     border-color: #2B2B2B
                 &.pressed
-                    background-color: #1AA7EC
-                    border-color: #1AA7EC
+                    background-color: #3EAA42
+                    border-color: #157D19
                 .icon
                     height: 13px
     main
