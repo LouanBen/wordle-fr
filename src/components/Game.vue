@@ -890,6 +890,7 @@ export default {
                         opacity: .5
                 .icon
                     height: 13px
+                    user-select: none
     main
         max-width: 500px
         height: 95%
