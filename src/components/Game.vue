@@ -3,7 +3,7 @@
         <header>
             <div class="header-container">
                 <div class="header-left">
-                    <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="archivesMode = !archivesMode" title="Archives">
+                    <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="switchArchivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
                     </div>
                     <div class="icon-btn stats" @click="statsOpened = true" v-if="!archivesMode" title="Statistiques">
@@ -338,6 +338,7 @@ export default {
             animateLetter: true,
             bestAttemptPercent: 0,
             resultsCopied: false,
+            visitedArchives: false,
             archivesMode: false,
             archivesDate: moment().subtract(1, 'days'),
             userResults: {
@@ -388,6 +389,10 @@ export default {
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
+
+        if (localStorage.getItem('visitedArchives')) {
+            this.visitedArchives = true;
+        }
     },
     watch: {
         sharedLink() {
@@ -409,6 +414,14 @@ export default {
         },
     },
     methods: {
+        switchArchivesMode () {
+            if (!this.archivesMode && !this.visitedArchives) {
+                this.visitedArchives = true;
+                this.setLSItem('visitedArchives', true);
+            }
+
+            this.archivesMode = !this.archivesMode;
+        },
         setLSItem (key, val) {
             if (this.archivesMode && !['colorBlindMode', 'keyboard', 'sharedLink'].includes(key))
                 return
