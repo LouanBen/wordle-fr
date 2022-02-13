@@ -3,11 +3,11 @@
         <header>
             <div class="header-container">
                 <div class="header-left">
-                    <div class="icon-btn help" @click="helpOpened = true" title="Aide">
-                        <img class="icon" src="/icons/help.svg" alt="Aide" />
-                    </div>
                     <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="archivesMode = !archivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
+                    </div>
+                    <div class="icon-btn stats" @click="statsOpened = true" v-if="!archivesMode" title="Statistiques">
+                        <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
                     </div>
                 </div>
                 <div class="game-title" v-if="!archivesMode"><!--MORDLE-->
@@ -32,11 +32,11 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
-                        <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
-                    </div>
                     <div class="icon-btn settings" @click="settingsOpened = true" title="Paramètres">
                         <img class="icon" src="/icons/settings.svg" alt="Paramètres" />
+                    </div>
+                    <div class="icon-btn help" @click="helpOpened = true" v-if="!archivesMode" title="Aide">
+                        <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
                 </div>
             </div>
@@ -833,6 +833,8 @@ export default {
                 justify-content: space-between
                 @media (max-height: 540px)
                     width: 62px
+            .header-right
+                flex-direction: row-reverse
             .icon-btn
                 display: flex
                 align-items: center
