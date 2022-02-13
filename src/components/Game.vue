@@ -882,6 +882,12 @@ export default {
                 &.pressed
                     background-color: #3EAA42
                     border-color: #157D19
+                &.disabled
+                    background: none
+                    border: 2px solid #2C2C2C
+                    cursor: default
+                    .icon
+                        opacity: .5
                 .icon
                     height: 13px
     main
