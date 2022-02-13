@@ -5,6 +5,7 @@
                 <div class="header-left">
                     <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="archivesMode = !archivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
+                        <div class="pin"></div>
                     </div>
                     <div class="icon-btn stats" @click="statsOpened = true" v-if="!archivesMode" title="Statistiques">
                         <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
@@ -831,6 +832,7 @@ export default {
             .header-right
                 flex-direction: row-reverse
             .icon-btn
+                position: relative
                 display: flex
                 align-items: center
                 justify-content: center
@@ -847,14 +849,30 @@ export default {
                 &:hover
                     background-color: #474748
                     border-color: #313131
+                    .pin
+                        border-color: #474748
                 &:active
                     background-color: #2B2B2B
                     border-color: #2B2B2B
+                    .pin
+                        border-color: #2B2B2B
                 &.pressed
                     background-color: #3EAA42
                     border-color: #157D19
+                    .pin
+                        border-color: #3EAA42
                 .icon
                     height: 13px
+                .pin
+                    position: absolute
+                    top: 4px
+                    right: 4px
+                    width: 11px
+                    height: 11px
+                    border: 2px solid #3A3A3C
+                    border-radius: 100px
+                    background: #d40000
+                    transition: all .3s
     main
         max-width: 500px
         height: 95%
