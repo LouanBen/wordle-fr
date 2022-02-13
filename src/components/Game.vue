@@ -188,6 +188,7 @@
                                 </div>
                             </div>
                         </template>
+                        <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
                         <div class="soluce" v-if="finished">
                             <div class="subtitle">Le mot était</div>
                             <h2>{{ wordOfTheDay }}</h2>
