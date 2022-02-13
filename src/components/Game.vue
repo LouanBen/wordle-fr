@@ -6,7 +6,7 @@
                     <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="archivesMode = !archivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
                     </div>
-                    <div class="icon-btn stats" @click="statsOpened = true" v-if="!archivesMode" title="Statistiques">
+                    <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
                         <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                     <div class="icon-btn settings" @click="settingsOpened = true" title="Paramètres">
                         <img class="icon" src="/icons/settings.svg" alt="Paramètres" />
                     </div>
-                    <div class="icon-btn help" @click="helpOpened = true" v-if="!archivesMode" title="Aide">
+                    <div class="icon-btn help" @click="helpOpened = true" title="Aide">
                         <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
                 </div>
