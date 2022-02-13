@@ -10,7 +10,7 @@
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
                     </div>
                 </div>
-                <div class="game-title"><!--MORDLE-->
+                <div class="game-title" v-if="!archivesMode"><!--MORDLE-->
                     <div class="title">
                         <div class="letter correct">L</div>
                         <div class="letter incorrect">E</div>
@@ -19,7 +19,18 @@
                         <div class="letter incorrect">O</div>
                         <div class="letter incorrect">T</div>
                     </div>
-                </div> 
+                </div>
+                <div class="archives-selector" v-if="archivesMode">
+                    <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
+                        <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
+                    </div>
+                    <div class="archives-date">
+                        {{ formatDate(archivesDate) }}
+                    </div>
+                    <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
+                        <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
+                    </div>
+                </div>
                 <div class="header-right">
                     <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
                         <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
@@ -34,18 +45,6 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
-            <!-- here -->
-            <div class="archives-selector" v-if="archivesMode">
-                <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
-                    <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
-                </div>
-                <div class="archives-date">
-                    {{ formatDate(archivesDate) }}
-                </div>
-                <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
-                    <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
-                </div>
-            </div>
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
@@ -813,6 +812,21 @@ export default {
                 .subtitle
                     margin-top: 0.5em
                     font-size: 0.8em
+            .archives-selector
+                display: flex
+                align-items: center
+                justify-content: center
+                color: white
+                .archives-arrow
+                    width: 16px
+                    height: 16px
+                    cursor: pointer
+                .archives-date
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 100px
+                    font-size: 14px
             .header-right, .header-left
                 display: flex
                 width: 70px
@@ -873,16 +887,6 @@ export default {
             font-size: 18px
             font-weight: bold
             z-index: 10
-        .archives-selector
-            margin: 12px 0
-            color: white
-            display: flex
-            justify-content: space-around
-            width: 100%
-            .archives-arrow
-                width: 16px
-                height: 16px
-                cursor: pointer
         .grid
             margin-top: auto
             margin-bottom: auto
