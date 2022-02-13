@@ -823,6 +823,12 @@ export default {
                     justify-content: center
                     width: 100px
                     font-size: 14px
+                    @media (max-width: 372px)
+                        font-size: 13px
+                        width: 84px
+                    @media (max-width: 320px)
+                        font-size: 11px
+                        width: 70px
             .header-right, .header-left
                 display: flex
                 width: 70px
