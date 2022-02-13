@@ -21,13 +21,13 @@
                     </div>
                 </div>
                 <div class="archives-selector" v-if="archivesMode">
-                    <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
+                    <div class="icon-btn archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
                         <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
                     </div>
                     <div class="archives-date">
                         {{ formatDate(archivesDate) }}
                     </div>
-                    <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
+                    <div class="icon-btn archives-arrow archives-date-next" @click="changeArchivesDate(1)">
                         <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
                     </div>
                 </div>
@@ -816,10 +816,6 @@ export default {
                 align-items: center
                 justify-content: center
                 color: white
-                .archives-arrow
-                    width: 16px
-                    height: 16px
-                    cursor: pointer
                 .archives-date
                     display: flex
                     align-items: center
