@@ -729,7 +729,7 @@ export default {
                     }
                 }).join('');
             }).join('\n');
-            const url = "wordle.louan.me";
+            const url = "https://wordle.louan.me";
 
             let sharedContent = title + schema;
 
