@@ -317,7 +317,7 @@ export default {
             KEYBOARD_QWERTY,
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
-            today: moment(),
+            today: moment('2022-03-08T00:00:00'),
             yesterday: moment().subtract(1, 'day'),
             words,
             attempts: [],
@@ -348,6 +348,7 @@ export default {
                 bestStreak: 0,
                 games: [],
             },
+            womenRightsDay: false,
         }
     },
     mounted() {
@@ -441,6 +442,13 @@ export default {
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
+
+            // 👩
+            console.log(formatedDate);
+            if (formatedDate === '2022-3-8') {
+                this.wordOfTheDay = 'DROIT';
+                this.womenRightsDay = true;
+            }
         },
         changeArchivesDate(nbDays) {
             if (nbDays > 0) {
