@@ -203,6 +203,12 @@
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
                                 </div>
                             </div>
+                            <div class="ctas">
+                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
+                                    <img class="icon" src="/icons/heart.svg" />
+                                    <p>Soutenir l'auteur du projet</p>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer" v-if="finished && !archivesMode">
@@ -251,7 +257,13 @@
                                     Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">Reelwens</a> pour le design !
                                 </p>
                                 <p>
-                                    Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
+                                    Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>.
+                                </p>
+                                <p>
+                                    <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>.
+                                </p>
+                                <p>
+                                    <a href="https://netlify.com">Site web hébergé chez Netlify</a>.
                                 </p>
                             </div>
                         </div>
@@ -725,7 +737,7 @@ export default {
                     }
                 }).join('');
             }).join('\n');
-            const url = "wordle.louan.me";
+            const url = "https://wordle.louan.me";
 
             let sharedContent = title + schema;
 
@@ -1218,6 +1230,13 @@ export default {
                             .icon
                                 height: 14px
                                 margin-right: 8px
+                            &.support-btn
+                                background-color: #3A3A3C
+                                border-bottom: 2px solid #2B2B2B
+                                width: 224px
+                                margin-top: 8px
+                                .icon
+                                    height: 16px
                             &.definition-btn
                                 background-color: #3A3A3C
                                 border-bottom: 2px solid #2B2B2B
