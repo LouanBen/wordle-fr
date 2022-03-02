@@ -50,7 +50,7 @@
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
                         :letter="attempts[indexA][indexL]" 
-                        :color="results[indexA][indexL]" 
+                        :color="womenRightsDay && indexA === (wonOnAttemptNb - 1) ? 'special' : results[indexA][indexL]" 
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
@@ -190,9 +190,11 @@
                             </div>
                         </template>
                         <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
-                        <div class="soluce" v-if="finished">
+                        <div class="soluce" :class="{ special: womenRightsDay }" v-if="finished">
                             <div class="subtitle">Le mot était</div>
                             <h2>{{ wordOfTheDay }}</h2>
+                            <div class="subtitle special" v-if="womenRightsDay">à l'occasion de la Journée internationale des droits des femmes</div>
+                            <div class="big special" v-if="womenRightsDay">Un mot qui ne devrait pas être celui d'un seul jour.</div>
                             <div class="ctas">
                                 <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
                                     <img class="icon" src="/icons/book.svg" />
@@ -206,8 +208,11 @@
                             <div class="ctas">
                                 <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
                                     <img class="icon" src="/icons/heart.svg" />
-                                    <p>Soutenir l'auteur du projet</p>
+                                    <p>{{ womenRightsDay ? 'Soutenir l\'association' : 'Soutenir l\'auteur du projet' }}</p>
                                 </a>
+                            </div>
+                            <div v-if="womenRightsDay" class="special-logo">
+                                <img src="/img/fondation-des-femmes.png" alt="Fondation des femmes" />
                             </div>
                         </div>
                     </div>
@@ -361,6 +366,7 @@ export default {
                 games: [],
             },
             womenRightsDay: false,
+            wonOnAttemptNb: 0,
         }
     },
     mounted() {
@@ -401,6 +407,11 @@ export default {
 
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
+        }
+
+        // 👩
+        if (this.finished) {
+            this.wonOnAttemptNb = this.currentAttempt;
         }
     },
     watch: {
@@ -610,6 +621,9 @@ export default {
             if (attempt.join('') === this.wordOfTheDay) {
                 this.won = true;
                 this.finished = true;
+                // 👩
+                this.wonOnAttemptNb = this.currentAttempt;
+                //
                 this.computeStats();
             } else {
                 this.currentAttempt++;
@@ -697,7 +711,21 @@ export default {
                 }
 
             }
-            window.setTimeout(() => { this.statsOpened = true }, 2000);
+            window.setTimeout(() => { 
+                this.statsOpened = true;
+                if (this.womenRightsDay) {
+                    window.setTimeout(() => {
+                        this.scrollStatsToBottom();
+                    }, 200);
+                }
+            }, 2000);
+        },
+        scrollStatsToBottom() {
+            let stats = document.querySelector('.endgame-modal-content');
+            stats.scrollTo({
+                top: stats.scrollHeight,
+                behavior: 'smooth'
+            });
         },
         getAttemptStat(attemptNumber) {
             let iteration = 0;
@@ -1199,14 +1227,31 @@ export default {
                                     &.best
                                         background: #3EAA42
                 .soluce
+                    &.special
+                        h2
+                            margin-bottom: 0
+                        .ctas
+                            .btn.support-btn
+                                background: #A348AD
+                                border-bottom: 2px solid #722081
                     display: flex
                     flex-direction: column
+                    align-items: center
                     margin-top: 16px
                     width: 100%
                     .subtitle
                         font-size: 12px
                         font-weight: 700
                         color: rgba(255, 255, 255, 0.5)
+                        &.special
+                            margin-bottom: 12px
+                            max-width: 225px
+                    .big
+                        font-size: 18px
+                        font-weight: 700
+                        color: white
+                        margin-bottom: 16px
+                        max-width: 250px
                     h2
                         margin-bottom: 8px
                     .ctas
@@ -1256,6 +1301,13 @@ export default {
                                 &:active
                                     background-color: #157D19
                                     border-color: #157D19
+                    .special-logo
+                        margin-top: 16px
+                        width: 48px
+                        img
+                            width: 100%
+                            height: 100%
+                            object-fit: contain
             .modal-footer
                 display: flex
                 flex-direction: column
