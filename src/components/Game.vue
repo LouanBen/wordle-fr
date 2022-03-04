@@ -192,9 +192,9 @@
                         <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
                         <div class="soluce" :class="{ special: womenRightsDay }" v-if="finished">
                             <div class="subtitle">Le mot était</div>
-                            <h2>{{ wordOfTheDay }}</h2>
+                            <h2>{{ wordOfTheDay }}<span v-if="womenRightsDay" class="special-s">S</span></h2>
                             <div class="subtitle special" v-if="womenRightsDay">à l'occasion de la Journée internationale des droits des femmes</div>
-                            <div class="big special" v-if="womenRightsDay">Un mot qui ne devrait pas être celui d'un seul jour.</div>
+                            <div class="big special" v-if="womenRightsDay">Un mot qui ne devrait pas être celui d'un seul jour, et encore moins au singulier !</div>
                             <div class="ctas">
                                 <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
                                     <img class="icon" src="/icons/book.svg" />
@@ -206,10 +206,20 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
+                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn" v-if="!womenRightsDay">
                                     <img class="icon" src="/icons/heart.svg" />
-                                    <p>{{ womenRightsDay ? 'Soutenir l\'association' : 'Soutenir l\'auteur du projet' }}</p>
+                                    <p>Soutenir l'auteur du projet</p>
                                 </a>
+                                <div v-else>
+                                    <a href="https://www.helloasso.com/associations/les-internettes" target="_blank" class="btn support-btn">
+                                        <img class="icon" src="/icons/heart.svg" />
+                                        <p>Soutenir Les Internettes</p>
+                                    </a>
+                                    <a href="https://www.womenwhodostuff.com/actu/assofeministes" target="_blank" class="btn support-btn stretched">
+                                        <img class="icon" src="/icons/heart.svg" />
+                                        <p>Soutenir d'autre associations féministes</p>
+                                    </a>
+                                </div>
                             </div>
                             <div v-if="womenRightsDay" class="special-logo">
                                 <img src="/img/fondation-des-femmes.png" alt="Fondation des femmes" />
@@ -1236,10 +1246,17 @@ export default {
                     &.special
                         h2
                             margin-bottom: 0
+                        .special-s
+                            color: #E21C46
                         .ctas
                             .btn.support-btn
-                                background: #A348AD
-                                border-bottom: 2px solid #722081
+                                background: #E21C46
+                                border-bottom: 2px solid #B90029
+                                padding: 0 16px
+                                p
+                                    width: 100%
+                                &.stretched
+                                    height: 45px
                     display: flex
                     flex-direction: column
                     align-items: center
