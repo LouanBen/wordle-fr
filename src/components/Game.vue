@@ -222,7 +222,7 @@
                                 </div>
                             </div>
                             <div v-if="womenRightsDay" class="special-logo">
-                                <img src="/img/fondation-des-femmes.png" alt="Fondation des femmes" />
+                                <a href="https://www.lesinternettes.com/" target="_blank"><img src="/img/les-internettes-logo.png" alt="Les Internettes" /></a>
                             </div>
                         </div>
                     </div>
@@ -1326,7 +1326,7 @@ export default {
                                     border-color: #157D19
                     .special-logo
                         margin-top: 16px
-                        width: 48px
+                        height: 36px
                         img
                             width: 100%
                             height: 100%
