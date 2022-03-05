@@ -770,7 +770,7 @@ export default {
                 if (this.womenRightsDay) count++;
                 return result.map((letter) => {
                     if (count === this.currentAttempt && letter === 'correct') {
-                        return '🟪';
+                        return '🟥';
                     }
                     if (letter === 'correct') {
                         return '🟩';
