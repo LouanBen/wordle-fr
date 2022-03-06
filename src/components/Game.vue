@@ -217,7 +217,7 @@
                                     </a>
                                     <a href="https://www.womenwhodostuff.com/actu/assofeministes" target="_blank" class="btn support-btn stretched">
                                         <img class="icon" src="/icons/heart.svg" />
-                                        <p>Soutenir d'autre associations féministes</p>
+                                        <p>Soutenir d'autres associations féministes</p>
                                     </a>
                                 </div>
                             </div>
@@ -420,7 +420,7 @@ export default {
         }
 
         // 👩
-        if (this.finished) {
+        if (this.finished && !this.archivesMode) {
             this.wonOnAttemptNb = this.currentAttempt;
         }
     },
@@ -765,12 +765,10 @@ export default {
             const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
 
             const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
-            let count = 0;
-            let schema = this.results.slice(0, this.currentAttempt).map((result) => {
-                if (this.womenRightsDay) count++;
+            let schema = this.results.slice(0, this.currentAttempt).map((result, index) => {
                 return result.map((letter) => {
-                    if (count === this.currentAttempt && letter === 'correct') {
-                        return '🟥';
+                    if (this.womenRightsDay && (index + 1) === this.currentAttempt && letter === 'correct') {
+                        return '🟪';
                     }
                     if (letter === 'correct') {
                         return '🟩';
