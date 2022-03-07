@@ -50,7 +50,7 @@
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
                         :letter="attempts[indexA][indexL]" 
-                        :color="results[indexA][indexL]" 
+                        :color="womenRightsDay && indexA === (wonOnAttemptNb - 1) ? 'special' : results[indexA][indexL]" 
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
@@ -190,9 +190,11 @@
                             </div>
                         </template>
                         <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
-                        <div class="soluce" v-if="finished">
+                        <div class="soluce" :class="{ special: womenRightsDay }" v-if="finished">
                             <div class="subtitle">Le mot était</div>
-                            <h2>{{ wordOfTheDay }}</h2>
+                            <h2>{{ wordOfTheDay }}<span v-if="womenRightsDay" class="special-s">S</span></h2>
+                            <div class="subtitle special" v-if="womenRightsDay">à l'occasion de la Journée internationale des droits des femmes</div>
+                            <div class="big special" v-if="womenRightsDay">Un mot qui ne devrait pas être celui d'un seul jour, et encore moins au singulier !</div>
                             <div class="ctas">
                                 <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
                                     <img class="icon" src="/icons/book.svg" />
@@ -204,10 +206,23 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
+                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn" v-if="!womenRightsDay">
                                     <img class="icon" src="/icons/heart.svg" />
                                     <p>Soutenir l'auteur du projet</p>
                                 </a>
+                                <div v-else>
+                                    <a href="https://www.helloasso.com/associations/les-internettes" target="_blank" class="btn support-btn">
+                                        <img class="icon" src="/icons/heart.svg" />
+                                        <p>Soutenir Les Internettes</p>
+                                    </a>
+                                    <a href="https://www.womenwhodostuff.com/actu/assofeministes" target="_blank" class="btn support-btn stretched">
+                                        <img class="icon" src="/icons/heart.svg" />
+                                        <p>Soutenir d'autres associations féministes</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div v-if="womenRightsDay" class="special-logo">
+                                <a href="https://www.lesinternettes.com/" target="_blank"><img src="/img/les-internettes-logo.png" alt="Les Internettes" /></a>
                             </div>
                         </div>
                     </div>
@@ -360,6 +375,8 @@ export default {
                 bestStreak: 0,
                 games: [],
             },
+            womenRightsDay: false,
+            wonOnAttemptNb: 0,
         }
     },
     mounted() {
@@ -401,6 +418,11 @@ export default {
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
+
+        // 👩
+        if (this.finished && !this.archivesMode) {
+            this.wonOnAttemptNb = this.currentAttempt;
+        }
     },
     watch: {
         sharedLink() {
@@ -418,6 +440,7 @@ export default {
                 this.getSavedData();
             } else {
                 this.resetGridData();
+                this.womenRightsDay = false;
             }
         },
     },
@@ -453,6 +476,13 @@ export default {
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
+
+            // 👩
+            console.log(formatedDate);
+            if (formatedDate === '2022-3-8') {
+                this.wordOfTheDay = 'DROIT';
+                this.womenRightsDay = true;
+            }
         },
         changeArchivesDate(nbDays) {
             if (nbDays > 0) {
@@ -602,6 +632,9 @@ export default {
             if (attempt.join('') === this.wordOfTheDay) {
                 this.won = true;
                 this.finished = true;
+                // 👩
+                this.wonOnAttemptNb = this.currentAttempt;
+                //
                 this.computeStats();
             } else {
                 this.currentAttempt++;
@@ -689,7 +722,21 @@ export default {
                 }
 
             }
-            window.setTimeout(() => { this.statsOpened = true }, 2000);
+            window.setTimeout(() => { 
+                this.statsOpened = true;
+                if (this.womenRightsDay) {
+                    window.setTimeout(() => {
+                        this.scrollStatsToBottom();
+                    }, 200);
+                }
+            }, 2000);
+        },
+        scrollStatsToBottom() {
+            let stats = document.querySelector('.endgame-modal-content');
+            stats.scrollTo({
+                top: stats.scrollHeight,
+                behavior: 'smooth'
+            });
         },
         getAttemptStat(attemptNumber) {
             let iteration = 0;
@@ -718,8 +765,11 @@ export default {
             const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
 
             const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
-            let schema = this.results.slice(0, this.currentAttempt).map((result) => {
+            let schema = this.results.slice(0, this.currentAttempt).map((result, index) => {
                 return result.map((letter) => {
+                    if (this.womenRightsDay && (index + 1) === this.currentAttempt && letter === 'correct') {
+                        return '🟥';
+                    }
                     if (letter === 'correct') {
                         return '🟩';
                     } else if (letter === 'partial') {
@@ -1191,14 +1241,38 @@ export default {
                                     &.best
                                         background: #3EAA42
                 .soluce
+                    &.special
+                        h2
+                            margin-bottom: 0
+                        .special-s
+                            color: #E21C46
+                        .ctas
+                            .btn.support-btn
+                                background: #E21C46
+                                border-bottom: 2px solid #B90029
+                                padding: 0 16px
+                                p
+                                    width: 100%
+                                &.stretched
+                                    height: 45px
                     display: flex
                     flex-direction: column
+                    align-items: center
                     margin-top: 16px
                     width: 100%
                     .subtitle
                         font-size: 12px
                         font-weight: 700
                         color: rgba(255, 255, 255, 0.5)
+                        &.special
+                            margin-bottom: 12px
+                            max-width: 225px
+                    .big
+                        font-size: 18px
+                        font-weight: 700
+                        color: white
+                        margin-bottom: 16px
+                        max-width: 250px
                     h2
                         margin-bottom: 8px
                     .ctas
@@ -1248,6 +1322,13 @@ export default {
                                 &:active
                                     background-color: #157D19
                                     border-color: #157D19
+                    .special-logo
+                        margin-top: 16px
+                        height: 36px
+                        img
+                            width: 100%
+                            height: 100%
+                            object-fit: contain
             .modal-footer
                 display: flex
                 flex-direction: column

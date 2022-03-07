@@ -5,6 +5,7 @@
         correct: color === 'correct', 
         partial: color === 'partial', 
         incorrect: color === 'incorrect',
+        special: color === 'special',
         'no-animation': !animate,
         'color-blind': colorBlindMode,
     }">
@@ -87,6 +88,9 @@ export default {
     &.incorrect
         border-color: #3A3A3C
         background: #3A3A3C
+    &.special
+        border-color: #E21C46
+        background: #E21C46
     &.no-animation
         transition: none
         animation: none
