@@ -768,7 +768,7 @@ export default {
             let schema = this.results.slice(0, this.currentAttempt).map((result, index) => {
                 return result.map((letter) => {
                     if (this.womenRightsDay && (index + 1) === this.currentAttempt && letter === 'correct') {
-                        return '🟪';
+                        return '🟥';
                     }
                     if (letter === 'correct') {
                         return '🟩';
