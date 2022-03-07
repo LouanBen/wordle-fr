@@ -344,7 +344,7 @@ export default {
             KEYBOARD_QWERTY,
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
-            today: moment('2022-03-08T00:00:00'),
+            today: moment(),
             yesterday: moment().subtract(1, 'day'),
             words,
             attempts: [],
