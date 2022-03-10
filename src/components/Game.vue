@@ -34,7 +34,6 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
-            <!--- here --->
             <div class="archives-selector" v-if="archivesMode">
                 <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
                     <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
@@ -50,7 +49,7 @@
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
                         :letter="attempts[indexA][indexL]" 
-                        :color="womenRightsDay && indexA === (wonOnAttemptNb - 1) ? 'special' : results[indexA][indexL]" 
+                        :color="results[indexA][indexL]" 
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
@@ -190,11 +189,9 @@
                             </div>
                         </template>
                         <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
-                        <div class="soluce" :class="{ special: womenRightsDay }" v-if="finished">
+                        <div class="soluce" v-if="finished">
                             <div class="subtitle">Le mot était</div>
-                            <h2>{{ wordOfTheDay }}<span v-if="womenRightsDay" class="special-s">S</span></h2>
-                            <div class="subtitle special" v-if="womenRightsDay">à l'occasion de la Journée internationale des droits des femmes</div>
-                            <div class="big special" v-if="womenRightsDay">Un mot qui ne devrait pas être celui d'un seul jour, et encore moins au singulier !</div>
+                            <h2>{{ wordOfTheDay }}</h2>
                             <div class="ctas">
                                 <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
                                     <img class="icon" src="/icons/book.svg" />
@@ -206,23 +203,10 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn" v-if="!womenRightsDay">
+                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
                                     <img class="icon" src="/icons/heart.svg" />
                                     <p>Soutenir l'auteur du projet</p>
                                 </a>
-                                <div v-else>
-                                    <a href="https://www.helloasso.com/associations/les-internettes" target="_blank" class="btn support-btn">
-                                        <img class="icon" src="/icons/heart.svg" />
-                                        <p>Soutenir Les Internettes</p>
-                                    </a>
-                                    <a href="https://www.womenwhodostuff.com/actu/assofeministes" target="_blank" class="btn support-btn stretched">
-                                        <img class="icon" src="/icons/heart.svg" />
-                                        <p>Soutenir d'autres associations féministes</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div v-if="womenRightsDay" class="special-logo">
-                                <a href="https://www.lesinternettes.com/" target="_blank"><img src="/img/les-internettes-logo.png" alt="Les Internettes" /></a>
                             </div>
                         </div>
                     </div>
@@ -276,9 +260,6 @@
                                 </p>
                                 <p>
                                     <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>.
-                                </p>
-                                <p>
-                                    <a href="https://netlify.com">Site web hébergé chez Netlify</a>.
                                 </p>
                             </div>
                         </div>
@@ -375,8 +356,6 @@ export default {
                 bestStreak: 0,
                 games: [],
             },
-            womenRightsDay: false,
-            wonOnAttemptNb: 0,
         }
     },
     mounted() {
@@ -418,11 +397,6 @@ export default {
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
-
-        // 👩
-        if (this.finished && !this.archivesMode) {
-            this.wonOnAttemptNb = this.currentAttempt;
-        }
     },
     watch: {
         sharedLink() {
@@ -440,7 +414,6 @@ export default {
                 this.getSavedData();
             } else {
                 this.resetGridData();
-                this.womenRightsDay = false;
             }
         },
     },
@@ -481,7 +454,6 @@ export default {
             console.log(formatedDate);
             if (formatedDate === '2022-3-8') {
                 this.wordOfTheDay = 'DROIT';
-                this.womenRightsDay = true;
             }
         },
         changeArchivesDate(nbDays) {
@@ -632,9 +604,6 @@ export default {
             if (attempt.join('') === this.wordOfTheDay) {
                 this.won = true;
                 this.finished = true;
-                // 👩
-                this.wonOnAttemptNb = this.currentAttempt;
-                //
                 this.computeStats();
             } else {
                 this.currentAttempt++;
@@ -724,11 +693,6 @@ export default {
             }
             window.setTimeout(() => { 
                 this.statsOpened = true;
-                if (this.womenRightsDay) {
-                    window.setTimeout(() => {
-                        this.scrollStatsToBottom();
-                    }, 200);
-                }
             }, 2000);
         },
         scrollStatsToBottom() {
@@ -765,11 +729,8 @@ export default {
             const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
 
             const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
-            let schema = this.results.slice(0, this.currentAttempt).map((result, index) => {
+            let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
-                    if (this.womenRightsDay && (index + 1) === this.currentAttempt && letter === 'correct') {
-                        return '🟥';
-                    }
                     if (letter === 'correct') {
                         return '🟩';
                     } else if (letter === 'partial') {
