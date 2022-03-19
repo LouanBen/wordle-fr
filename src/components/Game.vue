@@ -202,6 +202,12 @@
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
                                 </div>
                             </div>
+                            <div class="ctas">
+                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
+                                    <img class="icon" src="/icons/heart.svg" />
+                                    <p>Soutenir l'auteur du projet</p>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer" v-if="finished && !archivesMode">
@@ -250,7 +256,10 @@
                                     Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">Reelwens</a> pour le design !
                                 </p>
                                 <p>
-                                    Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
+                                    Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>.
+                                </p>
+                                <p>
+                                    <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>.
                                 </p>
                             </div>
                         </div>
@@ -453,6 +462,12 @@ export default {
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
+
+            // 👩
+            console.log(formatedDate);
+            if (formatedDate === '2022-3-8') {
+                this.wordOfTheDay = 'DROIT';
+            }
         },
         canChangeArchivesDate (nbDays) {
             if (nbDays > 0 && this.archivesDate >= this.yesterday)
@@ -697,7 +712,16 @@ export default {
                 }
 
             }
-            window.setTimeout(() => { this.statsOpened = true }, 2000);
+            window.setTimeout(() => { 
+                this.statsOpened = true;
+            }, 2000);
+        },
+        scrollStatsToBottom() {
+            let stats = document.querySelector('.endgame-modal-content');
+            stats.scrollTo({
+                top: stats.scrollHeight,
+                behavior: 'smooth'
+            });
         },
         getAttemptStat(attemptNumber) {
             let iteration = 0;
@@ -737,7 +761,7 @@ export default {
                     }
                 }).join('');
             }).join('\n');
-            const url = "wordle.louan.me";
+            const url = "https://wordle.louan.me";
 
             let sharedContent = title + schema;
 
@@ -1203,14 +1227,38 @@ export default {
                                     &.best
                                         background: #3EAA42
                 .soluce
+                    &.special
+                        h2
+                            margin-bottom: 0
+                        .special-s
+                            color: #E21C46
+                        .ctas
+                            .btn.support-btn
+                                background: #E21C46
+                                border-bottom: 2px solid #B90029
+                                padding: 0 16px
+                                p
+                                    width: 100%
+                                &.stretched
+                                    height: 45px
                     display: flex
                     flex-direction: column
+                    align-items: center
                     margin-top: 16px
                     width: 100%
                     .subtitle
                         font-size: 12px
                         font-weight: 700
                         color: rgba(255, 255, 255, 0.5)
+                        &.special
+                            margin-bottom: 12px
+                            max-width: 225px
+                    .big
+                        font-size: 18px
+                        font-weight: 700
+                        color: white
+                        margin-bottom: 16px
+                        max-width: 250px
                     h2
                         margin-bottom: 8px
                     .ctas
@@ -1234,6 +1282,13 @@ export default {
                             .icon
                                 height: 14px
                                 margin-right: 8px
+                            &.support-btn
+                                background-color: #3A3A3C
+                                border-bottom: 2px solid #2B2B2B
+                                width: 224px
+                                margin-top: 8px
+                                .icon
+                                    height: 16px
                             &.definition-btn
                                 background-color: #3A3A3C
                                 border-bottom: 2px solid #2B2B2B
@@ -1253,6 +1308,13 @@ export default {
                                 &:active
                                     background-color: #157D19
                                     border-color: #157D19
+                    .special-logo
+                        margin-top: 16px
+                        height: 36px
+                        img
+                            width: 100%
+                            height: 100%
+                            object-fit: contain
             .modal-footer
                 display: flex
                 flex-direction: column
