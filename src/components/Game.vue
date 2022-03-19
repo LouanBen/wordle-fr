@@ -309,7 +309,7 @@ const KEYBOARD_QWERTZ = {
         ['Entrer', 'Y', 'X', 'C', 'V', 'B', 'N', 'M', 'Suppr'],
     ]
 };
-
+// test commit ?
 export default {
     name: 'Game',
     components: {
