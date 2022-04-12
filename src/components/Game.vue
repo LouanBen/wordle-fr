@@ -238,8 +238,9 @@
                             </div>
                             <div class="settings-item setting-button">
                                 <h3>Clavier</h3>
-                                <div class="buttons">
+                                <div class="buttons keyboard-buttons">
                                     <button :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_BEPO.name }" @click="keyboard = KEYBOARD_BEPO">BÉPO</button>
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTY.name }" @click="keyboard = KEYBOARD_QWERTY">QWERTY</button>
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
@@ -293,6 +294,14 @@ const KEYBOARD_AZERTY = {
         ['Entrer', 'W', 'X', 'C', 'V', 'B', 'N', 'Suppr'],
     ],
 };
+const KEYBOARD_BEPO = {
+    name: 'bepo',
+    content: [
+        ['B', 'E', 'P', 'O', 'W', 'V', 'D', 'L', 'J', 'Z'],
+        ['A', 'U', 'I', 'C', 'T', 'S', 'R', 'N', 'M'],
+        ['Entrer', 'Y', 'X', 'K', 'Q', 'G', 'H', 'F', 'Suppr'],
+    ],
+};
 const KEYBOARD_QWERTY = {
     name: 'qwerty',
     content: [
@@ -322,6 +331,7 @@ export default {
             NB_LETTERS,
             NB_ATTEMPTS,
             KEYBOARD_AZERTY,
+            KEYBOARD_BEPO,
             KEYBOARD_QWERTY,
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
@@ -1429,7 +1439,6 @@ export default {
                             .buttons
                                 background: #3A3A3C
                                 border-radius: 100px
-                                height: 25px
                                 button
                                     font-family: Outfit, Avenir, Helvetica, Arial, sans-serif
                                     height: 25px
@@ -1444,17 +1453,11 @@ export default {
                                     &.selected
                                         background: #3EAA42
                                         border-radius: 100px
-
-                                @media (max-width: 360px)
-                                    button
-                                        width: 60px
-                                        font-size: 10px
-                                @media (max-width: 330px)
-                                    height: 28px // Expend hitbox on height
-                                    button
-                                        width: 48px
-                                        height: 28px
-                                        font-size: 9px
+                            @media (max-width: 450px)
+                                .keyboard-buttons
+                                    display: flex
+                                    flex-direction: column
+                                    border-radius: 12px
                     .credits
                         h2
                             text-align: left
