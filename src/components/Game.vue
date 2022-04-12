@@ -569,6 +569,7 @@ export default {
         verifyLetters(attempt) {
             let wordToGuess = this.wordOfTheDay.split('');
             let currentResult = this.results[this.currentAttempt - 1];
+            console.log(this.results[this.currentAttempt - 1]);
             
             attempt.forEach((letter, index) => {
                 if (wordToGuess[index] === letter) {
@@ -579,6 +580,7 @@ export default {
                     }
                 }
             });
+            console.log(this.results[this.currentAttempt - 1]);
 
             attempt.forEach((letter, index) => {
                 if (currentResult[index] !== 'correct') {
@@ -597,8 +599,9 @@ export default {
                     }
                 }
             });
+            console.log(this.results[this.currentAttempt - 1]);
 
-            // this update cleanly this.results
+            // this updates cleanly this.results
             this.results.splice(this.currentAttempt - 1, 1, currentResult);
 
             this.setLSItem('results', JSON.stringify(this.results));
