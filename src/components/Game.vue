@@ -597,6 +597,10 @@ export default {
                     }
                 }
             });
+
+            // this update cleanly this.results
+            this.results.splice(this.currentAttempt - 1, 1, currentResult);
+
             this.setLSItem('results', JSON.stringify(this.results));
             this.setLSItem('correctLetters', JSON.stringify(this.correctLetters));
             this.setLSItem('partialLetters', JSON.stringify(this.partialLetters));
