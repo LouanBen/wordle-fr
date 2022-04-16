@@ -64,12 +64,6 @@ export default {
         border-color: #646464
     &.selected
         border-color: #73ADFF
-        &::after
-            content: ''
-            width: 1px
-            height: 60%
-            background-color: white
-            animation: 1.2s linear infinite blink
     &.validated
         animation: flip
         animation-duration: 0.5s
@@ -126,13 +120,4 @@ export default {
             transform: rotateX(0deg)
         to
             transform: rotateX(180deg)
-    @keyframes blink
-        0%
-            opacity: 1
-        1%
-            opacity: 0
-        50%
-            opacity: 0
-        51%
-            opacity: 1
 </style>
