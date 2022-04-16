@@ -208,6 +208,7 @@
                                     <p>Soutenir l'auteur du projet</p>
                                 </a>
                             </div>
+                          <textarea id="clipboard-buffer"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer" v-if="finished && !archivesMode">
@@ -763,24 +764,40 @@ export default {
             }
             
             const errMsg = "Votre navigateur ne permet pas de copier du texte via un bouton. Une solution alternative sera proposée dans une prochaine mise à jour."
-            if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(sharedContent).then(() => this.changeCopiedStatus()).catch(() => alert(errMsg));
+            } else if (typeof document.execCommand === 'function') {
+                var clipboardBuffer = document.getElementById('clipboard-buffer')
+                clipboardBuffer.value = sharedContent
+                clipboardBuffer.style.display='block'
+                clipboardBuffer.focus()
+                clipboardBuffer.setSelectionRange(0, sharedContent.length); // select() does not work on old browsers (Safari/Firefox on iPhone 6 for instance)
+                document.execCommand("copy");
+                clipboardBuffer.style.display='none'
+                clipboardBuffer.blur();
+                clipboardBuffer.value = ''
+                this.changeCopiedStatus()
+            } else {
                 alert(errMsg);
-                return;
             }
-
-            navigator.clipboard.writeText(sharedContent).then(() => {
-                this.resultsCopied = true;
-                setTimeout(() => (this.resultsCopied = false), 10000);
-            }).catch(() => alert(errMsg));
         },
         formatDate(date) {
             return moment(date).format('DD/MM/YYYY');
         },
+        changeCopiedStatus() {
+            this.resultsCopied = true;
+            setTimeout(() => (this.resultsCopied = false), 10000);
+        }
     }
 }
 </script>
 
 <style lang="sass" scoped>
+#clipboard-buffer
+  display: none
+  width: 150px
+  height: 40px
+
 #game
     display: flex
     align-items: center
