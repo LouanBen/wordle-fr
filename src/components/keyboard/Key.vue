@@ -64,16 +64,20 @@ export default {
     border: none
     border-bottom: 2px solid #4D4D4D
     user-select: none
+    transition: transform 0.2s
     -webkit-tap-highlight-color: transparent
     @media (max-height: 700px)
         height: 50px
     @media (max-height: 700px), (max-width: 500px)
         font-size: 18px
+    &:hover
+        background: #5A5A5A
     &:active
         background: #4D4D4D
+        transform: translateY(1px)
     &.big
         width: 90px
-        &.qwerty, &.qwertz
+        &.bepo, &.qwerty, &.qwertz
             width: 66px
     &.correct
         background: #3EAA42
@@ -111,13 +115,13 @@ export default {
         width: 34px
         &.big
             width: 72px
-            &.qwerty, &.qwertz
+            &.bepo, &.qwerty, &.qwertz
                 width: 53px
     @media (max-width: 393px)
         width: 32px
         &.big
             width: 68px
-            &.qwerty, &.qwertz
+            &.bepo, &.qwerty, &.qwertz
                 width: 50px
     @media (max-width: 372px)
         width: 28px
@@ -129,7 +133,7 @@ export default {
         width: 22px
         &.big
             width: 48px
-            &.qwerty, &.qwertz
+            &.bepo, &.qwerty, &.qwertz
                 width: 35px
     @media (max-height: 600px)
         height: 48px
