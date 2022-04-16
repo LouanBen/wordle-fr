@@ -5,6 +5,7 @@
         correct: color === 'correct', 
         partial: color === 'partial', 
         incorrect: color === 'incorrect',
+        special: color === 'special',
         'no-animation': !animate,
         'color-blind': colorBlindMode,
     }">
@@ -59,6 +60,8 @@ export default {
         border-radius: 3px
     &.has-letter
         border-color: #646464
+        &.color-blind
+            border-color: #FFFFFF
     &.validated
         animation: flip
         animation-duration: 0.5s
@@ -68,6 +71,7 @@ export default {
             transition: all 0.1s
             transform: rotateX(180deg)
         &.color-blind
+            border-color: #3A3A3C
             .letter
                 color: white
     &.correct
@@ -87,6 +91,9 @@ export default {
     &.incorrect
         border-color: #3A3A3C
         background: #3A3A3C
+    &.special
+        border-color: #E21C46
+        background: #E21C46
     &.no-animation
         transition: none
         animation: none

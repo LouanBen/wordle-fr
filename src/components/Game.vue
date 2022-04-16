@@ -45,6 +45,17 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
+            <div class="archives-selector" v-if="archivesMode">
+                <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
+                    <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
+                </div>
+                <div class="archives-date">
+                    {{ formatDate(archivesDate) }}
+                </div>
+                <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
+                    <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
+                </div>
+            </div>
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
@@ -72,6 +83,7 @@
             </div>
             <transition name="fadeup">
                 <div class="help-modal" v-if="helpOpened">
+                    <div class="modal-backdrop" @click="helpOpened = false"></div>
                     <div class="help-modal-content">
                         <div class="close-btn" @click="helpOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
@@ -143,6 +155,7 @@
             </transition>
             <transition name="fadeup">
                 <div class="endgame-modal" v-if="statsOpened">
+                    <div class="modal-backdrop" @click="statsOpened = false"></div>
                     <div class="endgame-modal-content" v-bind:class="{ 'finished' : finished}">
                         <div class="close-btn" @click="statsOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
@@ -202,6 +215,13 @@
                                     <p>{{resultsCopied ? 'Copié !' : 'Partager'}}</p>
                                 </div>
                             </div>
+                            <div class="ctas">
+                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
+                                    <img class="icon" src="/icons/heart.svg" />
+                                    <p>Soutenir l'auteur du projet</p>
+                                </a>
+                            </div>
+                          <textarea id="clipboard-buffer"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer" v-if="finished && !archivesMode">
@@ -212,6 +232,7 @@
             </transition>
             <transition name="fadeup">
                 <div class="settings-modal" v-if="settingsOpened">
+                    <div class="modal-backdrop" @click="settingsOpened = false"></div>
                     <div class="settings-modal-content">
                         <div class="close-btn" @click="settingsOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
@@ -232,8 +253,9 @@
                             </div>
                             <div class="settings-item setting-button">
                                 <h3>Clavier</h3>
-                                <div class="buttons">
+                                <div class="buttons keyboard-buttons">
                                     <button :class="{ selected: keyboard.name === KEYBOARD_AZERTY.name }" @click="keyboard = KEYBOARD_AZERTY">AZERTY</button>
+                                    <button :class="{ selected: keyboard.name === KEYBOARD_BEPO.name }" @click="keyboard = KEYBOARD_BEPO">BÉPO</button>
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTY.name }" @click="keyboard = KEYBOARD_QWERTY">QWERTY</button>
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
@@ -250,7 +272,10 @@
                                     Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">Reelwens</a> pour le design !
                                 </p>
                                 <p>
-                                    Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>
+                                    Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>.
+                                </p>
+                                <p>
+                                    <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>.
                                 </p>
                             </div>
                         </div>
@@ -284,6 +309,14 @@ const KEYBOARD_AZERTY = {
         ['Entrer', 'W', 'X', 'C', 'V', 'B', 'N', 'Suppr'],
     ],
 };
+const KEYBOARD_BEPO = {
+    name: 'bepo',
+    content: [
+        ['B', 'E', 'P', 'O', 'W', 'V', 'D', 'L', 'J', 'Z'],
+        ['A', 'U', 'I', 'C', 'T', 'S', 'R', 'N', 'M'],
+        ['Entrer', 'Y', 'X', 'K', 'Q', 'G', 'H', 'F', 'Suppr'],
+    ],
+};
 const KEYBOARD_QWERTY = {
     name: 'qwerty',
     content: [
@@ -313,6 +346,7 @@ export default {
             NB_LETTERS,
             NB_ATTEMPTS,
             KEYBOARD_AZERTY,
+            KEYBOARD_BEPO,
             KEYBOARD_QWERTY,
             KEYBOARD_QWERTZ,
             keyboard: KEYBOARD_AZERTY,
@@ -453,6 +487,12 @@ export default {
             const seed = seedrandom(formatedDate);
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
+
+            // 👩
+            console.log(formatedDate);
+            if (formatedDate === '2022-3-8') {
+                this.wordOfTheDay = 'DROIT';
+            }
         },
         canChangeArchivesDate (nbDays) {
             if (nbDays > 0 && this.archivesDate >= this.yesterday)
@@ -603,6 +643,10 @@ export default {
                     }
                 }
             });
+
+            // this updates cleanly this.results
+            this.results.splice(this.currentAttempt - 1, 1, currentResult);
+
             this.setLSItem('results', JSON.stringify(this.results));
             this.setLSItem('correctLetters', JSON.stringify(this.correctLetters));
             this.setLSItem('partialLetters', JSON.stringify(this.partialLetters));
@@ -697,7 +741,16 @@ export default {
                 }
 
             }
-            window.setTimeout(() => { this.statsOpened = true }, 2000);
+            window.setTimeout(() => { 
+                this.statsOpened = true;
+            }, 2000);
+        },
+        scrollStatsToBottom() {
+            let stats = document.querySelector('.endgame-modal-content');
+            stats.scrollTo({
+                top: stats.scrollHeight,
+                behavior: 'smooth'
+            });
         },
         getAttemptStat(attemptNumber) {
             let iteration = 0;
@@ -737,7 +790,7 @@ export default {
                     }
                 }).join('');
             }).join('\n');
-            const url = "wordle.louan.me";
+            const url = "https://wordle.louan.me";
 
             let sharedContent = title + schema;
 
@@ -746,24 +799,40 @@ export default {
             }
             
             const errMsg = "Votre navigateur ne permet pas de copier du texte via un bouton. Une solution alternative sera proposée dans une prochaine mise à jour."
-            if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(sharedContent).then(() => this.changeCopiedStatus()).catch(() => alert(errMsg));
+            } else if (typeof document.execCommand === 'function') {
+                var clipboardBuffer = document.getElementById('clipboard-buffer')
+                clipboardBuffer.value = sharedContent
+                clipboardBuffer.style.display='block'
+                clipboardBuffer.focus()
+                clipboardBuffer.setSelectionRange(0, sharedContent.length); // select() does not work on old browsers (Safari/Firefox on iPhone 6 for instance)
+                document.execCommand("copy");
+                clipboardBuffer.style.display='none'
+                clipboardBuffer.blur();
+                clipboardBuffer.value = ''
+                this.changeCopiedStatus()
+            } else {
                 alert(errMsg);
-                return;
             }
-
-            navigator.clipboard.writeText(sharedContent).then(() => {
-                this.resultsCopied = true;
-                setTimeout(() => (this.resultsCopied = false), 10000);
-            }).catch(() => alert(errMsg));
         },
         formatDate(date) {
             return moment(date).format('DD/MM/YYYY');
         },
+        changeCopiedStatus() {
+            this.resultsCopied = true;
+            setTimeout(() => (this.resultsCopied = false), 10000);
+        }
     }
 }
 </script>
 
 <style lang="sass" scoped>
+#clipboard-buffer
+  display: none
+  width: 150px
+  height: 40px
+
 #game
     display: flex
     align-items: center
@@ -939,6 +1008,12 @@ export default {
                     margin: 0
                 @media (max-height: 540px)
                     margin-top: 4px
+        .modal-backdrop
+                position: fixed
+                width: 100vw
+                height: 100vh
+                top: 0
+                left: 0
         .help-modal
             position: fixed
             display: flex
@@ -1216,14 +1291,38 @@ export default {
                                     &.best
                                         background: #3EAA42
                 .soluce
+                    &.special
+                        h2
+                            margin-bottom: 0
+                        .special-s
+                            color: #E21C46
+                        .ctas
+                            .btn.support-btn
+                                background: #E21C46
+                                border-bottom: 2px solid #B90029
+                                padding: 0 16px
+                                p
+                                    width: 100%
+                                &.stretched
+                                    height: 45px
                     display: flex
                     flex-direction: column
+                    align-items: center
                     margin-top: 16px
                     width: 100%
                     .subtitle
                         font-size: 12px
                         font-weight: 700
                         color: rgba(255, 255, 255, 0.5)
+                        &.special
+                            margin-bottom: 12px
+                            max-width: 225px
+                    .big
+                        font-size: 18px
+                        font-weight: 700
+                        color: white
+                        margin-bottom: 16px
+                        max-width: 250px
                     h2
                         margin-bottom: 8px
                     .ctas
@@ -1247,6 +1346,13 @@ export default {
                             .icon
                                 height: 14px
                                 margin-right: 8px
+                            &.support-btn
+                                background-color: #3A3A3C
+                                border-bottom: 2px solid #2B2B2B
+                                width: 224px
+                                margin-top: 8px
+                                .icon
+                                    height: 16px
                             &.definition-btn
                                 background-color: #3A3A3C
                                 border-bottom: 2px solid #2B2B2B
@@ -1266,6 +1372,13 @@ export default {
                                 &:active
                                     background-color: #157D19
                                     border-color: #157D19
+                    .special-logo
+                        margin-top: 16px
+                        height: 36px
+                        img
+                            width: 100%
+                            height: 100%
+                            object-fit: contain
             .modal-footer
                 display: flex
                 flex-direction: column
@@ -1401,7 +1514,6 @@ export default {
                             .buttons
                                 background: #3A3A3C
                                 border-radius: 100px
-                                height: 25px
                                 button
                                     font-family: Outfit, Avenir, Helvetica, Arial, sans-serif
                                     height: 25px
@@ -1416,17 +1528,11 @@ export default {
                                     &.selected
                                         background: #3EAA42
                                         border-radius: 100px
-
-                                @media (max-width: 360px)
-                                    button
-                                        width: 60px
-                                        font-size: 10px
-                                @media (max-width: 330px)
-                                    height: 28px // Expend hitbox on height
-                                    button
-                                        width: 48px
-                                        height: 28px
-                                        font-size: 9px
+                            @media (max-width: 450px)
+                                .keyboard-buttons
+                                    display: flex
+                                    flex-direction: column
+                                    border-radius: 12px
                     .credits
                         h2
                             text-align: left
