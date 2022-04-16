@@ -45,17 +45,6 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
-            <div class="archives-selector" v-if="archivesMode">
-                <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
-                    <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
-                </div>
-                <div class="archives-date">
-                    {{ formatDate(archivesDate) }}
-                </div>
-                <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
-                    <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
-                </div>
-            </div>
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
