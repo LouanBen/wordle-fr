@@ -390,7 +390,7 @@ export default {
         let checkBeta = () => window.location.hash.toLowerCase() === '#beta'
         this.isBetaEnabled = checkBeta()
         
-        window.addEventListener('hashchange', () => this.isBetaEnabled = checkBeta)
+        window.addEventListener('hashchange', () => this.isBetaEnabled = checkBeta())
 
         // Update timer to next word
         setInterval((function () {
