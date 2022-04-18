@@ -3,14 +3,14 @@
         <header>
             <div class="header-container">
                 <div class="header-left">
-                    <div class="icon-btn help" @click="helpOpened = true" title="Aide">
-                        <img class="icon" src="/icons/help.svg" alt="Aide" />
-                    </div>
-                    <div class="icon-btn archives" :class="{ pressed: archivesMode }" @click="archivesMode = !archivesMode" title="Archives">
+                    <div class="icon-btn archives" :class="{ pressed: archivesMode, nopin: visitedArchives }" @click="switchArchivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
                     </div>
+                    <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
+                        <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
+                    </div>
                 </div>
-                <div class="game-title"><!--MORDLE-->
+                <div class="game-title" v-if="!archivesMode"><!--MORDLE-->
                     <div class="title">
                         <div class="letter correct">L</div>
                         <div class="letter incorrect">E</div>
@@ -19,13 +19,24 @@
                         <div class="letter incorrect">O</div>
                         <div class="letter incorrect">T</div>
                     </div>
-                </div> 
-                <div class="header-right">
-                    <div class="icon-btn stats" @click="statsOpened = true" title="Statistiques">
-                        <img class="icon" src="/icons/stats.svg" alt="Statistiques" />
+                </div>
+                <div class="archives-selector" v-if="archivesMode">
+                    <div class="icon-btn archives-arrow archives-date-previous" :class="{ disabled: !canChangeArchivesDate(-1) }" @click="changeArchivesDate(-1)">
+                        <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
                     </div>
+                    <div class="archives-date">
+                        {{ formatDate(archivesDate) }}
+                    </div>
+                    <div class="icon-btn archives-arrow archives-date-next" :class="{ disabled: !canChangeArchivesDate(1) }" @click="changeArchivesDate(1)">
+                        <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
+                    </div>
+                </div>
+                <div class="header-right">
                     <div class="icon-btn settings" @click="settingsOpened = true" title="Paramètres">
                         <img class="icon" src="/icons/settings.svg" alt="Paramètres" />
+                    </div>
+                    <div class="icon-btn help" @click="helpOpened = true" title="Aide">
+                        <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
                 </div>
             </div>
@@ -34,17 +45,6 @@
             <transition name="fade">
                 <div class="error" v-if="error">{{ error }}</div>
             </transition>
-            <div class="archives-selector" v-if="archivesMode">
-                <div class="archives-arrow archives-date-previous" @click="changeArchivesDate(-1)">
-                    <img class="icon" src="/icons/caret-back.svg" alt="Date précédente">
-                </div>
-                <div class="archives-date">
-                    {{ formatDate(archivesDate) }}
-                </div>
-                <div class="archives-arrow archives-date-next" @click="changeArchivesDate(1)">
-                    <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
-                </div>
-            </div>
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
@@ -362,6 +362,7 @@ export default {
             animateLetter: true,
             bestAttemptPercent: 0,
             resultsCopied: false,
+            visitedArchives: false,
             archivesMode: false,
             archivesDate: moment().subtract(1, 'days'),
             userResults: {
@@ -412,6 +413,10 @@ export default {
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
+
+        if (localStorage.getItem('visitedArchives')) {
+            this.visitedArchives = true;
+        }
     },
     watch: {
         sharedLink() {
@@ -433,6 +438,14 @@ export default {
         },
     },
     methods: {
+        switchArchivesMode () {
+            if (!this.archivesMode && !this.visitedArchives) {
+                this.visitedArchives = true;
+                this.setLSItem('visitedArchives', true);
+            }
+
+            this.archivesMode = !this.archivesMode;
+        },
         setLSItem (key, val) {
             if (this.archivesMode && !['colorBlindMode', 'keyboard', 'sharedLink'].includes(key))
                 return
@@ -471,15 +484,23 @@ export default {
                 this.wordOfTheDay = 'DROIT';
             }
         },
-        changeArchivesDate(nbDays) {
+        canChangeArchivesDate (nbDays) {
+            if (nbDays > 0 && this.archivesDate >= this.yesterday)
+                return false;
+            else if (nbDays < 0 && this.archivesDate <= moment(FIRST_DAY).add(1, 'days'))
+                return false;
+
+            return true;
+        },
+        changeArchivesDate (nbDays) {
+
+            if (!this.canChangeArchivesDate(nbDays))
+                return;
+
             if (nbDays > 0) {
-                if (this.archivesDate < this.yesterday) {
-                    this.archivesDate = this.archivesDate.add(nbDays, 'days');
-                }
+                this.archivesDate = this.archivesDate.add(nbDays, 'days');
             } else {
-                if (this.archivesDate > moment(FIRST_DAY).add(1, 'days')) {
-                    this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
-                }
+                this.archivesDate = this.archivesDate.subtract(nbDays * -1, 'days');
             }
             this.resetGridData();
             this.getWordOfTheDay();
@@ -871,13 +892,33 @@ export default {
                 .subtitle
                     margin-top: 0.5em
                     font-size: 0.8em
+            .archives-selector
+                display: flex
+                align-items: center
+                justify-content: center
+                color: white
+                .archives-date
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 100px
+                    font-size: 14px
+                    @media (max-width: 372px)
+                        font-size: 13px
+                        width: 84px
+                    @media (max-width: 320px)
+                        font-size: 11px
+                        width: 70px
             .header-right, .header-left
                 display: flex
                 width: 70px
                 justify-content: space-between
                 @media (max-height: 540px)
                     width: 62px
+            .header-right
+                flex-direction: row-reverse
             .icon-btn
+                position: relative
                 display: flex
                 align-items: center
                 justify-content: center
@@ -898,10 +939,17 @@ export default {
                     background-color: #2B2B2B
                     border-color: #2B2B2B
                 &.pressed
-                    background-color: #1AA7EC
-                    border-color: #1AA7EC
+                    background-color: #3EAA42
+                    border-color: #157D19
+                &.disabled
+                    background: none
+                    border: 2px solid #2C2C2C
+                    cursor: default
+                    .icon
+                        opacity: .5
                 .icon
                     height: 13px
+                    user-select: none
     main
         max-width: 500px
         height: 95%
@@ -931,16 +979,6 @@ export default {
             font-size: 18px
             font-weight: bold
             z-index: 10
-        .archives-selector
-            margin: 12px 0
-            color: white
-            display: flex
-            justify-content: space-around
-            width: 100%
-            .archives-arrow
-                width: 16px
-                height: 16px
-                cursor: pointer
         .grid
             margin-top: auto
             margin-bottom: auto
