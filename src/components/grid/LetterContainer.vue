@@ -2,6 +2,7 @@
     <div id="letter-container" :style="{ transitionDelay: !color ? '0s' : `${0.15 + 0.3 * (placement - 1)}s`, animationDelay: `${0.3 * (placement - 1)}s` }" :class="{ 
         'has-letter': letter,
         validated: color, 
+        selected: hasCursor,
         correct: color === 'correct', 
         partial: color === 'partial', 
         incorrect: color === 'incorrect',
@@ -24,6 +25,7 @@ export default {
         placement: Number,
         color: String,
         animate: Boolean,
+        hasCursor: Boolean,
         colorBlindMode: Boolean,
     },
 }
@@ -31,6 +33,9 @@ export default {
 
 <style lang="sass" scoped>
 #letter-container
+    display: flex
+    align-items: center
+    justify-content: center
     width: 62px
     height: 62px
     border: 3px solid #2F2F2F
@@ -39,8 +44,6 @@ export default {
     margin: 4px
     transition: transform 0.1s, background 0.1s, border 0.1s
     user-select: none
-    &.color-blind
-            border-color: #919191
     @media (max-width: 380px)
         width: 54px
         height: 54px
@@ -60,8 +63,8 @@ export default {
         border-radius: 3px
     &.has-letter
         border-color: #646464
-        &.color-blind
-            border-color: #FFFFFF
+    &.selected
+        border-color: #73ADFF
     &.validated
         animation: flip
         animation-duration: 0.5s
@@ -71,7 +74,6 @@ export default {
             transition: all 0.1s
             transform: rotateX(180deg)
         &.color-blind
-            border-color: #3A3A3C
             .letter
                 color: white
     &.correct
@@ -82,8 +84,8 @@ export default {
             border-color: #F5793A
             background: #F5793A
     &.partial
-        border-color: #D3952A
-        background: #D3952A
+        border-color: #CD8729
+        background: #CD8729
         animation-name: flip
         &.color-blind
             border-color: #85C0F9
@@ -109,9 +111,11 @@ export default {
         align-items: center
         justify-content: center
         font-weight: bolder
-        font-size: 28px
+        font-size: 32px
         position: relative
         z-index: 3
+        @media (max-height: 700px)
+            font-size: 28px
         @media (max-height: 540px)
             font-size: 24px
 

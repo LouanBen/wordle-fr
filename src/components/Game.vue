@@ -53,6 +53,7 @@
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
+                        :hasCursor="indexA === currentAttempt - 1 && indexL === attempts[indexA].length"
                         v-for="letter, indexL in NB_LETTERS" 
                         :key="letter" />
                 </div>
@@ -258,7 +259,7 @@
                                     Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish" target="_blank">@powerlanguish</a> (Josh Wardle).
                                 </p>
                                 <p>
-                                    Merci à <a href="https://twitter.com/Richiesque" target="_blank">Richie</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">Reelwens</a> pour le design !
+                                    Merci à <a href="https://twitter.com/Richiesque" target="_blank">@Richiesque</a> pour son aide précieuse, ainsi qu'à <a href="https://twitter.com/Reelwens" target="_blank">@Reelwens</a> pour le design !
                                 </p>
                                 <p>
                                     Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>.
@@ -859,7 +860,7 @@ export default {
                         &.correct
                             background-color: #3EAA42
                         &.partial
-                            background-color: #D3952A
+                            background-color: #CD8729
                         &.incorrect
                             background-color: none
                             width: 14px
@@ -1069,7 +1070,8 @@ export default {
                                     background: #F5793A
                             &.partial
                                 border: none
-                                background: #D3952A
+                                background: #CD8729
+
                                 &.color-blind
                                     background: #85C0F9
                             &.incorrect
@@ -1083,7 +1085,7 @@ export default {
                                 &.color-blind
                                     color: #F5793A
                             &.partial
-                                color: #D3952A
+                                color: #CD8729
                                 &.color-blind
                                     color: #85C0F9
         .endgame-modal

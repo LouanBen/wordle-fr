@@ -56,11 +56,11 @@ export default {
     height: 60px
     cursor: pointer
     margin: 2px
-    font-size: 18px
+    font-size: 22px
     font-weight: 700
     color: #FFFFFF
     background: #636363
-    border-radius: 4px
+    border-radius: 6px
     border: none
     border-bottom: 2px solid #4D4D4D
     user-select: none
@@ -68,6 +68,8 @@ export default {
     -webkit-tap-highlight-color: transparent
     @media (max-height: 700px)
         height: 50px
+    @media (max-height: 700px), (max-width: 500px)
+        font-size: 18px
     &:hover
         background: #5A5A5A
     &:active
@@ -88,10 +90,10 @@ export default {
             &:active
                 background: #CB581E
     &.partial
-        background: #D3952A
-        border-color: #A06F19
+        background: #CD8729
+        border-color: #9f6414
         &:active
-            background: #A06F19
+            background: #9f6414
         &.color-blind
             background: #85C0F9
             border-color: #3C80C1
@@ -105,8 +107,10 @@ export default {
         &:active
             background: #212121
     .icon
-        height: 13px
+        height: 15px
         transform: translateY(1px)
+        @media (max-height: 700px), (max-width: 500px)
+            height: 13px
     @media (max-width: 500px)
         width: 34px
         &.big
