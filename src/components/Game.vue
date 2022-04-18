@@ -251,7 +251,7 @@
                             </div>
                              <div v-if="isBetaEnabled" class="settings-item setting-button">
                                  <h3>Import / Export (BETA)</h3>
-                                 <div class="btn" @click="importSave">
+                                 <div class="btn" @click="showImportInput">
                                     <img class="icon" src="/icons/copy.svg" />
                                     <p>Importer</p>
                                 </div>
@@ -259,6 +259,10 @@
                                     <img class="icon" src="/icons/copy.svg" />
                                     <p>Exporter</p>
                                 </div>
+                             </div>
+                             <div v-if="isBetaEnabled && isImportInputEnabled">
+                                 <textarea v-model="importInput" ref="importInputTA" placeholder="Collez ici vos données précédemment exportées. Attention, cela va écraser (sans fusionner) les données présentes sur ce navigateur." style="background-color: white;width: 100%; height: 100px"></textarea>
+                                 <button class="btn" style="color: white;background-color: #3EAA42;border-radius: 12px;height: 25px; width: 100%; cursor: pointer;" @click="importSave">Valider l'importation</button>
                              </div>
                             <div class="credits">
                                 <h2>Crédits</h2>
@@ -376,6 +380,8 @@ export default {
             resultsCopied: false,
             archivesMode: false,
             archivesDate: moment().subtract(1, 'days'),
+            isImportInputEnabled: false,
+            importInput: '',
             userResults: {
                 nbGames: 0,
                 nbWins: 0,
@@ -489,11 +495,19 @@ export default {
             alert(`Les données ont été copiées dans votre presse-papier. Transmettez-les au nouvel appareil, et collez-les après avoir cliqué sur "Importer". Attention, pour éviter de perdre votre streak, ne faites l'import/export qu'au cours d'une même journée.`)
 
         },
-        importSave () {
+        showImportInput () {
             if (this.archivesMode) return alert(`Vous ne pouvez pas importer vos données en mode archive, retirez le mode archive et retentez.`)
 
-            let b64 = prompt(`Veuillez coller vos données précédemment exportées. Attention, pour éviter de perdre votre streak, ne faites l'import/export qu'au cours d'une même journée. Cela va écraser (sans fusionner) les données actuellement stockées sur ce navigateur !`)
-            if (!b64) return
+            this.isImportInputEnabled = true
+            this.importInput = ''
+            alert(`Veuillez coller vos données précédemment exportées dans le champ qui vient d'apparaître et cliquer sur "Valider". Attention, pour éviter de perdre votre streak, ne faites l'import/export qu'au cours d'une même journée. Cela va écraser (sans fusionner) les données actuellement stockées sur ce navigateur !`)
+            this.$nextTick(() => this.$refs.importInputTA.focus())
+        },
+        importSave () {
+            if (this.archivesMode) return alert(`Vous ne pouvez pas importer vos données en mode archive, retirez le mode archive et retentez.`)
+            
+            let b64 = this.importInput.trim()
+            if (!b64) return alert(`Vous n'avez saisi aucune donnée`)
             
             let importData
             try {
@@ -518,6 +532,9 @@ export default {
 
             alert(`Données importées avec succès !`)
             this.getSavedData()
+
+            this.importInput = ''
+            this.isImportInputEnabled = false
 
         },
         async getWordOfTheDay() {
