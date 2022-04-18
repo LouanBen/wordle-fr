@@ -249,6 +249,17 @@
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
                             </div>
+                             <div v-if="isBetaEnabled" class="settings-item setting-button">
+                                 <h3>Import / Export (BETA)</h3>
+                                 <div class="btn" @click="importSave">
+                                    <img class="icon" src="/icons/copy.svg" />
+                                    <p>Importer</p>
+                                </div>
+                                 <div class="btn" @click="exportSave">
+                                    <img class="icon" src="/icons/copy.svg" />
+                                    <p>Exporter</p>
+                                </div>
+                             </div>
                             <div class="credits">
                                 <h2>Crédits</h2>
                                 <p>
@@ -287,6 +298,7 @@ import playableWords from "../assets/json/playable-words.json";
 moment.locale('fr')
 moment.tz.setDefault('Europe/Paris')
 
+const DATA_VERSION = "2.0.0"; // Must be updated when data structure is changed
 const FIRST_DAY = moment("2022-01-10T00:00:00");
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
@@ -332,6 +344,7 @@ export default {
     data() {
         return {
             seedrandom,
+            isBetaEnabled: false,
             NB_LETTERS,
             NB_ATTEMPTS,
             KEYBOARD_AZERTY,
@@ -373,6 +386,11 @@ export default {
         }
     },
     mounted() {
+        
+        let checkBeta = () => window.location.hash.toLowerCase() === '#beta'
+        this.isBetaEnabled = checkBeta()
+        
+        window.addEventListener('hashchange', () => this.isBetaEnabled = checkBeta)
 
         // Update timer to next word
         setInterval((function () {
@@ -457,6 +475,51 @@ export default {
             }
 
         },
+        simpleChecksum (str) {
+            return str.split('').reduce((ac, cv) => ac + cv.charCodeAt(0), 0).toString(16)
+        },
+        async exportSave () {
+            if (this.archivesMode) return alert(`Vous ne pouvez pas exporter vos données en mode archive, retirez le mode archive et retentez.`)
+
+            let jsonStr = JSON.stringify({ dataVersion: DATA_VERSION, ...localStorage })
+            let checksum = this.simpleChecksum(jsonStr)
+            let exportData = btoa([jsonStr, checksum].join(''))
+            await this.saveToClipboard(exportData)
+
+            alert(`Les données ont été copiées dans votre presse-papier. Transmettez-les au nouvel appareil, et collez-les après avoir cliqué sur "Importer". Attention, pour éviter de perdre votre streak, ne faites l'import/export qu'au cours d'une même journée.`)
+
+        },
+        importSave () {
+            if (this.archivesMode) return alert(`Vous ne pouvez pas importer vos données en mode archive, retirez le mode archive et retentez.`)
+
+            let b64 = prompt(`Veuillez coller vos données précédemment exportées. Attention, pour éviter de perdre votre streak, ne faites l'import/export qu'au cours d'une même journée. Cela va écraser (sans fusionner) les données actuellement stockées sur ce navigateur !`)
+            if (!b64) return
+            
+            let importData
+            try {
+                let str = atob(b64)
+                let lastBacketsAt = str.lastIndexOf('}')
+                let jsonStr = str.slice(0, lastBacketsAt + 1)
+                let checksum = str.slice(lastBacketsAt + 1)
+                let computedSum = this.simpleChecksum(jsonStr)
+
+                if (checksum !== computedSum)
+                    throw new Error('invalid checksum')
+
+                importData = JSON.parse(jsonStr)
+            } catch (err) {
+                return alert(`Erreur : Les données semblent avoir été corrompues ou tronquées. Veuillez recommencer avec de nouvelles données.`)
+            }
+
+            if (importData.dataVersion !== DATA_VERSION)
+                return alert(`Erreur : Votre sauvegarde est malheureusement obsolète, la structure de données a changé entre votre export & votre import. Veuillez recommencer avec de nouvelles données.`)
+
+            Object.entries(importData).forEach(([key, val]) => this.setLSItem(key, val))
+
+            alert(`Données importées avec succès !`)
+            this.getSavedData()
+
+        },
         async getWordOfTheDay() {
             const date = this.archivesMode ? this.archivesDate : this.today;
             const formatedDate = date.format('YYYY-M-D');
@@ -522,6 +585,7 @@ export default {
             }
         },
         reset() {
+            this.setLSItem('dataVersion', DATA_VERSION);
             this.setLSItem('attempts', JSON.stringify(this.attempts));
             this.setLSItem('results', JSON.stringify(this.results));
             this.setLSItem('currentAttempt', JSON.stringify(this.currentAttempt));
@@ -766,15 +830,19 @@ export default {
                 sharedContent = sharedContent + '\n\n' + url;
             }
             
+            this.saveToClipboard(sharedContent);
+            
+        },
+        async saveToClipboard (content) {
             const errMsg = "Votre navigateur ne permet pas de copier du texte via un bouton. Une solution alternative sera proposée dans une prochaine mise à jour."
             if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-                navigator.clipboard.writeText(sharedContent).then(() => this.changeCopiedStatus()).catch(() => alert(errMsg));
+                await navigator.clipboard.writeText(content).then(() => this.changeCopiedStatus()).catch(() => alert(errMsg));
             } else if (typeof document.execCommand === 'function') {
                 var clipboardBuffer = document.getElementById('clipboard-buffer')
-                clipboardBuffer.value = sharedContent
+                clipboardBuffer.value = content
                 clipboardBuffer.style.display='block'
                 clipboardBuffer.focus()
-                clipboardBuffer.setSelectionRange(0, sharedContent.length); // select() does not work on old browsers (Safari/Firefox on iPhone 6 for instance)
+                clipboardBuffer.setSelectionRange(0, content.length); // select() does not work on old browsers (Safari/Firefox on iPhone 6 for instance)
                 document.execCommand("copy");
                 clipboardBuffer.style.display='none'
                 clipboardBuffer.blur();
@@ -1462,6 +1530,8 @@ export default {
                             display: flex
                             justify-content: space-between
                             align-items: center
+                            .btn
+                                cursor: pointer
                             .buttons
                                 background: #3A3A3C
                                 border-radius: 100px
