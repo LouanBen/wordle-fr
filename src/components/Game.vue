@@ -18,6 +18,8 @@
                         <div class="letter partial">M</div>
                         <div class="letter incorrect">O</div>
                         <div class="letter incorrect">T</div>
+                        <div class="space"></div>
+                        <div>(simplifié)</div>
                     </div>
                 </div>
                 <div class="archives-selector" v-if="archivesMode">
@@ -78,10 +80,23 @@
                         <div class="close-btn" @click="helpOpened = false">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
+                        <h2>Kézako ?</h2>
+                        <div class="help-content">
+                            <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/" target="_blank">Wordle</a>, mais en français, avec quelques simplifications.</p>
+                            <p>Chaque jour, un mot de 5 lettres est choisi aléatoirement. Vous devez le deviner en 6 essais.</p>
+                            <p>La liste de mots à trouver est très restreinte ({{words.length}} mots, sur {{words.length+playableWords.length}})&nbsp;:<br />
+                            - aucun mot à trouver ne comportera deux lettres identiques<br />
+                            - les variantes plurielles &amp; féminines sont absentes de la liste<br />
+                            - il n'y a pas + de 2 mots à trouver ayant qu'1 lettre de différence<br />
+                            - les verbes sont uniquement à l'infinitif ou au participe-passé<br />
+                            - par défaut le safe-mode est activé sur toutes vos tentatives : il vous prévient que le mot saisi n'est pas dans la liste des mots à trouver<br />
+                            <br />
+                            Aucun mot ne retombera avant 814 jours minimum (2 ans 2 mois)
+                            </p>
+                        </div>
+                        <p></p>
                         <h2>Comment jouer ?</h2>
                         <div class="help-content">
-                            <p>Ce jeu reprend exactement le même concept que le <a href="https://www.powerlanguage.co.uk/wordle/" target="_blank">Wordle</a>, mais en français.</p>
-                            <p>Chaque jour, un mot de 5 lettres est choisi aléatoirement. Vous devez le deviner en 6 essais.</p>
                             <p>À chaque essai, les lettres du mot que vous avez proposé changeront de couleur en fonction de à quel point vous êtes proche de le trouver.</p>
                             <div class="help-exemple">
                                 <div class="help-word">
@@ -250,6 +265,15 @@
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
                             </div>
+                            <div class="settings-item setting-button">
+                                <h3>Safe-mode</h3>
+                                <div class="buttons keyboard-buttons">
+                                    <button :class="{ selected: safeMode === 'always' }" @click="safeMode = 'always'">Toujours</button>
+                                    <button :class="{ selected: safeMode === 'last-chance' }" @click="safeMode = 'last-chance'">Ligne 6</button>
+                                    <button :class="{ selected: safeMode === 'never' }" @click="safeMode = 'never'">Jamais</button>
+                                </div>
+                            </div>
+                            <div style="text-align:left">Le safe-mode vous avertit qu'un mot que vous venez de jouer n'est pas présent dans la liste des mots à trouver, vous pourrez choisir de le jouer malgré tout.</div>
                              <div v-if="isBetaEnabled" class="settings-item setting-button">
                                  <h3>Import / Export (BETA)</h3>
                                  <div class="btn" @click="showImportInput">
@@ -268,7 +292,7 @@
                             <div class="credits">
                                 <h2>Crédits</h2>
                                 <p>
-                                    Jeu développé par <a href="https://twitter.com/louanben" target="_blank">@louanben</a>.
+                                    Jeu développé par <a href="https://twitter.com/louanben" target="_blank">@louanben</a>, simplifié par <a href="https://twitter.com/Richiesque" target="_blank">@Richiesque</a>.
                                 </p>
                                 <p>
                                     Concept et design librement inspirés de <strong>Wordle</strong> par <a href="https://twitter.com/powerlanguish" target="_blank">@powerlanguish</a> (Josh Wardle).
@@ -280,7 +304,7 @@
                                     Pour toute demandes, contacter <strong>@louanben</strong> sur Twitter, ou bien par mail : <strong>louanben.pro@gmail.com</strong>.
                                 </p>
                                 <p>
-                                    <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>.
+                                    <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>. Vous êtes sur <a href="https://github.com/richie3366/wordle-fr-simple" target="_blank">un fork</a>.
                                 </p>
                             </div>
                         </div>
@@ -304,7 +328,7 @@ moment.locale('fr')
 moment.tz.setDefault('Europe/Paris')
 
 const DATA_VERSION = "2.0.0"; // Must be updated when data structure is changed
-const FIRST_DAY = moment("2022-01-10T00:00:00");
+const FIRST_DAY = moment("2022-05-05T00:00:00");
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
 const KEYBOARD_AZERTY = {
@@ -350,6 +374,7 @@ export default {
         return {
             seedrandom,
             isBetaEnabled: false,
+            safeMode: 'always',
             NB_LETTERS,
             NB_ATTEMPTS,
             KEYBOARD_AZERTY,
@@ -360,6 +385,7 @@ export default {
             today: moment(),
             yesterday: moment().subtract(1, 'day'),
             words,
+            playableWords,
             attempts: [],
             results: [],
             currentAttempt: 1,
@@ -438,6 +464,10 @@ export default {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
 
+        if (localStorage.getItem('safeMode')) {
+            this.safeMode = JSON.parse(localStorage.getItem('safeMode'));
+        }
+
         if (localStorage.getItem('visitedArchives')) {
             this.visitedArchives = true;
         }
@@ -448,6 +478,9 @@ export default {
         },
         colorBlindMode() {
             this.setLSItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
+        },
+        safeMode() {
+            this.setLSItem('safeMode', JSON.stringify(this.safeMode));
         },
         keyboard() {
             this.setLSItem('keyboard', JSON.stringify(this.keyboard));
@@ -550,19 +583,22 @@ export default {
             this.isImportInputEnabled = false
         },
         async getWordOfTheDay() {
-            const date = this.archivesMode ? this.archivesDate : this.today;
-            const formatedDate = date.format('YYYY-M-D');
-            const seed = seedrandom(formatedDate);
-            const random = seed();
-            this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
+            let wordID = this.getWordID() - 1
+            if (wordID < 0) wordID = 0
+            const groupNum = Math.floor(wordID / this.words.length)
+            const wordNum = wordID % this.words.length
+            const wcopy = this.words.slice()
 
-            // 👩
-            console.log(formatedDate);
-            if (formatedDate === '2022-3-8') {
-                this.wordOfTheDay = 'DROIT';
+            let word
+            for (let i = 0; i <= wordNum; i++) {
+                const seed = seedrandom(`group-${groupNum}/word-${wordNum}`);
+                word = wcopy.splice(Math.floor(seed() * wcopy.length), 1)[0]
             }
+
+            this.wordOfTheDay = word
         },
         canChangeArchivesDate (nbDays) {
+            
             if (nbDays > 0 && this.archivesDate >= this.yesterday)
                 return false;
             else if (nbDays < 0 && this.archivesDate <= moment(FIRST_DAY).add(1, 'days'))
@@ -666,7 +702,18 @@ export default {
         },
         verifyWord(attempt) {
             if (attempt.length === NB_LETTERS) {
-                if (this.words.includes(attempt.join('')) || playableWords.includes(attempt.join(''))) {
+
+                let isDrawable = this.words.includes(attempt.join(''))
+                let isPlayable = playableWords.includes(attempt.join(''))
+
+                if (!isDrawable && isPlayable) {
+                    if (this.safeMode === 'always' || (this.safeMode === 'last-chance' && this.currentAttempt === 6)) {
+                        if (!confirm(`Le mot saisi existe, mais n'est pas dans la liste des mots à trouver. Le jouer quand même ? (oui = OK, non = annuler)\n\n(vous pouvez désactiver cette alerte dans les réglages [safe-mode])`))
+                            return
+                    }
+                }
+
+                if (isDrawable || isPlayable) {
                     this.verifyLetters(attempt);
                 } else {
                     this.error = 'Ce mot n\'est pas dans la liste';
@@ -847,7 +894,7 @@ export default {
             const wordID = this.getWordID()
             const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
 
-            const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
+            const title = `Le Mot Simple (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
             let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
                     if (letter === 'correct') {
@@ -859,7 +906,7 @@ export default {
                     }
                 }).join('');
             }).join('\n');
-            const url = "https://wordle.louan.me";
+            const url = "https://wordle.richie.fr";
 
             let sharedContent = title + schema;
 
