@@ -250,8 +250,8 @@
                                     <button :class="{ selected: keyboard.name === KEYBOARD_QWERTZ.name }" @click="keyboard = KEYBOARD_QWERTZ">QWERTZ</button>
                                 </div>
                             </div>
-                             <div v-if="isBetaEnabled" class="settings-item setting-button">
-                                 <h3>Import / Export (BETA)</h3>
+                             <div class="settings-item setting-button">
+                                 <h3>Import / Export</h3>
                                  <div class="btn" @click="showImportInput">
                                     <img class="icon" src="/icons/copy.svg" />
                                     <p>Importer</p>
@@ -261,7 +261,7 @@
                                     <p>Exporter</p>
                                 </div>
                              </div>
-                             <div v-if="isBetaEnabled && isImportInputEnabled">
+                             <div v-if="isImportInputEnabled">
                                  <textarea v-model="importInput" ref="importInputTA" placeholder="Collez ici vos données précédemment exportées. Attention, cela va écraser (sans fusionner) les données présentes sur ce navigateur." style="background-color: white;width: 100%; height: 100px"></textarea>
                                  <button class="btn" style="color: white;background-color: #3EAA42;border-radius: 12px;height: 25px; width: 100%; cursor: pointer;" @click="importSave">Valider l'importation</button>
                              </div>
