@@ -26,6 +26,9 @@
                     </div>
                     <div class="archives-date">
                         {{ formatDate(archivesDate) }}
+                        <div class="datepicker-container" v-if="isBetaEnabled">
+                            <date-picker v-model="archivesDateDatepicker" type="format" :disabled-date="disabledRange" @input="changeArchivesDateFromDatepicker()"></date-picker>
+                        </div>
                     </div>
                     <div class="icon-btn archives-arrow archives-date-next" :class="{ disabled: !canChangeArchivesDate(1) }" @click="changeArchivesDate(1)">
                         <img class="icon" src="/icons/caret-forward.svg" alt="Date suivante">
@@ -294,6 +297,9 @@
 <script>
 import * as seedrandom from 'seedrandom';
 import moment from 'moment-timezone';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
+import 'vue2-datepicker/locale/fr';
 
 import LetterContainer from "./grid/LetterContainer.vue";
 import Key from "./keyboard/Key.vue";
@@ -345,6 +351,7 @@ export default {
     components: {
         LetterContainer,
         Key,
+        DatePicker,
     },
     data() {
         return {
@@ -382,6 +389,7 @@ export default {
             visitedArchives: false,
             archivesMode: false,
             archivesDate: moment().subtract(1, 'days'),
+            archivesDateDatepicker: moment().subtract(1, 'days'),
             isImportInputEnabled: false,
             importInput: '',
             userResults: {
@@ -582,6 +590,14 @@ export default {
             }
             this.resetGridData();
             this.getWordOfTheDay();
+        },
+        changeArchivesDateFromDatepicker () {
+            this.archivesDate = moment(this.archivesDateDatepicker)
+            this.resetGridData();
+            this.getWordOfTheDay();
+        },
+        disabledRange(date) {
+            return date < FIRST_DAY || date > this.yesterday;
         },
         getSavedData() {
             if (localStorage.getItem('lastSave')) {
@@ -986,12 +1002,24 @@ export default {
                     justify-content: center
                     width: 100px
                     font-size: 14px
+                    position: relative
                     @media (max-width: 372px)
                         font-size: 13px
                         width: 84px
                     @media (max-width: 320px)
                         font-size: 11px
                         width: 70px
+                    
+                    .datepicker-container
+                        position: absolute
+                        .mx-datepicker
+                            opacity: 0
+                            width: 100%
+                            cursor: pointer
+                            .mx-datepicker-popup
+                                display: none
+                                margin-top: 12px
+
             .header-right, .header-left
                 display: flex
                 width: 70px
