@@ -564,10 +564,11 @@ export default {
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
 
-            // 👩
             console.log(formatedDate);
-            if (formatedDate === '2022-3-8') {
+            if (formatedDate === '2022-3-8') { // 👩
                 this.wordOfTheDay = 'DROIT';
+            } else if (formatedDate === '2023-5-12') { // 🧑‍🎓
+                this.wordOfTheDay = 'FAIRE';
             }
         },
         canChangeArchivesDate (nbDays) {
