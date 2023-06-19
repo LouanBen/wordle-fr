@@ -209,7 +209,7 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://utip.io/louanben" target="_blank" class="btn support-btn">
+                                <a href="https://ko-fi.com/louanben" target="_blank" class="btn support-btn">
                                     <img class="icon" src="/icons/heart.svg" />
                                     <p>Soutenir l'auteur du projet</p>
                                 </a>
