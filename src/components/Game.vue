@@ -309,7 +309,7 @@ import playableWords from "../assets/json/playable-words.json";
 moment.locale('fr')
 moment.tz.setDefault('Europe/Paris')
 
-const DATA_VERSION = "2.0.0"; // Must be updated when data structure is changed
+const DATA_VERSION = "2.3.0"; // Must be updated when data structure is changed
 const FIRST_DAY = moment("2022-01-10T00:00:00");
 const NB_LETTERS = 5;
 const NB_ATTEMPTS = 6;
