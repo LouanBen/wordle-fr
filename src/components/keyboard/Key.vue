@@ -1,5 +1,6 @@
 <template>
     <button id="key" @click="handleClick"
+        :style="{ transitionDelay: '1.5s'}" 
         :class="[{
             big,
             correct: color === 'correct', 
@@ -64,7 +65,7 @@ export default {
     border: none
     border-bottom: 2px solid #4D4D4D
     user-select: none
-    transition: transform 0.2s
+    transition: transform 0.1s, background 0.1s, border-bottom-color 0.1s, color 0.1s
     -webkit-tap-highlight-color: transparent
     @media (max-height: 700px)
         height: 50px
