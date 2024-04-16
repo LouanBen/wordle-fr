@@ -9,8 +9,9 @@
         special: color === 'special',
         'no-animation': !animate,
         'color-blind': colorBlindMode,
+        'light-mode': lightMode,
     }">
-        <div class="letter" v-if="letter" :style="{ transitionDelay: `${0.15 + 0.3 * (placement - 1)}s`}">
+        <div class="letter" v-if="letter" :style="{ transitionDelay: `${0.15 + 0.3 * (placement - 1)}s`}"  :class="{ 'light-mode': lightMode }">
             {{ letter }}
         </div>
     </div>
@@ -27,6 +28,7 @@ export default {
         animate: Boolean,
         hasCursor: Boolean,
         colorBlindMode: Boolean,
+        lightMode: Boolean,
     },
 }
 </script>
@@ -39,6 +41,15 @@ export default {
     width: 62px
     height: 62px
     border: 3px solid #2F2F2F
+    &.light-mode
+        border-color: #c8ccce
+
+    
+    color: #FFFFFF
+    &.light-mode
+        color: black
+    &.validated
+        color: white
     border-radius: 6px
     box-sizing: border-box
     margin: 4px
@@ -93,6 +104,9 @@ export default {
     &.incorrect
         border-color: #3A3A3C
         background: #3A3A3C
+        &.light-mode
+            border-color: #787c7e
+            background: #787c7e
     &.special
         border-color: #E21C46
         background: #E21C46
@@ -106,7 +120,6 @@ export default {
     .letter
         width: 100%
         height: 100%
-        color: #FFFFFF
         display: flex
         align-items: center
         justify-content: center

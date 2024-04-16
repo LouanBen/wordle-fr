@@ -6,10 +6,12 @@
             partial: color === 'partial', 
             incorrect: color === 'incorrect',
             'color-blind': colorBlindMode,
+            'light-mode': lightMode,
         }, isBig && keyboardName]"
     >
         <div v-if="isBig">
-            <img :src="`/icons/${keyContent.toLowerCase()}.svg`" :alt="keyContent" class="icon" />
+            <img v-if="lightMode" :src="`/icons/${keyContent.toLowerCase()}_blk.svg`" :alt="keyContent" class="icon"/>
+            <img v-else :src="`/icons/${keyContent.toLowerCase()}.svg`" :alt="keyContent" class="icon"/>
         </div>
         <template v-else>
             {{ keyContent }}
@@ -25,6 +27,7 @@ export default {
         keyContent: String,
         color: String,
         colorBlindMode: Boolean,
+        lightMode: Boolean,
         keyboardName: String
     },
     data() {
@@ -60,6 +63,9 @@ export default {
     font-weight: 700
     color: #FFFFFF
     background: #636363
+    &.light-mode
+        color: black
+        background: #d3d6da
     border-radius: 6px
     border: none
     border-bottom: 2px solid #4D4D4D
@@ -82,6 +88,8 @@ export default {
     &.correct
         background: #3EAA42
         border-color: #157D19
+        &.light-mode
+            color: white
         &:active
             background: #157D19
         &.color-blind
@@ -92,6 +100,9 @@ export default {
     &.partial
         background: #CD8729
         border-color: #9f6414
+
+        &.light-mode
+            color: white
         &:active
             background: #9f6414
         &.color-blind
@@ -103,6 +114,10 @@ export default {
         background: #2C2C2C
         border-color: #212121
         color: #969696
+        &.light-mode
+            color: white
+            background: #787c7e
+            border-color: #6e6e6e
 
         &:active
             background: #212121

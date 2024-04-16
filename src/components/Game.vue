@@ -1,7 +1,7 @@
 <template>
-    <div id="game">
-        <header>
-            <div class="header-container">
+    <div id="game" :class="{ 'light-mode': lightMode }">
+        <header :class="{ 'light-mode': lightMode }">
+            <div class="header-container" >
                 <div class="header-left">
                     <div class="icon-btn archives" :class="{ pressed: archivesMode, nopin: visitedArchives }" @click="switchArchivesMode" title="Archives">
                         <img class="icon" src="/icons/archive.svg" alt="Archives" />
@@ -11,8 +11,8 @@
                     </div>
                 </div>
                 <div class="game-title" v-if="!archivesMode"><!--MORDLE-->
-                    <div class="title">
-                        <div class="letter correct">L</div>
+                    <div class="title" :class="{ 'light-mode': lightMode }">
+                        <div class="letter correct" >L</div>
                         <div class="letter incorrect">E</div>
                         <div class="space"></div>
                         <div class="letter partial">M</div>
@@ -56,6 +56,7 @@
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
+                        :lightMode="lightMode"
                         :hasCursor="indexA === currentAttempt - 1 && indexL === attempts[indexA].length"
                         v-for="letter, indexL in NB_LETTERS" 
                         :key="letter" />
@@ -67,6 +68,7 @@
                         :keyContent="key"
                         :color="getKeyColor(key)"
                         :colorBlindMode="colorBlindMode"
+                        :lightMode="lightMode"
                         v-for="key in line"
                         :key="key"
                         :keyboardName="keyboard.name"
@@ -88,7 +90,7 @@
                             <p>À chaque essai, les lettres du mot que vous avez proposé changeront de couleur en fonction de à quel point vous êtes proche de le trouver.</p>
                             <div class="help-exemple">
                                 <div class="help-word">
-                                    <div class="help-letter-container correct" :class="{ 'color-blind': colorBlindMode }">
+                                    <div class="help-letter-container correct" :class="{ 'color-blind': colorBlindMode, 'light-mode': lightMode }">
                                         F
                                     </div>
                                     <div class="help-letter-container">
@@ -104,7 +106,7 @@
                                         T
                                     </div>
                                 </div>
-                                <p>La lettre <span class="correct" :class="{ 'color-blind': colorBlindMode }">F</span> est dans le mot, à la bonne place.</p>
+                                <p>La lettre <span class="correct" :class="{ 'color-blind': colorBlindMode, 'light-mode': lightMode }">F</span> est dans le mot, à la bonne place.</p>
                                 <div class="help-word">
                                     <div class="help-letter-container">
                                         P
@@ -112,7 +114,7 @@
                                     <div class="help-letter-container">
                                         O
                                     </div>
-                                    <div class="help-letter-container partial" :class="{ 'color-blind': colorBlindMode }">
+                                    <div class="help-letter-container partial" :class="{ 'color-blind': colorBlindMode, 'light-mode': lightMode }">
                                         C
                                     </div>
                                     <div class="help-letter-container">
@@ -122,7 +124,7 @@
                                         E
                                     </div>
                                 </div>
-                                <p>La lettre <span class="partial" :class="{ 'color-blind': colorBlindMode }">C</span> est dans le mot, mais pas à la bonne place.</p>
+                                <p>La lettre <span class="partial" :class="{ 'color-blind': colorBlindMode, 'light-mode': lightMode }">C</span> est dans le mot, mais pas à la bonne place.</p>
                                 <div class="help-word">
                                     <div class="help-letter-container">
                                         S
@@ -136,7 +138,7 @@
                                     <div class="help-letter-container">
                                         U
                                     </div>
-                                    <div class="help-letter-container incorrect" :class="{ 'color-blind': colorBlindMode }">
+                                    <div class="help-letter-container incorrect" :class="{ 'color-blind': colorBlindMode, 'light-mode': lightMode }">
                                         R
                                     </div>
                                 </div>
@@ -241,6 +243,12 @@
                             <div class="settings-item setting-toggle">
                                 <h3>Mode daltoniens</h3>
                                 <div class="toggle-button" @click="colorBlindMode = !colorBlindMode" :class="{ activated: colorBlindMode }">
+                                    <div class="toggle"></div>
+                                </div>
+                            </div>
+                            <div class="settings-item setting-toggle">
+                                <h3>Mode clair</h3>
+                                <div class="toggle-button" @click="lightMode = !lightMode" :class="{ activated: lightMode }">
                                     <div class="toggle"></div>
                                 </div>
                             </div>
@@ -382,6 +390,7 @@ export default {
             settingsOpened: false,
             helpOpened: false,
             colorBlindMode: false,
+            lightMode: false,
             sharedLink: true,
             animateLetter: true,
             bestAttemptPercent: 0,
@@ -442,6 +451,10 @@ export default {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
         }
 
+        if (localStorage.getItem('lightMode')) {
+            this.lightMode = JSON.parse(localStorage.getItem('lightMode'));
+        }
+
         if (localStorage.getItem('keyboard')) {
             this.keyboard = JSON.parse(localStorage.getItem('keyboard'));
         }
@@ -456,6 +469,9 @@ export default {
         },
         colorBlindMode() {
             this.setLSItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
+        },
+        lightMode() {
+            this.setLSItem('lightMode', JSON.stringify(this.lightMode));
         },
         keyboard() {
             this.setLSItem('keyboard', JSON.stringify(this.keyboard));
@@ -479,7 +495,7 @@ export default {
             this.archivesMode = !this.archivesMode;
         },
         setLSItem (key, val) {
-            if (this.archivesMode && !['colorBlindMode', 'keyboard', 'sharedLink'].includes(key))
+            if (this.archivesMode && !['colorBlindMode', 'lightMode', 'keyboard', 'sharedLink'].includes(key))
                 return
             
             if (typeof val !== 'string')
@@ -933,12 +949,16 @@ export default {
     display: flex
     flex-direction: column
     background: #0E0E0F
+    &.light-mode
+        background: #FFFFFF
     header
         width: 100%
         height: 60px
         display: flex
         justify-content: center
         background: #1D1D20
+        &.light-mode
+            background: #f0f0f0
         @media (max-height: 540px)
             height: 40px
         .header-container
@@ -956,6 +976,9 @@ export default {
                     display: flex
                     align-items: center
                     justify-content: center
+                    color: white
+                    &.light-mode
+                        color: black
                     .letter
                         display: flex
                         align-items: center
@@ -967,7 +990,6 @@ export default {
                         font-weight: 700
                         border-radius: 4px
                         text-transform: uppercase
-                        color: white
                         @media (max-height: 540px)
                             width: 20px
                             height: 20px
