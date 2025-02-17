@@ -42,6 +42,9 @@
                         <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
                 </div>
+                <div class="announcement-cta" @click="promoOpened = true" title="Annonce">
+                    <img class="icon" src="/icons/book.svg" alt="Annonce" />
+                </div>
             </div>
         </header>
         <main>
@@ -51,14 +54,15 @@
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
+                        v-for="letter, indexL in NB_LETTERS" 
+                        :key="letter"
                         :letter="attempts[indexA][indexL]" 
                         :color="results[indexA][indexL]" 
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
                         :hasCursor="indexA === currentAttempt - 1 && indexL === attempts[indexA].length"
-                        v-for="letter, indexL in NB_LETTERS" 
-                        :key="letter" />
+                    />
                 </div>
             </div>
             <div class="keyboard">
@@ -209,7 +213,7 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://www.marabout.com/auteur/louan-bengmah/" target="_blank" class="btn large-btn">
+                                <a href="https://bento.me/le-mot" target="_blank" class="btn large-btn">
                                     <img class="icon" src="/icons/book.svg" />
                                     <p>Découvrir les livres Le Mot</p>
                                 </a>
@@ -298,10 +302,10 @@
             </transition>
             <transition name="fadeup">
                 <div class="promo-modal" v-if="promoOpened">
-                    <div class="modal-backdrop" @click="promoOpened = false">
+                    <div class="modal-backdrop" @click="closePromo">
                     </div>
                     <div class="promo-modal-content">
-                        <div class="close-btn" @click="promoOpened = false">
+                        <div class="close-btn" @click="closePromo">
                             <img class="icon" src="/icons/close.svg" alt="Fermer" />
                         </div>
                         <h2>Le Mot arrive en librairie !</h2>
@@ -310,15 +314,15 @@
                             <img class="promo-image" src="/img/le-mot-extreme.png" alt="Le Mot - Version Extrême" />
                         </div>
                         <p>
-                            Retrouvez tout le plaisir du jeu en version papier avec la <a href="#">Version Classique</a>, 
-                            et relevez un défi encore plus corsé avec la <a href="#">Version Extrême</a> ! 
+                            Retrouvez tout le plaisir du jeu en version papier avec la <b>Version Classique</b>, 
+                            et relevez un défi encore plus corsé avec la <b>Version Extrême</b>&nbsp;! 
+                        </p>
+                        <p>
                             130 grilles inédites par livre pour tester votre logique et votre déduction, où que vous soyez.
                         </p>
                         <div class="ctas">
-                            <input @click="promoOpened = false" type="button" value="Fermer" class="btn">
-                            <a href="#" target="_blank" class="btn discover-btn">
-                                Découvrir
-                            </a>
+                            <input @click="closePromo" type="button" value="Fermer" class="btn">
+                            <input @click="goToBookClassic" type="button" value="Découvrir" class="btn discover-btn">
                         </div>
                     </div>
                 </div>
@@ -414,7 +418,7 @@ export default {
             statsOpened: false,
             settingsOpened: false,
             helpOpened: false,
-            promoOpened: true,
+            promoOpened: false,
             colorBlindMode: false,
             sharedLink: true,
             animateLetter: true,
@@ -436,7 +440,10 @@ export default {
         }
     },
     mounted() {
-        
+        if (localStorage.getItem('lastClosedPromo') !== 'le-mot-classique') {
+            this.promoOpened = true;
+        }
+
         let checkBeta = () => window.location.hash.toLowerCase() === '#beta'
         this.isBetaEnabled = checkBeta()
         
@@ -451,15 +458,7 @@ export default {
 
         }).bind(this), 1000)
 
-        window.addEventListener('keydown', event => {
-            if (/^[a-zA-Z]$/.test(event.key)) {
-                this.handleKeyClick(event.key.toUpperCase());
-            } else if (event.key === 'Enter') {
-                this.handleKeyClick('Entrer');
-            } else if (event.key === 'Backspace') {
-                this.handleKeyClick('Suppr');
-            }
-        });
+        window.addEventListener('keydown', this.onKeyDown);
 
         for (let i = 0; i < NB_ATTEMPTS; i++) {
             this.attempts.push([]);
@@ -484,6 +483,9 @@ export default {
             this.visitedArchives = true;
         }
     },
+    beforeDestroy() {
+        window.removeEventListener('keydown', this.onKeyDown);
+    },
     watch: {
         sharedLink() {
             this.setLSItem('sharedLink', JSON.stringify(this.sharedLink));
@@ -504,6 +506,15 @@ export default {
         },
     },
     methods: {
+        onKeyDown() {
+            if (/^[a-zA-Z]$/.test(event.key)) {
+                this.handleKeyClick(event.key.toUpperCase());
+            } else if (event.key === 'Enter') {
+                this.handleKeyClick('Entrer');
+            } else if (event.key === 'Backspace') {
+                this.handleKeyClick('Suppr');
+            }
+        },
         switchArchivesMode () {
             if (!this.archivesMode && !this.visitedArchives) {
                 this.visitedArchives = true;
@@ -598,7 +609,6 @@ export default {
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
 
-            console.log(formatedDate);
             if (formatedDate === '2022-3-8') { // 👩
                 this.wordOfTheDay = 'DROIT';
             } else if (formatedDate === '2023-5-12') { // 🧑‍🎓
@@ -946,6 +956,14 @@ export default {
         changeCopiedStatus() {
             this.resultsCopied = true;
             setTimeout(() => (this.resultsCopied = false), 10000);
+        },
+        goToBookClassic() {
+            this.setLSItem('lastClosedPromo', 'le-mot-classique');
+            this.$emit('goToBookClassic');
+        },
+        closePromo() {
+            this.promoOpened = false;
+            this.setLSItem('lastClosedPromo', 'le-mot-classique');
         }
     }
 }
@@ -982,6 +1000,7 @@ export default {
             display: flex
             align-items: center
             justify-content: space-between
+            position: relative
             @media (max-width: 512px)
                 padding: 0 12px
                 box-sizing: border-box
@@ -1096,6 +1115,26 @@ export default {
                 .icon
                     height: 13px
                     user-select: none
+        .announcement-cta
+            z-index: 5
+            display: flex
+            align-items: center
+            justify-content: center
+            width: 38px
+            height: 38px
+            position: absolute
+            bottom: -38px
+            right: 16px
+            background: #3EAA42
+            border-radius: 0 0 1000px 1000px
+            cursor: pointer
+            @media (max-height: 540px)
+                width: 32px
+                height: 32px
+                bottom: -32px
+            .icon
+                height: 16px
+
     main
         max-width: 500px
         height: 95%
@@ -1770,12 +1809,10 @@ export default {
                     color: #8E8E90
                     &:last-child
                         margin-bottom: 0
-                    a
+                    b
                         color: white
                         text-decoration: none
                         font-weight: 700
-                        &:hover
-                            text-decoration: underline
                 .promo-images
                     width: 100%
                     display: flex
