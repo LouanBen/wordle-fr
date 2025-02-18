@@ -42,6 +42,9 @@
                         <img class="icon" src="/icons/help.svg" alt="Aide" />
                     </div>
                 </div>
+                <div class="announcement-cta" @click="promoOpened = true" title="Annonce">
+                    <img class="icon" src="/icons/book.svg" alt="Annonce" />
+                </div>
             </div>
         </header>
         <main>
@@ -51,14 +54,15 @@
             <div class="grid">
                 <div class="attempt" v-for="attempt, indexA in attempts" :key="indexA" :class="{ shake: error && indexA === currentAttempt - 1 }">
                     <LetterContainer 
+                        v-for="letter, indexL in NB_LETTERS" 
+                        :key="letter"
                         :letter="attempts[indexA][indexL]" 
                         :color="results[indexA][indexL]" 
                         :placement="letter" 
                         :animate="animateLetter" 
                         :colorBlindMode="colorBlindMode"
                         :hasCursor="indexA === currentAttempt - 1 && indexL === attempts[indexA].length"
-                        v-for="letter, indexL in NB_LETTERS" 
-                        :key="letter" />
+                    />
                 </div>
             </div>
             <div class="keyboard">
@@ -200,7 +204,7 @@
                             <h2>{{ wordOfTheDay }}</h2>
                             <div class="ctas">
                                 <a :href="`https://1mot.net/${this.wordOfTheDay.toLowerCase()}`" target="_blank" class="btn definition-btn">
-                                    <img class="icon" src="/icons/book.svg" />
+                                    <img class="icon" src="/icons/definition.svg" />
                                     <p>Définition</p>
                                 </a>
                                 <div class="btn sh4re-btn-anti-adblock" @click="sh4reAntiAdblock">
@@ -209,7 +213,13 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://ko-fi.com/louanben" target="_blank" class="btn support-btn">
+                                <a href="https://www.marabout.com/auteur/louan-bengmah/" target="_blank" class="btn large-btn">
+                                    <img class="icon" src="/icons/book.svg" />
+                                    <p>Découvrir les livres Le Mot</p>
+                                </a>
+                            </div>
+                            <div class="ctas">
+                                <a href="https://ko-fi.com/louanben" target="_blank" class="btn large-btn">
                                     <img class="icon" src="/icons/heart.svg" />
                                     <p>Soutenir l'auteur du projet</p>
                                 </a>
@@ -286,6 +296,33 @@
                                     <strong>WordleFR</strong> est un projet <a href="https://github.com/louanben/wordle-fr" target="_blank">open-source</a>.
                                 </p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <transition name="fadeup">
+                <div class="promo-modal" v-if="promoOpened">
+                    <div class="modal-backdrop" @click="closePromo">
+                    </div>
+                    <div class="promo-modal-content">
+                        <div class="close-btn" @click="closePromo">
+                            <img class="icon" src="/icons/close.svg" alt="Fermer" />
+                        </div>
+                        <h2>Le Mot arrive en librairie !</h2>
+                        <div class="promo-images">
+                            <img class="promo-image" src="/img/le-mot-classique.png" alt="Le Mot - Version Classique" />
+                            <img class="promo-image" src="/img/le-mot-extreme.png" alt="Le Mot - Version Extrême" />
+                        </div>
+                        <p>
+                            Retrouvez tout le plaisir du jeu en version papier avec la <b>Version Classique</b>, 
+                            et relevez un défi encore plus corsé avec la <b>Version Extrême</b>&nbsp;! 
+                        </p>
+                        <p>
+                            130 grilles inédites par livre pour tester votre logique et votre déduction, où que vous soyez.
+                        </p>
+                        <div class="ctas">
+                            <input @click="closePromo" type="button" value="Fermer" class="btn">
+                            <input @click="goToBookClassic" type="button" value="Découvrir" class="btn discover-btn">
                         </div>
                     </div>
                 </div>
@@ -381,6 +418,7 @@ export default {
             statsOpened: false,
             settingsOpened: false,
             helpOpened: false,
+            promoOpened: false,
             colorBlindMode: false,
             sharedLink: true,
             animateLetter: true,
@@ -402,7 +440,10 @@ export default {
         }
     },
     mounted() {
-        
+        if (localStorage.getItem('lastClosedPromo') !== 'le-mot-classique') {
+            this.promoOpened = true;
+        }
+
         let checkBeta = () => window.location.hash.toLowerCase() === '#beta'
         this.isBetaEnabled = checkBeta()
         
@@ -417,15 +458,7 @@ export default {
 
         }).bind(this), 1000)
 
-        window.addEventListener('keydown', event => {
-            if (/^[a-zA-Z]$/.test(event.key)) {
-                this.handleKeyClick(event.key.toUpperCase());
-            } else if (event.key === 'Enter') {
-                this.handleKeyClick('Entrer');
-            } else if (event.key === 'Backspace') {
-                this.handleKeyClick('Suppr');
-            }
-        });
+        window.addEventListener('keydown', this.onKeyDown);
 
         for (let i = 0; i < NB_ATTEMPTS; i++) {
             this.attempts.push([]);
@@ -450,6 +483,9 @@ export default {
             this.visitedArchives = true;
         }
     },
+    beforeDestroy() {
+        window.removeEventListener('keydown', this.onKeyDown);
+    },
     watch: {
         sharedLink() {
             this.setLSItem('sharedLink', JSON.stringify(this.sharedLink));
@@ -470,6 +506,15 @@ export default {
         },
     },
     methods: {
+        onKeyDown() {
+            if (/^[a-zA-Z]$/.test(event.key)) {
+                this.handleKeyClick(event.key.toUpperCase());
+            } else if (event.key === 'Enter') {
+                this.handleKeyClick('Entrer');
+            } else if (event.key === 'Backspace') {
+                this.handleKeyClick('Suppr');
+            }
+        },
         switchArchivesMode () {
             if (!this.archivesMode && !this.visitedArchives) {
                 this.visitedArchives = true;
@@ -564,7 +609,6 @@ export default {
             const random = seed();
             this.wordOfTheDay = this.words[Math.floor(random * (this.words.indexOf('PIZZA') + 1))];
 
-            console.log(formatedDate);
             if (formatedDate === '2022-3-8') { // 👩
                 this.wordOfTheDay = 'DROIT';
             } else if (formatedDate === '2023-5-12') { // 🧑‍🎓
@@ -912,6 +956,14 @@ export default {
         changeCopiedStatus() {
             this.resultsCopied = true;
             setTimeout(() => (this.resultsCopied = false), 10000);
+        },
+        goToBookClassic() {
+            this.setLSItem('lastClosedPromo', 'le-mot-classique');
+            this.$emit('goToBookClassic');
+        },
+        closePromo() {
+            this.promoOpened = false;
+            this.setLSItem('lastClosedPromo', 'le-mot-classique');
         }
     }
 }
@@ -948,6 +1000,7 @@ export default {
             display: flex
             align-items: center
             justify-content: space-between
+            position: relative
             @media (max-width: 512px)
                 padding: 0 12px
                 box-sizing: border-box
@@ -1062,6 +1115,33 @@ export default {
                 .icon
                     height: 13px
                     user-select: none
+        .announcement-cta
+            z-index: 5
+            display: flex
+            align-items: center
+            justify-content: center
+            width: 38px
+            height: 38px
+            position: absolute
+            bottom: -38px
+            right: 16px
+            background: #3EAA42
+            border-radius: 0 0 1000px 1000px
+            cursor: pointer
+            border-bottom: 2px solid #157D19
+            &:hover
+                background-color: #44b848
+                border-color: #1c9320
+            &:active
+                background-color: #157D19
+                border-color: #157D19
+            @media (max-height: 540px)
+                width: 32px
+                height: 32px
+                bottom: -32px
+            .icon
+                height: 16px
+
     main
         max-width: 500px
         height: 95%
@@ -1121,7 +1201,6 @@ export default {
             display: flex
             width: 100vw
             height: 100vh
-            display: flex
             justify-content: center
             align-items: center
             background: rgba(0, 0, 0, 0.7)
@@ -1244,7 +1323,6 @@ export default {
             flex-direction: column
             width: 100vw
             height: 100vh
-            display: flex
             justify-content: center
             align-items: center
             background: rgba(0, 0, 0, 0.7)
@@ -1400,7 +1478,7 @@ export default {
                         .special-s
                             color: #E21C46
                         .ctas
-                            .btn.support-btn
+                            .btn.large-btn
                                 background: #E21C46
                                 border-bottom: 2px solid #B90029
                                 padding: 0 16px
@@ -1449,7 +1527,7 @@ export default {
                             .icon
                                 height: 14px
                                 margin-right: 8px
-                            &.support-btn
+                            &.large-btn
                                 background-color: #3A3A3C
                                 border-bottom: 2px solid #2B2B2B
                                 width: 224px
@@ -1511,7 +1589,6 @@ export default {
             flex-direction: column
             width: 100vw
             height: 100vh
-            display: flex
             justify-content: center
             align-items: center
             background: rgba(0, 0, 0, 0.7)
@@ -1655,6 +1732,145 @@ export default {
                                 text-decoration: none
                                 &:hover
                                     text-decoration: underline
+        .promo-modal
+            position: fixed
+            display: flex
+            flex-direction: column
+            width: 100vw
+            height: 100vh
+            justify-content: center
+            align-items: center
+            background: rgba(0, 0, 0, 0.7)
+            top: 0
+            left: 0
+            z-index: 10
+            .promo-modal-content
+                position: relative
+                display: flex
+                align-items: flex-start
+                flex-direction: column
+                max-width: 450px
+                width: 90%
+                box-sizing: border-box
+                padding: 24px
+                background: #1D1D20
+                border-radius: 8px
+                min-height: 420px
+                max-height: 100%
+                overflow-y: auto
+                background: #121213
+                border-radius: 8px
+                overflow-y: auto
+                scrollbar-width: thin
+                scrollbar-color: #d2d2d280 #fff0
+                &::-webkit-scrollbar
+                    -webkit-appearance: none
+                    width: 4px
+                &::-webkit-scrollbar-thumb
+                    border-radius: 4px
+                    background: rgba(0, 0, 0, 0.6)
+                    &:hover 
+                        background: rgba(0, 0, 0, 1)
+                .close-btn
+                    position: absolute
+                    top: 24px
+                    right: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 24px
+                    height: 24px
+                    background-color: #3A3A3C
+                    border-radius: 5px
+                    border-bottom: 2px solid #2B2B2B
+                    cursor: pointer
+                    transition: all .3s
+                    &:hover
+                        background-color: #474748
+                        border-color: #313131
+                        .icon
+                            transform: rotate(90deg)
+                    &:active
+                        background-color: #2B2B2B
+                        border-color: #2B2B2B
+                    .icon
+                        height: 10px
+                        transition: all .3s
+                h2
+                    color: white
+                    font-size: 20px
+                    font-weight: 700
+                    margin-bottom: 24px
+                    @media (max-width: 320px)
+                        font-size: 18px
+                h3
+                    font-size: 14px
+                    font-weight: 700
+                    color: #8E8E90
+                    margin-bottom: 12px
+                p
+                    font-size: 14px
+                    line-height: 1.3
+                    margin-bottom: 12px
+                    text-align: left
+                    color: #8E8E90
+                    &:last-child
+                        margin-bottom: 0
+                    b
+                        color: white
+                        text-decoration: none
+                        font-weight: 700
+                .promo-images
+                    width: 100%
+                    display: flex
+                    justify-content: space-around
+                    gap: 16px
+                    margin-bottom: 16px
+                    .promo-image
+                        width: 160px
+                        border-radius: 8px
+                        @media (max-width: 420px)
+                            width: 140px
+                        @media (max-width: 360px)
+                            width: 100px
+                .ctas
+                    width: 100%
+                    display: flex
+                    justify-content: space-around
+                    margin-top: 16px
+                    .btn
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        width: 108px
+                        height: 36px
+                        border-radius: 5px
+                        margin: 0 4px
+                        text-decoration: none
+                        font-size: 14px
+                        font-weight: 700
+                        cursor: pointer
+                        user-select: none
+                        color: white
+                        background-color: #3A3A3C
+                        border-bottom: 2px solid #2B2B2B
+                        &:hover
+                            background-color: #474748
+                            border-color: #313131
+                        &:active
+                            background-color: #2B2B2B
+                            border-color: #2B2B2B
+                        &.discover-btn
+                            background-color: #3EAA42
+                            border-bottom: 2px solid #157D19
+                            &:hover
+                                background-color: #44b848
+                                border-color: #1c9320
+                            &:active
+                                background-color: #157D19
+                                border-color: #157D19
+
+
 
 @keyframes shake
     0%
