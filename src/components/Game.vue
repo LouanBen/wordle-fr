@@ -213,7 +213,7 @@
                                 </div>
                             </div>
                             <div class="ctas">
-                                <a href="https://bento.me/le-mot" target="_blank" class="btn large-btn">
+                                <a href="https://www.marabout.com/auteur/louan-bengmah/" target="_blank" class="btn large-btn">
                                     <img class="icon" src="/icons/book.svg" />
                                     <p>Découvrir les livres Le Mot</p>
                                 </a>
@@ -1128,6 +1128,13 @@ export default {
             background: #3EAA42
             border-radius: 0 0 1000px 1000px
             cursor: pointer
+            border-bottom: 2px solid #157D19
+            &:hover
+                background-color: #44b848
+                border-color: #1c9320
+            &:active
+                background-color: #157D19
+                border-color: #157D19
             @media (max-height: 540px)
                 width: 32px
                 height: 32px

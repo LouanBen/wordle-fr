@@ -72,14 +72,16 @@
                             <p>En effet, cette fois-ci <b>une grille pré-remplie vous est imposée</b>. À vous de trouver le mot à l'aide des indices qui vous sont donnés dans celle-ci.</p>
                             <p><b>Une seule solution est possible. Saurez-vous la trouver ?</b></p>
                             <div class="ctas"> 
-                                <a href="https://bento.me/le-mot" target="_blank" class="btn large-btn">
+                                <a href="https://www.marabout.com/auteur/louan-bengmah/" target="_blank" class="btn large-btn">
                                     <img class="icon" src="/icons/book.svg" />
                                     En savoir plus
                                 </a>
                             </div>
                             <div class="ctas">
-                                <input @click="goBackToGame" type="button" value="Retour" class="btn">
-                                <input @click="helpOpened = false" type="button" value="Compris !" class="btn primary">
+                                <div class="ctas-container">
+                                    <input @click="goBackToGame" type="button" value="Retour" class="btn">
+                                    <input @click="helpOpened = false" type="button" value="Compris !" class="btn primary">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -94,14 +96,18 @@
                         </div>
                         <h2>Félicitations !</h2>
                         <div class="content">
-                            <p>Seul le mot <span class="primary">AMOUR</span> correspondait à cette grille.</p>
+                            <p><b>Seul le mot <span class="primary">AMOUR</span> correspondait à cette grille.</b></p>
                             <p>Retrouvez 130 grilles supplémentaires dans <b>Le Mot - Version Classique</b>, disponible en librairie&nbsp;!</p>
                             <p>Sans oublier 130 autres grilles dans <b>Le Mot - Version Extrême</b>&nbsp;! Cette fois, à vous de déterminer l'emplacement des indices...</p>
+                            <div class="promo-images">
+                                <img class="promo-image" src="/img/le-mot-classique.png" alt="Le Mot - Version Classique" />
+                                <img class="promo-image" src="/img/le-mot-extreme.png" alt="Le Mot - Version Extrême" />
+                            </div>
                             <div class="ctas">
                                 <input @click="goBackToGame" type="button" value="Retour au mot du jour" class="btn large-btn">
                             </div>
                             <div class="ctas"> 
-                                <a href="https://bento.me/le-mot" target="_blank" class="btn large-btn primary">
+                                <a href="https://www.marabout.com/auteur/louan-bengmah/" target="_blank" class="btn large-btn primary">
                                     <img class="icon" src="/icons/book.svg" />
                                     Découvrir les livres Le Mot
                                 </a>
@@ -531,12 +537,18 @@ export default {
                     font-size: 20px
                     font-weight: 700
                     margin-bottom: 16px
+                    @media (max-height: 540px)
+                        font-size: 16px
+                        margin-bottom: 12px
                 p
                     font-size: 14px
                     line-height: 1.3
                     margin-bottom: 12px
                     text-align: left
                     color: #8E8E90
+                    @media (max-height: 540px)
+                        font-size: 12px
+                        margin-bottom: 8px
                     &:last-child
                         margin-bottom: 0
                     a
@@ -551,14 +563,32 @@ export default {
                         &.primary
                             color: #3EAA42
                             font-weight: 700
+                .promo-images
+                    width: 100%
+                    display: flex
+                    justify-content: space-around
+                    gap: 16px
+                    margin-bottom: 16px
+                    .promo-image
+                        width: 160px
+                        border-radius: 8px
+                        @media (max-width: 420px)
+                            width: 140px
+                        @media (max-width: 360px)
+                            width: 100px
                         
                 .ctas
                     width: 100%
                     display: flex
                     justify-content: center
-                    gap: 8px
                     &:first-of-type
                         margin-top: 16px
+                    .ctas-container
+                        display: flex
+                        justify-content: center
+                        gap: 8px
+                        width: 100%
+                        max-width: 224px
                 .btn
                     display: flex
                     align-items: center
@@ -566,7 +596,7 @@ export default {
                     width: 108px
                     height: 36px
                     border-radius: 5px
-                    margin: 0 4px
+                    margin: 0
                     text-decoration: none
                     font-size: 14px
                     font-weight: 700
@@ -594,15 +624,6 @@ export default {
                         &:active
                             background-color: #157D19
                             border-color: #157D19
-                    // &.red
-                    //     background-color: #a32c2e
-                    //     border-bottom: 2px solid #681c1d
-                    //     &:hover
-                    //         background-color: #941c1e
-                    //         border-color: #720508
-                    //     &:active
-                    //         background-color: #941c1e
-                    //         border-color: #720508
                     .icon
                         height: 14px
                         margin-right: 8px
