@@ -249,6 +249,12 @@
                                 </div>
                             </div>
                             <div class="settings-item setting-toggle">
+                                <h3>Méthode de partage natif</h3>
+                                <div class="toggle-button" @click="webShare = !webShare" :class="{ activated: webShare }">
+                                    <div class="toggle"></div>
+                                </div>
+                            </div>
+                            <div class="settings-item setting-toggle">
                                 <h3>Mode daltoniens</h3>
                                 <div class="toggle-button" @click="colorBlindMode = !colorBlindMode" :class="{ activated: colorBlindMode }">
                                     <div class="toggle"></div>
@@ -421,6 +427,7 @@ export default {
             promoOpened: false,
             colorBlindMode: false,
             sharedLink: true,
+            webShare: false,
             animateLetter: true,
             bestAttemptPercent: 0,
             resultsCopied: false,
@@ -470,6 +477,10 @@ export default {
         if (localStorage.getItem('sharedLink')) {
             this.sharedLink = JSON.parse(localStorage.getItem('sharedLink'));
         }
+        
+        if (localStorage.getItem('webShare')) {
+            this.webShare = JSON.parse(localStorage.getItem('webShare'));
+        }
 
         if (localStorage.getItem('colorBlindMode')) {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
@@ -489,6 +500,9 @@ export default {
     watch: {
         sharedLink() {
             this.setLSItem('sharedLink', JSON.stringify(this.sharedLink));
+        },
+        webShare() {
+            this.setLSItem('webShare', JSON.stringify(this.webShare));
         },
         colorBlindMode() {
             this.setLSItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
@@ -936,7 +950,7 @@ export default {
             }
 
             // We first check if we can use the Web Share API
-            if (navigator.canShare?.(dataToShare)) {
+            if (this.webShare && navigator.canShare?.(dataToShare)) {
                 // We open the share modal and display the "Copié" message
                 navigator.share(dataToShare).then(() => {
                     this.changeCopiedStatus();
