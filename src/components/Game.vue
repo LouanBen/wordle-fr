@@ -249,6 +249,12 @@
                                 </div>
                             </div>
                             <div class="settings-item setting-toggle">
+                                <h3>Méthode de partage natif</h3>
+                                <div class="toggle-button" @click="webShare = !webShare" :class="{ activated: webShare }">
+                                    <div class="toggle"></div>
+                                </div>
+                            </div>
+                            <div class="settings-item setting-toggle">
                                 <h3>Mode daltoniens</h3>
                                 <div class="toggle-button" @click="colorBlindMode = !colorBlindMode" :class="{ activated: colorBlindMode }">
                                     <div class="toggle"></div>
@@ -421,6 +427,7 @@ export default {
             promoOpened: false,
             colorBlindMode: false,
             sharedLink: true,
+            webShare: false,
             animateLetter: true,
             bestAttemptPercent: 0,
             resultsCopied: false,
@@ -470,6 +477,10 @@ export default {
         if (localStorage.getItem('sharedLink')) {
             this.sharedLink = JSON.parse(localStorage.getItem('sharedLink'));
         }
+        
+        if (localStorage.getItem('webShare')) {
+            this.webShare = JSON.parse(localStorage.getItem('webShare'));
+        }
 
         if (localStorage.getItem('colorBlindMode')) {
             this.colorBlindMode = JSON.parse(localStorage.getItem('colorBlindMode'));
@@ -489,6 +500,9 @@ export default {
     watch: {
         sharedLink() {
             this.setLSItem('sharedLink', JSON.stringify(this.sharedLink));
+        },
+        webShare() {
+            this.setLSItem('webShare', JSON.stringify(this.webShare));
         },
         colorBlindMode() {
             this.setLSItem('colorBlindMode', JSON.stringify(this.colorBlindMode));
@@ -908,7 +922,7 @@ export default {
             const wordID = this.getWordID()
             const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
 
-            const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}\n\n`;
+            const title = `Le Mot (@WordleFR) ${middle} ${this.currentAttempt <= NB_ATTEMPTS ? this.currentAttempt : '💀' }/${NB_ATTEMPTS}`;
             let schema = this.results.slice(0, this.currentAttempt).map((result) => {
                 return result.map((letter) => {
                     if (letter === 'correct') {
@@ -922,13 +936,29 @@ export default {
             }).join('\n');
             const url = "https://wordle.louan.me";
 
-            let sharedContent = title + schema;
+            let sharedContent = `${title}\n\n${schema}`;
 
-            if (this.sharedLink) {
-                sharedContent = sharedContent + '\n\n' + url;
+            // This is the payload expected by the web share API
+            // The url is automatically appended if provided
+            const dataToShare = {
+                title,
+                text: this.sharedLink ? `${sharedContent}\n\n` : sharedContent,
+                url: this.sharedLink ? url : undefined,
             }
-            
-            this.saveToClipboard(sharedContent);
+            if (this.sharedLink) {
+                sharedContent = `${sharedContent}\n\n${url}`;
+            }
+
+            // We first check if we can use the Web Share API
+            if (this.webShare && navigator.canShare?.(dataToShare)) {
+                // We open the share modal and display the "Copié" message
+                navigator.share(dataToShare).then(() => {
+                    this.changeCopiedStatus();
+                })
+            } else {
+                // If not supported, we fallback to copy and paste
+                this.saveToClipboard(sharedContent);
+            }
             
         },
         async saveToClipboard (content) {
