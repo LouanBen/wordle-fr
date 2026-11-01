@@ -1,41 +1,38 @@
-# wordle-fr
+# Le Mot / Wordle — FR & EN
 
-"Le Mot" also called "WordleFR" is a game, freely inspired by ["Wordle"](https://www.powerlanguage.co.uk/wordle/) made by [Josh Wardle](https://twitter.com/powerlanguish).
+Jeu de mots du jour (style Wordle) en **français** 🇫🇷 et en **anglais** 🇬🇧.
 
-The idea, the concept and the design were, for the most part, taken from the original project.
+## Jouer
 
-You can find Le Mot at this URL : [wordle.louan.me](https://wordle.louan.me)
+**Ouvre simplement `index.html` dans ton navigateur** (double-clic) — aucun serveur, aucune installation, aucune compilation.
 
-## Contacts
+Au premier lancement, choisis ta langue. Tu peux la changer avec le bouton **FR / EN** en haut à droite, dans les paramètres, ou directement par l'adresse : `index.html#fr` ou `index.html#en`.
 
-[@louanben](https://twitter.com/louanben) on Twitter
-or
-louanben.pro@gmail.com
+## Fonctions
 
-## Project setup
+- Un mot par jour et par langue (change à minuit, heure locale)
+- Statistiques séparées FR / EN (parties, % de victoires, séries, distribution)
+- Mode **Archives** : rejoue les mots des jours précédents
+- Mode **difficile**, mode **daltonien**
+- Claviers AZERTY, BÉPO, QWERTY, QWERTZ (FR) — QWERTY, AZERTY, DVORAK (EN)
+- Accents ignorés au clavier (é → E)
+- Partage du résultat en emojis 🟩🟨⬛
+- Hors-ligne (PWA) quand le site est hébergé (ex. GitHub Pages)
+
+## Structure
+
 ```
-npm install
+index.html            page unique (choix de langue + jeu)
+assets/css/style.css  style
+assets/js/game.js     logique du jeu (JavaScript pur, sans framework)
+assets/js/i18n.js     textes et claviers FR / EN
+assets/js/words-*.js  listes de mots (réponses + mots acceptés)
+assets/icons, img     icônes
+sw.js, manifest.json  mode hors-ligne / installation (PWA)
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Crédits
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-You'll need @vue/cli-service for this to work.
-
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-
+- Version FR basée sur [louanben/wordle-fr](https://github.com/louanben/wordle-fr) (GPL-3.0)
+- Listes de mots anglaises tirées de [everurstruly/The-New-York-Times-Wordle-Clone](https://github.com/everurstruly/The-New-York-Times-Wordle-Clone)
+- Concept original : **Wordle** par Josh Wardle
