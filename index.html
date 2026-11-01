@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3EAA42">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Wordle en français et en anglais. Devine le mot du jour ! / Guess the word of the day!">
+  <title>Le Mot · Wordle FR / EN</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- ========== Choix de la langue ========== -->
+  <section id="lang-picker" class="screen" hidden>
+    <div class="picker-box">
+      <div class="title tiles" aria-hidden="true">
+        <span class="tile correct">L</span><span class="tile">E</span><span class="gap"></span><span class="tile partial">M</span><span class="tile">O</span><span class="tile">T</span>
+      </div>
+      <h1>Choisis ta langue<br><small>Choose your language</small></h1>
+      <div class="picker-buttons">
+        <button class="lang-btn" data-lang="fr"><span class="flag">🇫🇷</span>Français</button>
+        <button class="lang-btn" data-lang="en"><span class="flag">🇬🇧</span>English</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Jeu ========== -->
+  <div id="game" hidden>
+    <header>
+      <div class="header-container">
+        <div class="header-side">
+          <button class="icon-btn" id="btn-archives" data-i18n-title="archives"><img class="icon" src="assets/icons/archive.svg" alt=""></button>
+          <button class="icon-btn" id="btn-stats" data-i18n-title="stats"><img class="icon" src="assets/icons/stats.svg" alt=""></button>
+        </div>
+
+        <div id="game-title" class="title tiles" aria-label="Titre"></div>
+
+        <div id="archives-selector" hidden>
+          <button class="icon-btn" id="archive-prev"><img class="icon" src="assets/icons/caret-back.svg" alt="◀"></button>
+          <label class="archives-date">
+            <span id="archive-date-label"></span>
+            <input type="date" id="archive-date-input">
+          </label>
+          <button class="icon-btn" id="archive-next"><img class="icon" src="assets/icons/caret-forward.svg" alt="▶"></button>
+        </div>
+
+        <div class="header-side">
+          <button class="icon-btn" id="btn-help" data-i18n-title="help"><img class="icon" src="assets/icons/help.svg" alt=""></button>
+          <button class="icon-btn" id="btn-settings" data-i18n-title="settings"><img class="icon" src="assets/icons/settings.svg" alt=""></button>
+          <button class="icon-btn lang-switch" id="btn-lang" data-i18n-title="changeLang"></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="toast" role="status" aria-live="polite"></div>
+      <div id="grid"></div>
+      <div id="keyboard"></div>
+    </main>
+  </div>
+
+  <!-- ========== Fenêtres (modales) ========== -->
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-content">
+      <button class="close-btn" data-close><img class="icon" src="assets/icons/close.svg" alt="×"></button>
+      <h2 data-i18n="howToPlay"></h2>
+      <div id="help-content"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-content">
+      <button class="close-btn" data-close><img class="icon" src="assets/icons/close.svg" alt="×"></button>
+      <h2 data-i18n="stats"></h2>
+      <div id="stats-body"></div>
+      <h2 data-i18n="distribution" id="dist-title"></h2>
+      <div id="graph"></div>
+      <div id="solution" hidden>
+        <div class="subtitle" data-i18n="wordWas"></div>
+        <h2 id="solution-word"></h2>
+        <div class="ctas">
+          <a class="btn" id="btn-definition" target="_blank" rel="noopener">
+            <img class="icon" src="assets/icons/definition.svg" alt=""><span data-i18n="definition"></span>
+          </a>
+          <button class="btn" id="btn-share">
+            <img class="icon" src="assets/icons/copy.svg" alt=""><span id="share-label"></span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer" id="countdown-box" hidden>
+        <div class="subtitle" data-i18n="nextWord"></div>
+        <div class="time" id="countdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-content">
+      <button class="close-btn" data-close><img class="icon" src="assets/icons/close.svg" alt="×"></button>
+      <h2 data-i18n="settings"></h2>
+      <div class="setting">
+        <span data-i18n="hardMode"></span>
+        <button class="toggle" data-setting="hardMode" role="switch"><span></span></button>
+      </div>
+      <p class="setting-hint" data-i18n="hardModeHint"></p>
+      <div class="setting">
+        <span data-i18n="lightTheme"></span>
+        <button class="toggle" data-setting="lightTheme" role="switch"><span></span></button>
+      </div>
+      <div class="setting">
+        <span data-i18n="colorBlind"></span>
+        <button class="toggle" data-setting="colorBlind" role="switch"><span></span></button>
+      </div>
+      <div class="setting">
+        <span data-i18n="nativeShare"></span>
+        <button class="toggle" data-setting="webShare" role="switch"><span></span></button>
+      </div>
+      <div class="setting setting-col">
+        <span data-i18n="keyboard"></span>
+        <div class="layout-buttons" id="layout-buttons"></div>
+      </div>
+      <div class="setting setting-col">
+        <span data-i18n="language"></span>
+        <div class="layout-buttons">
+          <button data-lang="fr">Français</button>
+          <button data-lang="en">English</button>
+        </div>
+      </div>
+      <div class="credits" data-i18n-html="credits"></div>
+    </div>
+  </div>
+
+  <!-- Les listes de mots (words-fr.js / words-en.js) sont chargées par game.js
+       seulement pour la langue choisie. -->
+  <script src="assets/js/vendor/seedrandom.min.js"></script>
+  <script src="assets/js/logic.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/game.js"></script>
+</body>
+</html>
