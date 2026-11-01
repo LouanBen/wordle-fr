@@ -1,0 +1,9 @@
+{
+  "name": "wordle-fr",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Le Mot / Wordle FR & EN — aucune dépendance, ouvrir index.html pour jouer",
+  "scripts": {
+    "test": "node --test"
+  }
+}

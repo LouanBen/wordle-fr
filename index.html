@@ -115,6 +115,10 @@
       </div>
       <p class="setting-hint" data-i18n="hardModeHint"></p>
       <div class="setting">
+        <span data-i18n="lightTheme"></span>
+        <button class="toggle" data-setting="lightTheme" role="switch"><span></span></button>
+      </div>
+      <div class="setting">
         <span data-i18n="colorBlind"></span>
         <button class="toggle" data-setting="colorBlind" role="switch"><span></span></button>
       </div>
@@ -137,10 +141,10 @@
     </div>
   </div>
 
-  <!-- Les listes de mots sont des fichiers .js (et pas .json) pour que le jeu marche
-       même en ouvrant index.html directement, sans serveur. -->
-  <script src="assets/js/words-fr.js"></script>
-  <script src="assets/js/words-en.js"></script>
+  <!-- Les listes de mots (words-fr.js / words-en.js) sont chargées par game.js
+       seulement pour la langue choisie. -->
+  <script src="assets/js/vendor/seedrandom.min.js"></script>
+  <script src="assets/js/logic.js"></script>
   <script src="assets/js/i18n.js"></script>
   <script src="assets/js/game.js"></script>
 </body>

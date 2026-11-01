@@ -1,7 +1,13 @@
 /* Textes et réglages propres à chaque langue. */
 window.LANGS = {
   fr: {
+    id: "fr",
     name: "Français",
+    // Même mot que wordle.louan.me : même liste, même graine, heure de Paris.
+    pick: "seedrandom",
+    timeZone: "Europe/Paris",
+    numberOffset: 1,
+    specialDays: { "2022-03-08": "DROIT", "2023-05-12": "FAIRE" },
     htmlLang: "fr",
     docTitle: "Le Mot · Wordle en français",
     title: [["L", "correct"], ["E"], [" "], ["M", "partial"], ["O"], ["T"]],
@@ -39,6 +45,7 @@ window.LANGS = {
       hardMode: "Mode difficile",
       hardModeHint: "Les indices trouvés (lettres vertes et jaunes) doivent être réutilisés.",
       colorBlind: "Mode daltonien",
+      lightTheme: "Thème clair",
       nativeShare: "Partage natif (mobile)",
       keyboard: "Clavier",
       language: "Langue",
@@ -55,7 +62,7 @@ window.LANGS = {
         {{ex:FRUIT:0:correct}}<p>La lettre <b class="c-correct">F</b> est dans le mot, à la <strong>bonne place</strong>.</p>
         {{ex:POCHE:2:partial}}<p>La lettre <b class="c-partial">C</b> est dans le mot, mais <strong>pas à la bonne place</strong>.</p>
         {{ex:SOEUR:4:incorrect}}<p>La lettre <b>R</b> n'est <strong>pas dans le mot</strong>.</p>
-        <p>Les accents sont ignorés (É = E). Un nouveau mot chaque jour à minuit !</p>`,
+        <p>Les accents sont ignorés (É = E). Un nouveau mot chaque jour à minuit, heure de Paris (18 h au Québec) — le même que sur wordle.louan.me !</p>`,
       credits: `<h3>Crédits</h3>
         <p>Version FR basée sur <a href="https://github.com/louanben/wordle-fr" target="_blank" rel="noopener">wordle-fr</a> par @louanben (GPL-3.0).</p>
         <p>Concept inspiré de <strong>Wordle</strong> par Josh Wardle.</p>`,
@@ -63,7 +70,11 @@ window.LANGS = {
   },
 
   en: {
+    id: "en",
     name: "English",
+    pick: "shuffle",
+    timeZone: undefined, // heure de l'appareil
+    numberOffset: 0,
     htmlLang: "en",
     docTitle: "Wordle · English",
     title: [["W", "correct"], ["O"], ["R", "partial"], ["D"], ["L"], ["E"]],
@@ -100,6 +111,7 @@ window.LANGS = {
       hardMode: "Hard mode",
       hardModeHint: "Any revealed hints (green and yellow letters) must be used in later guesses.",
       colorBlind: "Color-blind mode",
+      lightTheme: "Light theme",
       nativeShare: "Native share (mobile)",
       keyboard: "Keyboard",
       language: "Language",

@@ -1,12 +1,12 @@
 /* =========================================================================
    Le Mot / Wordle — FR & EN
-   Tout le jeu en JavaScript « pur » (sans framework, sans compilation).
+   Interface du jeu (affichage, clavier, sauvegarde). Les règles sont dans logic.js.
    ========================================================================= */
 (function () {
   "use strict";
 
-  const NB_LETTERS = 5;
-  const NB_ATTEMPTS = 6;
+  const G = window.WordleLogic;
+  const { NB_LETTERS, NB_ATTEMPTS, pad, addDays, daysBetween, evaluate } = G;
   const STORAGE_KEY = "lemot:v3";
   const FLIP_MS = 300; // délai entre chaque case qui se retourne
 
@@ -19,65 +19,51 @@
     if (text != null) e.textContent = text;
     return e;
   };
-  const chunk5 = (str) => str.match(/.{5}/g) || [];
 
-  // Dates « locales » au format AAAA-MM-JJ (le mot change à minuit chez toi).
-  const pad = (n) => String(n).padStart(2, "0");
-  const toKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  const fromKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
-  const addDays = (k, n) => { const d = fromKey(k); d.setDate(d.getDate() + n); return toKey(d); };
-  const utc = (k) => { const [y, m, d] = k.split("-").map(Number); return Date.UTC(y, m - 1, d); };
-  const daysBetween = (a, b) => Math.round((utc(b) - utc(a)) / 864e5);
-  const todayKey = () => toKey(new Date());
-
-  // Générateur pseudo-aléatoire déterministe (même graine = même suite de nombres).
-  function mulberry32(seed) {
-    return function () {
-      seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
+  // ---------- Listes de mots : chargées seulement quand la langue est choisie ----------
+  // (une balise <script> ajoutée à la volée marche aussi en ouvrant index.html sans serveur)
+  const loading = {};
+  function loadWords(lang) {
+    if (window.WORDS && window.WORDS[lang]) return Promise.resolve();
+    return (loading[lang] = loading[lang] || new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = `assets/js/words-${lang}.js`;
+      s.onload = resolve;
+      s.onerror = () => { delete loading[lang]; reject(new Error("words " + lang)); };
+      document.head.appendChild(s);
+    }));
   }
-  const hash = (str) => [...str].reduce((h, c) => Math.imul(31, h) + c.charCodeAt(0) | 0, 7);
 
-  // ---------- Dictionnaires (préparés une seule fois par langue) ----------
   const dict = {};
   function getDict(lang) {
     if (dict[lang]) return dict[lang];
     const src = window.WORDS[lang];
-    const answers = chunk5(src.answers);
-    // Ordre mélangé fixe : chaque mot sort une fois avant de revenir.
-    const rnd = mulberry32(hash("le-mot-" + lang));
-    const order = answers.slice();
-    for (let i = order.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      [order[i], order[j]] = [order[j], order[i]];
-    }
-    // Un Set rend la vérification « ce mot existe ? » instantanée.
-    const valid = new Set(answers.concat(chunk5(src.valid)));
-    return (dict[lang] = { order, valid });
+    const answers = G.chunk5(src.answers);
+    const cfg = window.LANGS[lang];
+    return (dict[lang] = {
+      answers,
+      order: cfg.pick === "shuffle" ? G.shuffled(answers, "le-mot-" + lang) : null,
+      valid: new Set(answers.concat(G.chunk5(src.valid))), // Set = recherche instantanée
+    });
   }
 
   // ---------- Sauvegarde (localStorage) ----------
-  const defaultStore = () => ({
-    lang: null,
-    settings: { colorBlind: false, webShare: false, hardMode: false, layout: {} },
-    fr: { game: null, stats: {} },
-    en: { game: null, stats: {} },
-  });
-  let store;
-  try {
-    store = Object.assign(defaultStore(), JSON.parse(localStorage.getItem(STORAGE_KEY)) || {});
-  } catch (e) {
-    store = defaultStore();
+  function loadStore() {
+    let s = {};
+    try { s = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { /* données abîmées */ }
+    s.settings = Object.assign({ colorBlind: false, webShare: false, hardMode: false, theme: null, layout: {} }, s.settings);
+    for (const lang of Object.keys(window.LANGS)) {
+      s[lang] = Object.assign({ game: null, stats: {}, archives: {} }, s[lang]);
+    }
+    return s;
   }
+  const store = loadStore();
   const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) { /* mode privé */ } };
 
   // ---------- État de la partie en cours ----------
   const state = {
     lang: null,
-    date: todayKey(),
+    date: null,
     archive: false,
     answer: "",
     guesses: [],   // mots déjà validés
@@ -89,68 +75,50 @@
   };
   let L = null; // config de la langue active (window.LANGS[lang])
   const T = (key, ...args) => { const v = L.t[key]; return typeof v === "function" ? v(...args) : v; };
+  const today = () => G.todayKey(L.timeZone);
 
-  function wordFor(lang, dateKey) {
-    const { order } = getDict(lang);
-    const idx = daysBetween(window.LANGS[lang].firstDay, dateKey);
-    return order[((idx % order.length) + order.length) % order.length];
-  }
-  const wordNumber = () => daysBetween(L.firstDay, state.date);
+  const wordFor = (dateKey) => {
+    const d = getDict(state.lang);
+    return G.wordFor(L, d.answers, dateKey, d.order);
+  };
+  const wordNumber = () => daysBetween(L.firstDay, state.date) + L.numberOffset;
 
-  // Couleurs d'un essai : 2 passages pour bien gérer les lettres en double.
-  function evaluate(guess, answer) {
-    const res = Array(NB_LETTERS).fill("incorrect");
-    const left = answer.split("");
-    for (let i = 0; i < NB_LETTERS; i++) {
-      if (guess[i] === answer[i]) { res[i] = "correct"; left[i] = null; }
-    }
-    for (let i = 0; i < NB_LETTERS; i++) {
-      if (res[i] === "correct") continue;
-      const j = left.indexOf(guess[i]);
-      if (j !== -1) { res[i] = "partial"; left[j] = null; }
-    }
-    return res;
+  // ---------- Chargement / sauvegarde d'une partie ----------
+  // Partie du jour : store[lang].game — Archives : store[lang].archives[date]
+  function savedSlot() {
+    const s = store[state.lang];
+    if (state.archive) return s.archives[state.date];
+    return s.game && s.game.date === state.date ? s.game : null;
   }
 
-  // Mode difficile : vérifie qu'on réutilise les indices déjà trouvés.
-  function hardModeError(guess) {
-    for (const prev of state.guesses) {
-      const res = evaluate(prev, state.answer);
-      for (let i = 0; i < NB_LETTERS; i++) {
-        if (res[i] === "correct" && guess[i] !== prev[i]) return T("mustPlace", prev[i], i + 1);
-      }
-      const need = {};
-      res.forEach((r, i) => { if (r !== "incorrect") need[prev[i]] = (need[prev[i]] || 0) + 1; });
-      for (const l in need) {
-        if (guess.split(l).length - 1 < need[l]) return T("mustContain", l);
-      }
-    }
-    return null;
-  }
-
-  // ---------- Chargement d'une partie ----------
   function loadGame() {
-    state.answer = wordFor(state.lang, state.date);
-    state.current = "";
+    state.answer = wordFor(state.date);
     state.busy = false;
-    const saved = store[state.lang].game;
-    if (!state.archive && saved && saved.date === state.date) {
+    const saved = savedSlot();
+    // On ignore une sauvegarde faite pour un autre mot (ex. : ancienne version du jeu).
+    if (saved && saved.answer === state.answer) {
       state.guesses = saved.guesses.slice();
+      state.current = saved.current || "";
       state.hardMode = !!saved.hardMode;
     } else {
       state.guesses = [];
+      state.current = "";
       state.hardMode = store.settings.hardMode;
     }
     state.won = state.guesses.includes(state.answer);
     state.finished = state.won || state.guesses.length >= NB_ATTEMPTS;
-    renderAll(false);
+    if (state.finished) state.current = "";
+    renderAll();
   }
 
   function persistGame() {
-    if (state.archive) return; // les archives ne sont jamais sauvegardées
-    store[state.lang].game = { date: state.date, guesses: state.guesses, hardMode: state.hardMode };
-    if (state.finished) {
-      store[state.lang].stats[state.date] = { won: state.won, n: state.guesses.length };
+    const s = store[state.lang];
+    const slot = { answer: state.answer, guesses: state.guesses, current: state.current, hardMode: state.hardMode };
+    if (state.archive) {
+      s.archives[state.date] = slot; // gardé, mais ne compte pas dans les stats
+    } else {
+      s.game = Object.assign({ date: state.date }, slot);
+      if (state.finished) s.stats[state.date] = { won: state.won, n: state.guesses.length };
     }
     save();
   }
@@ -161,8 +129,6 @@
   const tiles = [];
 
   function buildGrid() {
-    gridEl.innerHTML = "";
-    tiles.length = 0;
     for (let r = 0; r < NB_ATTEMPTS; r++) {
       const row = el("div", "row");
       const rowTiles = [];
@@ -239,14 +205,19 @@
     });
   }
 
+  function archiveDone(dateKey) {
+    const a = store[state.lang].archives[dateKey];
+    return !!a && a.answer === wordFor(dateKey) && (a.guesses.includes(a.answer) || a.guesses.length >= NB_ATTEMPTS);
+  }
+
   function renderHeader() {
     $("#game-title").hidden = state.archive;
     $("#archives-selector").hidden = !state.archive;
     $("#btn-archives").classList.toggle("pressed", state.archive);
     if (state.archive) {
       const first = L.firstDay;
-      const last = addDays(todayKey(), -1);
-      $("#archive-date-label").textContent = fromKey(state.date).toLocaleDateString(L.dateLocale, { day: "2-digit", month: "2-digit", year: "numeric" });
+      const last = addDays(today(), -1);
+      $("#archive-date-label").textContent = state.date + (archiveDone(state.date) ? " ✓" : "");
       const input = $("#archive-date-input");
       input.min = first; input.max = last; input.value = state.date;
       $("#archive-prev").disabled = state.date <= first;
@@ -282,15 +253,16 @@
     if (state.finished || state.busy || !L) return;
     if (key === "Enter") return submit();
     if (key === "Backspace") {
+      if (!state.current) return;
       state.current = state.current.slice(0, -1);
-      return renderGrid();
-    }
-    if (/^[A-Z]$/.test(key) && state.current.length < NB_LETTERS) {
+    } else if (/^[A-Z]$/.test(key) && state.current.length < NB_LETTERS) {
       state.current += key;
-      renderGrid();
-      const t = tiles[state.guesses.length][state.current.length - 1];
-      t.classList.add("pop");
+    } else {
+      return;
     }
+    renderGrid();
+    if (key !== "Backspace") tiles[state.guesses.length][state.current.length - 1].classList.add("pop");
+    persistGame(); // la ligne en cours survit à une fermeture de la page
   }
 
   function submit() {
@@ -298,8 +270,11 @@
     if (guess.length < NB_LETTERS) { toast(T("notEnough")); return shakeRow(); }
     if (!getDict(state.lang).valid.has(guess)) { toast(T("notInList")); return shakeRow(); }
     if (state.hardMode) {
-      const err = hardModeError(guess);
-      if (err) { toast(err); return shakeRow(); }
+      const err = G.hardModeError(state.guesses, state.answer, guess);
+      if (err) {
+        toast(err.type === "place" ? T("mustPlace", err.letter, err.pos) : T("mustContain", err.letter));
+        return shakeRow();
+      }
     }
 
     const row = state.guesses.length;
@@ -316,6 +291,7 @@
       state.busy = false;
       renderKeyboard();
       if (!state.finished) return;
+      renderHeader(); // ✓ dans les archives
       if (state.won) {
         toast(T("wins")[row], 2000);
         tiles[row].forEach((t, i) => { t.style.animationDelay = `${i * 100}ms`; t.classList.remove("reveal"); t.classList.add("win"); });
@@ -346,30 +322,6 @@
   });
 
   // ---------- Statistiques ----------
-  function computeStats() {
-    const games = store[state.lang].stats;
-    const days = Object.keys(games).sort();
-    const s = { played: days.length, wins: 0, streak: 0, maxStreak: 0, dist: Array(NB_ATTEMPTS + 1).fill(0) };
-    let run = 0, prev = null;
-    for (const d of days) {
-      const g = games[d];
-      if (g.won) {
-        s.wins++;
-        s.dist[g.n - 1]++;
-        run = prev && addDays(prev, 1) === d && games[prev].won ? run + 1 : 1;
-      } else {
-        s.dist[NB_ATTEMPTS]++;
-        run = 0;
-      }
-      s.maxStreak = Math.max(s.maxStreak, run);
-      prev = d;
-    }
-    // La série actuelle compte seulement si la dernière partie gagnée est d'aujourd'hui ou d'hier.
-    const today = todayKey();
-    s.streak = prev && (prev === today || prev === addDays(today, -1)) ? run : 0;
-    return s;
-  }
-
   function renderStats() {
     const body = $("#stats-body");
     const graph = $("#graph");
@@ -380,7 +332,7 @@
     if (state.archive) {
       body.appendChild(el("p", "muted", T("archiveNoStats")));
     } else {
-      const s = computeStats();
+      const s = G.computeStats(store[state.lang].stats, today());
       const box = el("div", "stats-grid");
       [[s.played, "played"], [s.played ? Math.round((s.wins / s.played) * 100) : 0, "winPct"], [s.streak, "streak"], [s.maxStreak, "maxStreak"]]
         .forEach(([v, k]) => {
@@ -414,20 +366,20 @@
     }
   }
 
-  function tickCountdown() {
-    const now = new Date();
-    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const s = Math.max(0, Math.floor((midnight - now) / 1000));
+  function tick() {
+    if (!L) return;
+    const s = G.secondsToMidnight(L.timeZone);
     $("#countdown").textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`;
     // Nouveau jour pendant que la page est ouverte → on charge le nouveau mot.
-    if (!state.archive && L && state.date !== todayKey()) { state.date = todayKey(); loadGame(); }
+    if (!state.archive && state.date !== today() && !state.busy) { state.date = today(); loadGame(); }
   }
-  setInterval(tickCountdown, 1000);
+  setInterval(tick, 1000);
 
   // ---------- Partage ----------
   function shareText() {
     const cb = store.settings.colorBlind;
-    const emoji = { correct: cb ? "🟧" : "🟩", partial: cb ? "🟦" : "🟨", incorrect: "⬛" };
+    const light = document.body.classList.contains("light");
+    const emoji = { correct: cb ? "🟧" : "🟩", partial: cb ? "🟦" : "🟨", incorrect: light ? "⬜" : "⬛" };
     const score = state.won ? state.guesses.length : "X";
     const tag = state.archive ? ` (${state.date})` : "";
     const lines = state.guesses.map((g) => evaluate(g, state.answer).map((r) => emoji[r]).join(""));
@@ -476,12 +428,19 @@
   $("#btn-settings").addEventListener("click", () => openModal("settings"));
 
   // ---------- Paramètres ----------
+  const isLight = () => store.settings.theme === "light"; // sombre par défaut (look original)
+
   function renderSettings() {
+    const values = {
+      hardMode: state.hardMode,
+      colorBlind: store.settings.colorBlind,
+      webShare: store.settings.webShare,
+      lightTheme: isLight(),
+    };
     $$(".toggle").forEach((t) => {
-      const key = t.dataset.setting;
-      const on = key === "hardMode" ? state.hardMode : store.settings[key];
-      t.classList.toggle("on", !!on);
-      t.setAttribute("aria-checked", !!on);
+      const on = !!values[t.dataset.setting];
+      t.classList.toggle("on", on);
+      t.setAttribute("aria-checked", on);
     });
     const current = store.settings.layout[state.lang] || L.defaultLayout;
     const box = $("#layout-buttons");
@@ -507,27 +466,33 @@
       if (state.guesses.length && !state.finished) return toast(T("hardLocked"));
       state.hardMode = store.settings.hardMode = !state.hardMode;
       persistGame();
+    } else if (key === "lightTheme") {
+      store.settings.theme = isLight() ? "dark" : "light";
+      save();
     } else {
       store.settings[key] = !store.settings[key];
       save();
     }
-    applyColorBlind();
+    applyLook();
     renderSettings();
   }));
 
-  function applyColorBlind() {
+  function applyLook() {
+    const light = isLight();
+    document.body.classList.toggle("light", light);
     document.body.classList.toggle("color-blind", !!store.settings.colorBlind);
+    $('meta[name="theme-color"]').content = light ? "#ffffff" : "#1d1d20";
   }
 
   // ---------- Archives ----------
   $("#btn-archives").addEventListener("click", () => {
+    if (state.busy) return;
     state.archive = !state.archive;
-    state.date = state.archive ? addDays(todayKey(), -1) : todayKey();
+    state.date = state.archive ? addDays(today(), -1) : today();
     loadGame();
   });
   const goArchive = (k) => {
-    const first = L.firstDay, last = addDays(todayKey(), -1);
-    if (!k || k < first || k > last) return;
+    if (state.busy || !k || k < L.firstDay || k > addDays(today(), -1)) return;
     state.date = k;
     loadGame();
   };
@@ -554,19 +519,30 @@
       `<div class="example">${[...word].map((ch, i) => `<span class="tile filled ${i === +pos ? cls : ""}">${ch}</span>`).join("")}</div>`);
   }
 
-  function setLang(lang) {
+  let langRequest = 0;
+  async function setLang(lang) {
     if (!window.LANGS[lang]) return;
+    const req = ++langRequest;
+    try {
+      await loadWords(lang);
+    } catch (e) {
+      alert("Impossible de charger les mots / Could not load word list.");
+      return;
+    }
+    if (req !== langRequest) return; // un autre choix a été fait entre-temps
+
     state.lang = store.lang = lang;
     L = window.LANGS[lang];
     save();
     state.archive = false;
-    state.date = todayKey();
+    state.date = today();
     applyTexts();
     buildKeyboard();
     $("#lang-picker").hidden = true;
     $("#game").hidden = false;
     closeModals();
     loadGame();
+    tick();
     if (location.hash !== "#" + lang) history.replaceState(null, "", "#" + lang);
   }
 
@@ -585,10 +561,10 @@
 
   // ---------- Démarrage ----------
   buildGrid();
-  applyColorBlind();
+  applyLook();
   const fromHash = location.hash.slice(1);
   if (window.LANGS[fromHash]) setLang(fromHash);
-  else if (store.lang) setLang(store.lang);
+  else if (store.lang && window.LANGS[store.lang]) setLang(store.lang);
   else showPicker();
 
   // Mode hors-ligne (seulement si le site est servi en http/https)

@@ -1,6 +1,6 @@
 // Service worker : met en cache les fichiers du jeu pour qu'il marche hors-ligne.
 // (Actif seulement quand le site est servi en http/https, pas en ouvrant index.html directement.)
-const CACHE = "le-mot-v3";
+const CACHE = "le-mot-v4";
 
 self.addEventListener("install", () => self.skipWaiting());
 
