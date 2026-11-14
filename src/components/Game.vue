@@ -348,6 +348,7 @@ import LetterContainer from "./grid/LetterContainer.vue";
 import Key from "./keyboard/Key.vue";
 import words from "../assets/json/drawable-words.json";
 import playableWords from "../assets/json/playable-words.json";
+import { inDiscord, shareInDiscord } from "../discord";
 
 moment.locale('fr')
 moment.tz.setDefault('Europe/Paris')
@@ -918,7 +919,7 @@ export default {
             return day.clone().startOf('day').diff(FIRST_DAY, 'days') + 1
         },
         // Shitty function name to avoid shitty adblockers
-        sh4reAntiAdblock() {
+        async sh4reAntiAdblock() {
             const wordID = this.getWordID()
             const middle = this.archivesMode ? `archive${wordID > 0 ? ` #${wordID}`:''} [${this.archivesDate.format('DD/MM/YYYY')}]` : `#${wordID}`
 
@@ -937,6 +938,11 @@ export default {
             const url = "https://wordle.louan.me";
 
             let sharedContent = `${title}\n\n${schema}`;
+
+            if (inDiscord) {
+                if (await shareInDiscord(sharedContent)) this.changeCopiedStatus();
+                return;
+            }
 
             // This is the payload expected by the web share API
             // The url is automatically appended if provided

@@ -13,6 +13,8 @@ fs.writeFileSync('public/build_id.json', JSON.stringify({
 }));
 
 module.exports = {
+  // Webpack 4 cannot parse the modern syntax the Discord SDK ships (?? and ?.)
+  transpileDependencies: ['@discord/embedded-app-sdk'],
   configureWebpack: {
     plugins: [
       // On ne s'intéresse qu'à la timezone de Paris
