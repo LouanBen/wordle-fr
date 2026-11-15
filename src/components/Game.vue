@@ -197,6 +197,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <DiscordPlayers v-if="inDiscord" :day="today.format('YYYY-MM-DD')" :colorBlindMode="colorBlindMode" />
                         </template>
                         <template v-else>Les stats ne sont ni visibles ni changées en mode Archive.</template>
                         <div class="soluce" v-if="finished">
@@ -348,7 +349,8 @@ import LetterContainer from "./grid/LetterContainer.vue";
 import Key from "./keyboard/Key.vue";
 import words from "../assets/json/drawable-words.json";
 import playableWords from "../assets/json/playable-words.json";
-import { inDiscord, shareInDiscord } from "../discord";
+import DiscordPlayers from "./DiscordPlayers.vue";
+import { inDiscord, shareInDiscord, postResult } from "../discord";
 
 moment.locale('fr')
 moment.tz.setDefault('Europe/Paris')
@@ -396,6 +398,7 @@ export default {
         LetterContainer,
         Key,
         DatePicker,
+        DiscordPlayers,
     },
     data() {
         return {
@@ -423,6 +426,7 @@ export default {
             won: false,
             finished: false,
             statsOpened: false,
+            inDiscord,
             settingsOpened: false,
             helpOpened: false,
             promoOpened: false,
@@ -499,6 +503,14 @@ export default {
         window.removeEventListener('keydown', this.onKeyDown);
     },
     watch: {
+        // Also fires when a finished game is restored at launch; the server keeps the first result.
+        finished(finished) {
+            if (!finished || !inDiscord || this.archivesMode) return;
+            const grid = this.results.slice(0, Math.min(this.currentAttempt, NB_ATTEMPTS))
+                .map((row) => row.map((letter) => letter[0]).join(''))
+                .join('\n');
+            postResult(this.today.format('YYYY-MM-DD'), this.currentAttempt, grid);
+        },
         sharedLink() {
             this.setLSItem('sharedLink', JSON.stringify(this.sharedLink));
         },
