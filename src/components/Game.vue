@@ -940,8 +940,11 @@ export default {
             let sharedContent = `${title}\n\n${schema}`;
 
             if (inDiscord) {
-                if (await shareInDiscord(sharedContent)) this.changeCopiedStatus();
-                return;
+                const shared = await shareInDiscord(sharedContent);
+                if (shared !== null) {
+                    if (shared) this.changeCopiedStatus();
+                    return;
+                }
             }
 
             // This is the payload expected by the web share API

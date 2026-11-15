@@ -23,7 +23,14 @@ export async function initDiscord() {
 }
 
 // Opens Discord's share modal; Discord appends the Activity link to the message.
+// Returns null when Discord refused the command, so the caller can fall back to the clipboard.
 export async function shareInDiscord(message) {
-  const { success } = await sdk.commands.shareLink({ message });
-  return success;
+  try {
+    console.info('[discord] shareLink sent');
+    const { success } = await sdk.commands.shareLink({ message });
+    return success;
+  } catch (error) {
+    console.error('[discord] shareLink failed', error);
+    return null;
+  }
 }
